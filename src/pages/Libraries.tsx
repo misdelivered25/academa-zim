@@ -1,0 +1,378 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Database, 
+  Search, 
+  Filter, 
+  BookOpen, 
+  FileText, 
+  Globe, 
+  Download,
+  Eye,
+  Star,
+  Clock,
+  Users,
+  ExternalLink,
+  University,
+  Bookmark
+} from "lucide-react";
+import Header from "@/components/Header";
+
+const Libraries = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const digitalLibraries = [
+    {
+      name: "University of Zimbabwe Digital Repository",
+      university: "University of Zimbabwe",
+      type: "Institutional Repository",
+      resources: "45,000+",
+      subjects: ["Science", "Engineering", "Medicine", "Arts"],
+      access: "Full Access",
+      description: "Complete collection of UZ theses, dissertations, and research publications."
+    },
+    {
+      name: "NUST Research Database",
+      university: "NUST",
+      type: "Research Database",
+      resources: "25,000+",
+      subjects: ["Technology", "Engineering", "Applied Sciences"],
+      access: "Full Access",
+      description: "NUST's comprehensive database of technological research and innovations."
+    },
+    {
+      name: "Zimbabwe Academic Library Consortium",
+      university: "Multi-University",
+      type: "Consortium Database",
+      resources: "150,000+",
+      subjects: ["All Disciplines"],
+      access: "Limited Access",
+      description: "Shared academic resources across all major Zimbabwe universities."
+    }
+  ];
+
+  const researchDatabases = [
+    {
+      name: "JSTOR Academic",
+      provider: "JSTOR",
+      type: "Academic Journals",
+      subjects: ["History", "Literature", "Political Science", "Economics"],
+      articles: "2.5M+",
+      access: "Subscription Required",
+      description: "Comprehensive academic journal archive with full-text access."
+    },
+    {
+      name: "IEEE Xplore Digital Library",
+      provider: "IEEE",
+      type: "Technical Literature",
+      subjects: ["Engineering", "Computer Science", "Electronics"],
+      articles: "5M+",
+      access: "University Access",
+      description: "Leading database for electrical engineering and computer science research."
+    },
+    {
+      name: "PubMed Central",
+      provider: "NCBI",
+      type: "Medical Literature",
+      subjects: ["Medicine", "Biology", "Life Sciences"],
+      articles: "7M+",
+      access: "Open Access",
+      description: "Free full-text archive of biomedical and life sciences journal literature."
+    },
+    {
+      name: "SpringerLink",
+      provider: "Springer",
+      type: "Academic Publishing",
+      subjects: ["Science", "Technology", "Medicine", "Business"],
+      articles: "13M+",
+      access: "Subscription Required",
+      description: "Comprehensive collection of scientific, technical and medical content."
+    }
+  ];
+
+  const recentResources = [
+    {
+      title: "Machine Learning Applications in Agriculture",
+      author: "Dr. T. Mukamuri et al.",
+      journal: "Zimbabwe Journal of Technology",
+      year: "2024",
+      type: "Research Paper",
+      downloads: 234,
+      rating: 4.8
+    },
+    {
+      title: "Economic Impact of Mining in Zimbabwe",
+      author: "Prof. S. Chigondo",
+      journal: "African Economic Review",
+      year: "2023",
+      type: "Review Article",
+      downloads: 567,
+      rating: 4.9
+    },
+    {
+      title: "Climate Change Adaptation Strategies",
+      author: "Dr. M. Mutasa",
+      journal: "Environmental Science Zimbabwe",
+      year: "2024",
+      type: "Case Study",
+      downloads: 189,
+      rating: 4.6
+    }
+  ];
+
+  const popularSubjects = [
+    { name: "Computer Science", resources: "12,450", trend: "+15%" },
+    { name: "Medicine", resources: "8,230", trend: "+12%" },
+    { name: "Engineering", resources: "9,100", trend: "+18%" },
+    { name: "Business", resources: "6,780", trend: "+8%" },
+    { name: "Agriculture", resources: "5,450", trend: "+22%" },
+    { name: "Education", resources: "4,890", trend: "+10%" }
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Digital Libraries</h1>
+          <p className="text-muted-foreground">
+            Access comprehensive academic resources and research databases from Zimbabwe's leading universities
+          </p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-8">
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search across all libraries and databases..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Button variant="outline">
+              <Filter className="h-4 w-4 mr-2" />
+              Advanced Search
+            </Button>
+            <Button className="bg-gradient-hero hover:shadow-glow transition-all">
+              <Search className="h-4 w-4 mr-2" />
+              Search
+            </Button>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card className="bg-gradient-card border-border text-center p-4">
+            <div className="text-2xl font-bold text-primary">250K+</div>
+            <div className="text-sm text-muted-foreground">Total Resources</div>
+          </Card>
+          <Card className="bg-gradient-card border-border text-center p-4">
+            <div className="text-2xl font-bold text-secondary">15</div>
+            <div className="text-sm text-muted-foreground">Universities</div>
+          </Card>
+          <Card className="bg-gradient-card border-border text-center p-4">
+            <div className="text-2xl font-bold text-primary">50+</div>
+            <div className="text-sm text-muted-foreground">Databases</div>
+          </Card>
+          <Card className="bg-gradient-card border-border text-center p-4">
+            <div className="text-2xl font-bold text-secondary">24/7</div>
+            <div className="text-sm text-muted-foreground">Access</div>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <Tabs defaultValue="libraries" className="space-y-6">
+          <TabsList className="grid w-full md:w-fit grid-cols-4">
+            <TabsTrigger value="libraries">University Libraries</TabsTrigger>
+            <TabsTrigger value="databases">Research Databases</TabsTrigger>
+            <TabsTrigger value="recent">Recent Resources</TabsTrigger>
+            <TabsTrigger value="subjects">By Subject</TabsTrigger>
+          </TabsList>
+
+          {/* University Libraries */}
+          <TabsContent value="libraries" className="space-y-6">
+            <div className="grid gap-6">
+              {digitalLibraries.map((library, index) => (
+                <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-2">
+                        <CardTitle className="text-xl">{library.name}</CardTitle>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">{library.university}</Badge>
+                          <Badge variant="secondary">{library.type}</Badge>
+                          <Badge variant={library.access === "Full Access" ? "outline" : "destructive"}>
+                            {library.access}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-primary">{library.resources}</p>
+                        <p className="text-sm text-muted-foreground">Resources</p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">{library.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {library.subjects.map((subject, i) => (
+                        <Badge key={i} variant="outline">{subject}</Badge>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button className="bg-gradient-hero hover:shadow-glow transition-all">
+                        <Eye className="h-4 w-4 mr-2" />
+                        Browse Collection
+                      </Button>
+                      <Button variant="outline">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Visit Library
+                      </Button>
+                      <Button variant="ghost">
+                        <Bookmark className="h-4 w-4 mr-2" />
+                        Bookmark
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Research Databases */}
+          <TabsContent value="databases" className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {researchDatabases.map((database, index) => (
+                <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
+                  <CardHeader>
+                    <div className="space-y-2">
+                      <CardTitle className="text-lg">{database.name}</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">{database.provider}</Badge>
+                        <Badge variant="secondary">{database.type}</Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <p className="text-muted-foreground">{database.description}</p>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Articles:</span>
+                          <span className="font-medium">{database.articles}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Access:</span>
+                          <Badge variant={database.access === "Open Access" ? "outline" : "destructive"} className="text-xs">
+                            {database.access}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {database.subjects.map((subject, i) => (
+                          <Badge key={i} variant="outline" className="text-xs">{subject}</Badge>
+                        ))}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button size="sm" className="flex-1 bg-gradient-hero hover:shadow-glow transition-all">
+                          <Database className="h-4 w-4 mr-2" />
+                          Access Database
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Recent Resources */}
+          <TabsContent value="recent" className="space-y-6">
+            <div className="space-y-4">
+              {recentResources.map((resource, index) => (
+                <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-2 flex-1">
+                        <h3 className="text-lg font-semibold text-foreground">{resource.title}</h3>
+                        <p className="text-muted-foreground">
+                          {resource.author} • {resource.journal} ({resource.year})
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">{resource.type}</Badge>
+                          <div className="flex items-center space-x-1">
+                            <Star className="h-4 w-4 text-secondary fill-current" />
+                            <span className="text-sm text-muted-foreground">{resource.rating}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Download className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">{resource.downloads}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Button size="sm" className="bg-gradient-hero hover:shadow-glow transition-all">
+                          <Eye className="h-4 w-4 mr-2" />
+                          View
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* By Subject */}
+          <TabsContent value="subjects" className="space-y-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {popularSubjects.map((subject, index) => (
+                <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all cursor-pointer">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-foreground">{subject.name}</h3>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-primary">{subject.trend}</p>
+                        <p className="text-xs text-muted-foreground">growth</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Resources:</span>
+                        <span className="font-medium">{subject.resources}</span>
+                      </div>
+                    </div>
+                    <Button className="w-full mt-4 bg-gradient-hero hover:shadow-glow transition-all" size="sm">
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Explore Subject
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+};
+
+export default Libraries;

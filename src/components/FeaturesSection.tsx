@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { 
   BookOpen, 
   Users, 
@@ -128,9 +129,11 @@ const FeaturesSection = () => {
               Join thousands of students already using ZimUni Hub to achieve academic excellence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-hero hover:shadow-glow transition-all">
-                Get Started Free
-              </Button>
+              <Link to="/signup">
+                <Button size="lg" className="bg-gradient-hero hover:shadow-glow transition-all">
+                  Get Started Free
+                </Button>
+              </Link>
               <Button variant="outline" size="lg" className="hover:bg-accent transition-all">
                 Learn More
               </Button>

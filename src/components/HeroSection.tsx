@@ -58,10 +58,12 @@ const HeroSection = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-gradient-hero hover:shadow-glow transition-all">
-                <BookOpen className="mr-2 h-5 w-5" />
-                Start Learning
-              </Button>
+              <Link to="/dashboard">
+                <Button size="lg" className="bg-gradient-hero hover:shadow-glow transition-all">
+                  <BookOpen className="mr-2 h-5 w-5" />
+                  Start Learning
+                </Button>
+              </Link>
               <Button variant="outline" size="lg" className="hover:bg-accent transition-all">
                 <Users className="mr-2 h-5 w-5" />
                 Join Community

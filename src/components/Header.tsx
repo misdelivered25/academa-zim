@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { 
   BookOpen, 
   GraduationCap, 
@@ -30,29 +31,33 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#dashboard" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
-              <BookOpen className="h-4 w-4" />
-              <span>Study Center</span>
-            </a>
-            <a href="#libraries" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
-              <Database className="h-4 w-4" />
-              <span>Libraries</span>
-            </a>
-            <a href="#campus" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
-              <MapPin className="h-4 w-4" />
-              <span>Campus</span>
-            </a>
+              <Link to="/study-center" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
+                <BookOpen className="h-4 w-4" />
+                <span>Study Center</span>
+              </Link>
+              <Link to="/libraries" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
+                <Database className="h-4 w-4" />
+                <span>Libraries</span>
+              </Link>
+              <Link to="/campus" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
+                <MapPin className="h-4 w-4" />
+                <span>Campus</span>
+              </Link>
           </nav>
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              <User className="h-4 w-4 mr-2" />
-              Sign In
-            </Button>
-            <Button size="sm" className="bg-gradient-hero hover:shadow-glow transition-all">
-              Get Started
-            </Button>
+            <Link to="/login">
+              <Button variant="ghost" size="sm">
+                <User className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+            </Link>
+            <Link to="/dashboard">
+              <Button size="sm" className="bg-gradient-hero hover:shadow-glow transition-all">
+                Get Started
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -68,26 +73,30 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <nav className="flex flex-col space-y-3">
-              <a href="#dashboard" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
+              <Link to="/study-center" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
                 <BookOpen className="h-4 w-4" />
                 <span>Study Center</span>
-              </a>
-              <a href="#libraries" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
+              </Link>
+              <Link to="/libraries" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
                 <Database className="h-4 w-4" />
                 <span>Libraries</span>
-              </a>
-              <a href="#campus" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
+              </Link>
+              <Link to="/campus" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
                 <MapPin className="h-4 w-4" />
                 <span>Campus</span>
-              </a>
+              </Link>
               <div className="flex flex-col space-y-2 px-4 pt-4 border-t border-border">
+              <Link to="/login">
                 <Button variant="ghost" size="sm">
                   <User className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>
+              </Link>
+              <Link to="/dashboard">
                 <Button size="sm" className="bg-gradient-hero hover:shadow-glow transition-all">
                   Get Started
                 </Button>
+              </Link>
               </div>
             </nav>
           </div>
