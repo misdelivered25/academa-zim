@@ -148,7 +148,7 @@ const Campus = () => {
 
   const getLocationColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case "library": return "primary";
+      case "library": return "default";
       case "academic": return "secondary";
       case "dining": return "outline";
       case "health": return "destructive";
