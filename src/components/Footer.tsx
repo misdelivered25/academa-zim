@@ -123,17 +123,32 @@ const Footer = () => {
 
               {/* Contact Info */}
               <div className="space-y-3">
+                <h5 className="font-medium text-background mb-2">Contact CEO</h5>
+                <div>
+                  <p className="text-background text-sm font-medium">Miguel Hore</p>
+                  <p className="text-background/70 text-xs mb-2">Founder & CEO, CUT</p>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-background/60" />
-                  <span className="text-background/80 text-sm">support@zimunihub.co.zw</span>
+                  <a 
+                    href="mailto:Miguelhore250@gmail.com" 
+                    className="text-background/80 hover:text-background text-sm transition-colors"
+                  >
+                    Miguelhore250@gmail.com
+                  </a>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4 text-background/60" />
-                  <span className="text-background/80 text-sm">+263 4 123 4567</span>
+                  <a 
+                    href="tel:+263785693657" 
+                    className="text-background/80 hover:text-background text-sm transition-colors"
+                  >
+                    +263 785 693 657
+                  </a>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4 text-background/60" />
-                  <span className="text-background/80 text-sm">Harare, Zimbabwe</span>
+                  <span className="text-background/80 text-sm">Chinhoyi University of Technology</span>
                 </div>
               </div>
             </div>

@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import StudyCenter from "./pages/StudyCenter";
 import Libraries from "./pages/Libraries";
 import Campus from "./pages/Campus";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/study-center" element={<StudyCenter />} />
           <Route path="/libraries" element={<Libraries />} />
           <Route path="/campus" element={<Campus />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

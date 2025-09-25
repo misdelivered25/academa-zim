@@ -8,7 +8,8 @@ import {
   Database, 
   Menu, 
   X,
-  User
+  User,
+  Mail
 } from "lucide-react";
 
 const Header = () => {
@@ -42,6 +43,10 @@ const Header = () => {
               <Link to="/campus" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
                 <span>Campus</span>
+              </Link>
+              <Link to="/contact" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
+                <Mail className="h-4 w-4" />
+                <span>Contact</span>
               </Link>
           </nav>
 
@@ -84,6 +89,10 @@ const Header = () => {
               <Link to="/campus" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
                 <MapPin className="h-4 w-4" />
                 <span>Campus</span>
+              </Link>
+              <Link to="/contact" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
+                <Mail className="h-4 w-4" />
+                <span>Contact</span>
               </Link>
               <div className="flex flex-col space-y-2 px-4 pt-4 border-t border-border">
               <Link to="/login">
