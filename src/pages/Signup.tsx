@@ -1,4 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,11 +25,68 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const signupSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  university: z.string().min(1, "Please select your university"),
+  program: z.string().min(1, "Please select your program"),
+  studentId: z.string().min(1, "Student ID is required"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(10, "Please enter a valid phone number"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Please confirm your password"),
+  terms: z.boolean().refine(val => val === true, "You must accept the terms and conditions"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type SignupForm = z.infer<typeof signupSchema>;
+
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [selectedUniversity, setSelectedUniversity] = useState("");
-  const [selectedProgram, setSelectedProgram] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp, user } = useAuth();
+  const navigate = useNavigate();
+
+  const form = useForm<SignupForm>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      university: "",
+      program: "",
+      studentId: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      terms: false,
+    },
+  });
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+
+  const onSubmit = async (data: SignupForm) => {
+    setIsLoading(true);
+    const { error } = await signUp(data.email, data.password, {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      university: data.university,
+      program: data.program,
+      studentId: data.studentId,
+      phone: data.phone,
+    });
+    if (!error) {
+      navigate("/login");
+    }
+    setIsLoading(false);
+  };
 
   const universities = [
     "University of Zimbabwe",
@@ -82,191 +145,291 @@ const Signup = () => {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            <form className="space-y-4">
-              {/* Personal Information */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-sm font-medium">First Name</Label>
-                  <Input
-                    id="firstName"
-                    type="text"
-                    placeholder="John"
-                    className="transition-all focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-sm font-medium">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    type="text"
-                    placeholder="Doe"
-                    className="transition-all focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-              </div>
-
-              {/* University Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="university" className="text-sm font-medium flex items-center">
-                  <University className="h-4 w-4 mr-2" />
-                  University
-                </Label>
-                <select 
-                  id="university"
-                  value={selectedUniversity}
-                  onChange={(e) => setSelectedUniversity(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">Select your university</option>
-                  {universities.map((uni) => (
-                    <option key={uni} value={uni}>{uni}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Program of Study */}
-              <div className="space-y-2">
-                <Label htmlFor="program" className="text-sm font-medium flex items-center">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Program of Study
-                </Label>
-                <select 
-                  id="program"
-                  value={selectedProgram}
-                  onChange={(e) => setSelectedProgram(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">Select your program</option>
-                  {programs.map((program) => (
-                    <option key={program} value={program}>{program}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Student ID */}
-              <div className="space-y-2">
-                <Label htmlFor="studentId" className="text-sm font-medium flex items-center">
-                  <User className="h-4 w-4 mr-2" />
-                  Student ID
-                </Label>
-                <Input
-                  id="studentId"
-                  type="text"
-                  placeholder="e.g., H123456"
-                  className="transition-all focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-
-              {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium flex items-center">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Student Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="student@university.ac.zw"
-                  className="transition-all focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-
-              {/* Phone */}
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-sm font-medium flex items-center">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Phone Number
-                </Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="+263 77 123 4567"
-                  className="transition-all focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-
-              {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium flex items-center">
-                  <Lock className="h-4 w-4 mr-2" />
-                  Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Create a strong password"
-                    className="pr-10 transition-all focus:ring-2 focus:ring-primary/20"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                {/* Personal Information */}
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="John"
+                            className="transition-all focus:ring-2 focus:ring-primary/20"
+                            disabled={isLoading}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Confirm Password */}
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                    className="pr-10 transition-all focus:ring-2 focus:ring-primary/20"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Doe"
+                            className="transition-all focus:ring-2 focus:ring-primary/20"
+                            disabled={isLoading}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </Button>
+                  />
                 </div>
-              </div>
 
-              {/* Terms Agreement */}
-              <div className="flex items-start space-x-2">
-                <Checkbox id="terms" className="mt-1" />
-                <Label
-                  htmlFor="terms"
-                  className="text-sm leading-relaxed peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                {/* University Selection */}
+                <FormField
+                  control={form.control}
+                  name="university"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        <University className="h-4 w-4 mr-2" />
+                        University
+                      </FormLabel>
+                      <FormControl>
+                        <select 
+                          {...field}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          disabled={isLoading}
+                        >
+                          <option value="">Select your university</option>
+                          {universities.map((uni) => (
+                            <option key={uni} value={uni}>{uni}</option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Program of Study */}
+                <FormField
+                  control={form.control}
+                  name="program"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        <BookOpen className="h-4 w-4 mr-2" />
+                        Program of Study
+                      </FormLabel>
+                      <FormControl>
+                        <select 
+                          {...field}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          disabled={isLoading}
+                        >
+                          <option value="">Select your program</option>
+                          {programs.map((program) => (
+                            <option key={program} value={program}>{program}</option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Student ID */}
+                <FormField
+                  control={form.control}
+                  name="studentId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        <User className="h-4 w-4 mr-2" />
+                        Student ID
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g., H123456"
+                          className="transition-all focus:ring-2 focus:ring-primary/20"
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Email */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        <Mail className="h-4 w-4 mr-2" />
+                        Student Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="student@university.ac.zw"
+                          className="transition-all focus:ring-2 focus:ring-primary/20"
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Phone */}
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        <Phone className="h-4 w-4 mr-2" />
+                        Phone Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="tel"
+                          placeholder="+263 77 123 4567"
+                          className="transition-all focus:ring-2 focus:ring-primary/20"
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Password */}
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        <Lock className="h-4 w-4 mr-2" />
+                        Password
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Create a strong password"
+                            className="pr-10 transition-all focus:ring-2 focus:ring-primary/20"
+                            disabled={isLoading}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                            disabled={isLoading}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                              <Eye className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Confirm Password */}
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="Confirm your password"
+                            className="pr-10 transition-all focus:ring-2 focus:ring-primary/20"
+                            disabled={isLoading}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            disabled={isLoading}
+                          >
+                            {showConfirmPassword ? (
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                              <Eye className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Terms Agreement */}
+                <FormField
+                  control={form.control}
+                  name="terms"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-sm leading-relaxed">
+                          I agree to the{" "}
+                          <Link to="/terms" className="text-primary hover:text-primary-glow underline">
+                            Terms of Service
+                          </Link>{" "}
+                          and{" "}
+                          <Link to="/privacy" className="text-primary hover:text-primary-glow underline">
+                            Privacy Policy
+                          </Link>
+                        </FormLabel>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                {/* Create Account Button */}
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-hero hover:shadow-glow transition-all"
+                  size="lg"
+                  disabled={isLoading}
                 >
-                  I agree to the{" "}
-                  <Link to="/terms" className="text-primary hover:text-primary-glow underline">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="/privacy" className="text-primary hover:text-primary-glow underline">
-                    Privacy Policy
-                  </Link>
-                </Label>
-              </div>
-
-              {/* Create Account Button */}
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-hero hover:shadow-glow transition-all"
-                size="lg"
-              >
-                Create Account
-              </Button>
-            </form>
+                  {isLoading ? "Creating Account..." : "Create Account"}
+                </Button>
+              </form>
+            </Form>
 
             <Separator />
 

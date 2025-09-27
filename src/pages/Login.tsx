@@ -1,4 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,9 +22,41 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+type LoginForm = z.infer<typeof loginSchema>;
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedUniversity, setSelectedUniversity] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, user } = useAuth();
+  const navigate = useNavigate();
+
+  const form = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+
+  const onSubmit = async (data: LoginForm) => {
+    setIsLoading(true);
+    const { error } = await signIn(data.email, data.password);
+    if (!error) {
+      navigate("/dashboard");
+    }
+    setIsLoading(false);
+  };
 
   const universities = [
     "University of Zimbabwe",
@@ -64,95 +102,100 @@ const Login = () => {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            <form className="space-y-4">
-              {/* University Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="university" className="text-sm font-medium flex items-center">
-                  <University className="h-4 w-4 mr-2" />
-                  University
-                </Label>
-                <select 
-                  id="university"
-                  value={selectedUniversity}
-                  onChange={(e) => setSelectedUniversity(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">Select your university</option>
-                  {universities.map((uni) => (
-                    <option key={uni} value={uni}>{uni}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium flex items-center">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Student Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="student@university.ac.zw"
-                  className="transition-all focus:ring-2 focus:ring-primary/20"
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                {/* Email */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        <Mail className="h-4 w-4 mr-2" />
+                        Email Address
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="student@university.ac.zw"
+                          className="transition-all focus:ring-2 focus:ring-primary/20"
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium flex items-center">
-                  <Lock className="h-4 w-4 mr-2" />
-                  Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="pr-10 transition-all focus:ring-2 focus:ring-primary/20"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                {/* Password */}
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        <Lock className="h-4 w-4 mr-2" />
+                        Password
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Enter your password"
+                            className="pr-10 transition-all focus:ring-2 focus:ring-primary/20"
+                            disabled={isLoading}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                            disabled={isLoading}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                              <Eye className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Remember Me & Forgot Password */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="remember" disabled={isLoading} />
+                    <Label
+                      htmlFor="remember"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Remember me
+                    </Label>
+                  </div>
+                  <Button variant="link" className="px-0 font-normal text-primary hover:text-primary-glow" disabled={isLoading}>
+                    Forgot password?
                   </Button>
                 </div>
-              </div>
 
-              {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="remember" />
-                  <Label
-                    htmlFor="remember"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Remember me
-                  </Label>
-                </div>
-                <Button variant="link" className="px-0 font-normal text-primary hover:text-primary-glow">
-                  Forgot password?
+                {/* Sign In Button */}
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-hero hover:shadow-glow transition-all"
+                  size="lg"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Signing In..." : "Sign In"}
+                  {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
-              </div>
-
-              {/* Sign In Button */}
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-hero hover:shadow-glow transition-all"
-                size="lg"
-              >
-                Sign In
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </form>
+              </form>
+            </Form>
 
             <Separator />
 

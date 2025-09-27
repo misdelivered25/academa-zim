@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,8 +24,10 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
+  const { user, signOut } = useAuth();
   const [selectedSemester, setSelectedSemester] = useState("2024-1");
 
   const upcomingAssignments = [
@@ -153,13 +155,22 @@ const Dashboard = () => {
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome back, Sarah! 👋
-          </h1>
-          <p className="text-muted-foreground">
-            University of Zimbabwe • Computer Science • Semester 1, 2024
-          </p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Welcome back, {user?.email?.split('@')[0] || 'Student'}! 👋
+            </h1>
+            <p className="text-muted-foreground">
+              Your Academic Dashboard • Ready to excel today?
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={signOut}
+            className="hover:bg-destructive hover:text-destructive-foreground"
+          >
+            Sign Out
+          </Button>
         </div>
 
         {/* Quick Stats */}
