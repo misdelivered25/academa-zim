@@ -134,9 +134,11 @@ const FeaturesSection = () => {
                   Get Started Free
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="hover:bg-accent transition-all">
-                Learn More
-              </Button>
+              <Link to="/contact">
+                <Button variant="outline" size="lg" className="hover:bg-accent transition-all">
+                  Learn More
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

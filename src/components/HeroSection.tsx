@@ -65,10 +65,12 @@ const HeroSection = () => {
                   Start Learning
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="hover:bg-accent transition-all">
-                <Users className="mr-2 h-5 w-5" />
-                Join Community
-              </Button>
+              <Link to="/signup">
+                <Button variant="outline" size="lg" className="hover:bg-accent transition-all">
+                  <Users className="mr-2 h-5 w-5" />
+                  Join Community
+                </Button>
+              </Link>
             </div>
 
             {/* Quick Stats */}
