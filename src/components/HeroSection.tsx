@@ -92,61 +92,69 @@ const HeroSection = () => {
 
           {/* Right Content - Feature Cards */}
           <div className="space-y-6">
-            <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300">
-              <div className="flex items-start space-x-4">
-                <div className="bg-primary/10 rounded-lg p-3">
-                  <Calendar className="h-6 w-6 text-primary" />
+            <Link to="/study-center" className="block">
+              <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 cursor-pointer hover:-translate-y-1">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-primary/10 rounded-lg p-3">
+                    <Calendar className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">Assignment Tracker</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Never miss a deadline with our integrated assignment and exam calendar
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-foreground">Assignment Tracker</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Never miss a deadline with our integrated assignment and exam calendar
-                  </p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
 
-            <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300">
-              <div className="flex items-start space-x-4">
-                <div className="bg-secondary/10 rounded-lg p-3">
-                  <Database className="h-6 w-6 text-secondary" />
+            <Link to="/libraries" className="block">
+              <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 cursor-pointer hover:-translate-y-1">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-secondary/10 rounded-lg p-3">
+                    <Database className="h-6 w-6 text-secondary" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">Research Libraries</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Access digital libraries and databases from all participating universities
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-foreground">Research Libraries</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Access digital libraries and databases from all participating universities
-                  </p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
 
-            <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300">
-              <div className="flex items-start space-x-4">
-                <div className="bg-primary/10 rounded-lg p-3">
-                  <MapPin className="h-6 w-6 text-primary" />
+            <Link to="/campus" className="block">
+              <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 cursor-pointer hover:-translate-y-1">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-primary/10 rounded-lg p-3">
+                    <MapPin className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">Campus Navigation</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Interactive maps and directions for all university campuses
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-foreground">Campus Navigation</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Interactive maps and directions for all university campuses
-                  </p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
 
-            <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300">
-              <div className="flex items-start space-x-4">
-                <div className="bg-secondary/10 rounded-lg p-3">
-                  <Award className="h-6 w-6 text-secondary" />
+            <Link to="/study-center" className="block">
+              <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 cursor-pointer hover:-translate-y-1">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-secondary/10 rounded-lg p-3">
+                    <Award className="h-6 w-6 text-secondary" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">Exam Preparation</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Study guides, past papers, and collaborative study groups
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-foreground">Exam Preparation</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Study guides, past papers, and collaborative study groups
-                  </p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           </div>
         </div>
 

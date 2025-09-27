@@ -19,55 +19,64 @@ const FeaturesSection = () => {
       icon: BookOpen,
       title: "Unified Study Center",
       description: "Access assignments, quizzes, and study materials from all your courses in one centralized dashboard.",
-      color: "primary"
+      color: "primary",
+      path: "/study-center"
     },
     {
       icon: Calendar,
       title: "Academic Calendar",
       description: "Never miss important dates with synchronized calendars showing exams, assignments, and university events.",
-      color: "secondary"
+      color: "secondary",
+      path: "/dashboard"
     },
     {
       icon: Database,
       title: "Digital Libraries",
       description: "Seamlessly search through research databases and library catalogs across all participating universities.",
-      color: "primary"
+      color: "primary",
+      path: "/libraries"
     },
     {
       icon: MapPin,
       title: "Campus Navigation",
       description: "Interactive maps with real-time directions to lecture halls, libraries, and campus facilities.",
-      color: "secondary"
+      color: "secondary",
+      path: "/campus"
     },
     {
       icon: Users,
       title: "Study Groups",
       description: "Connect with peers taking similar courses and form collaborative study groups.",
-      color: "primary"
+      color: "primary",
+      path: "/study-center"
     },
     {
       icon: Award,
       title: "Exam Preparation",
       description: "Access past papers, study guides, and practice tests to excel in your examinations.",
-      color: "secondary"
+      color: "secondary",
+      path: "/study-center"
     },
     {
       icon: Search,
       title: "Smart Search",
       description: "Find exactly what you need with AI-powered search across all academic resources.",
-      color: "primary"
+      color: "primary",
+      path: "/libraries"
     },
     {
       icon: Bell,
       title: "Smart Notifications",
       description: "Get timely reminders for assignments, exams, and important university announcements.",
-      color: "secondary"
+      color: "secondary",
+      path: "/dashboard"
     },
     {
       icon: Clock,
       title: "Time Management",
       description: "Track your study time and get insights to improve your academic productivity.",
-      color: "primary"
+      color: "primary",
+      path: "/study-center"
     }
   ];
 
@@ -95,26 +104,31 @@ const FeaturesSection = () => {
             const isPrimary = feature.color === "primary";
             
             return (
-              <Card 
+              <Link 
                 key={index}
-                className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 group"
+                to={feature.path}
+                className="block"
               >
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
-                  isPrimary ? 'bg-primary/10' : 'bg-secondary/10'
-                }`}>
-                  <IconComponent className={`h-6 w-6 ${
-                    isPrimary ? 'text-primary' : 'text-secondary'
-                  } group-hover:scale-110 transition-transform`} />
-                </div>
-                
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {feature.title}
-                </h3>
-                
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {feature.description}
-                </p>
-              </Card>
+                <Card 
+                  className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 group cursor-pointer h-full"
+                >
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
+                    isPrimary ? 'bg-primary/10' : 'bg-secondary/10'
+                  }`}>
+                    <IconComponent className={`h-6 w-6 ${
+                      isPrimary ? 'text-primary' : 'text-secondary'
+                    } group-hover:scale-110 transition-transform`} />
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    {feature.title}
+                  </h3>
+                  
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </Card>
+              </Link>
             );
           })}
         </div>
