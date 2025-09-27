@@ -1,41 +1,34 @@
 import { Button } from "@/components/ui/button";
-import { 
-  GraduationCap, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Facebook, 
-  Twitter, 
-  Linkedin,
-  Instagram
-} from "lucide-react";
-
+import { GraduationCap, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 const Footer = () => {
-  const quickLinks = [
-    { name: "Study Center", href: "#study" },
-    { name: "Assignments", href: "#assignments" },
-    { name: "Exam Prep", href: "#exams" },
-    { name: "Research", href: "#research" }
-  ];
-
-  const universities = [
-    "University of Zimbabwe",
-    "NUST",
-    "Midlands State University", 
-    "Chinhoyi University of Technology",
-    "Bindura University",
-    "Great Zimbabwe University"
-  ];
-
-  const resources = [
-    { name: "Digital Libraries", href: "#libraries" },
-    { name: "Campus Maps", href: "#maps" },
-    { name: "Academic Calendar", href: "#calendar" },
-    { name: "Help Center", href: "#help" }
-  ];
-
-  return (
-    <footer className="bg-foreground text-background">
+  const quickLinks = [{
+    name: "Study Center",
+    href: "#study"
+  }, {
+    name: "Assignments",
+    href: "#assignments"
+  }, {
+    name: "Exam Prep",
+    href: "#exams"
+  }, {
+    name: "Research",
+    href: "#research"
+  }];
+  const universities = ["University of Zimbabwe", "NUST", "Midlands State University", "Chinhoyi University of Technology", "Bindura University", "Great Zimbabwe University"];
+  const resources = [{
+    name: "Digital Libraries",
+    href: "#libraries"
+  }, {
+    name: "Campus Maps",
+    href: "#maps"
+  }, {
+    name: "Academic Calendar",
+    href: "#calendar"
+  }, {
+    name: "Help Center",
+    href: "#help"
+  }];
+  return <footer className="bg-foreground text-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="py-16">
@@ -78,16 +71,11 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold text-lg mb-6">Quick Links</h4>
               <ul className="space-y-3">
-                {quickLinks.map((link, index) => (
-                  <li key={index}>
-                    <a 
-                      href={link.href}
-                      className="text-background/80 hover:text-background transition-colors text-sm"
-                    >
+                {quickLinks.map((link, index) => <li key={index}>
+                    <a href={link.href} className="text-background/80 hover:text-background transition-colors text-sm">
                       {link.name}
                     </a>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
             </div>
 
@@ -95,13 +83,11 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold text-lg mb-6">Partner Universities</h4>
               <ul className="space-y-3">
-                {universities.map((uni, index) => (
-                  <li key={index}>
+                {universities.map((uni, index) => <li key={index}>
                     <span className="text-background/80 text-sm">
                       {uni}
                     </span>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
             </div>
 
@@ -109,16 +95,11 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold text-lg mb-6">Resources & Support</h4>
               <ul className="space-y-3 mb-6">
-                {resources.map((resource, index) => (
-                  <li key={index}>
-                    <a 
-                      href={resource.href}
-                      className="text-background/80 hover:text-background transition-colors text-sm"
-                    >
+                {resources.map((resource, index) => <li key={index}>
+                    <a href={resource.href} className="text-background/80 hover:text-background transition-colors text-sm">
                       {resource.name}
                     </a>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
 
               {/* Contact Info */}
@@ -126,23 +107,18 @@ const Footer = () => {
                 <h5 className="font-medium text-background mb-2">Contact CEO</h5>
                 <div>
                   <p className="text-background text-sm font-medium">Miguel Hore</p>
-                  <p className="text-background/70 text-xs mb-2">Founder & CEO, CUT</p>
+                  <p className="text-background/70 text-xs mb-2">CEO CUT
+CUT Billion</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-background/60" />
-                  <a 
-                    href="mailto:Miguelhore250@gmail.com" 
-                    className="text-background/80 hover:text-background text-sm transition-colors"
-                  >
+                  <a href="mailto:Miguelhore250@gmail.com" className="text-background/80 hover:text-background text-sm transition-colors">
                     Miguelhore250@gmail.com
                   </a>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4 text-background/60" />
-                  <a 
-                    href="tel:+263785693657" 
-                    className="text-background/80 hover:text-background text-sm transition-colors"
-                  >
+                  <a href="tel:+263785693657" className="text-background/80 hover:text-background text-sm transition-colors">
                     +263 785 693 657
                   </a>
                 </div>
@@ -176,8 +152,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
