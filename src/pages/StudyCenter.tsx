@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
 import { 
   BookOpen, 
   Search, 
@@ -26,6 +27,92 @@ import Header from "@/components/Header";
 const StudyCenter = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const { toast } = useToast();
+
+  // Handler functions for button actions
+  const handleViewAssignment = (assignment: any) => {
+    toast({
+      title: "Opening Assignment",
+      description: `Opening ${assignment.title} for ${assignment.course}`,
+    });
+    // Mock opening a document - in a real app, this would open a PDF or document viewer
+    window.open(`/mock-assignment-${assignment.course.toLowerCase()}.pdf`, '_blank');
+  };
+
+  const handleStartWork = (assignment: any) => {
+    toast({
+      title: "Starting Assignment",
+      description: `Starting work on ${assignment.title}`,
+    });
+    // Mock starting work - in a real app, this might redirect to an assignment editor
+    window.open(`/assignment-editor?id=${assignment.course}`, '_blank');
+  };
+
+  const handleViewMaterial = (material: any) => {
+    toast({
+      title: "Opening Study Material", 
+      description: `Opening ${material.title}`,
+    });
+    // Mock opening study material
+    if (material.type === "video") {
+      window.open(`/mock-video-${material.course.toLowerCase()}.mp4`, '_blank');
+    } else {
+      window.open(`/mock-material-${material.course.toLowerCase()}.pdf`, '_blank');
+    }
+  };
+
+  const handleDownloadMaterial = (material: any) => {
+    toast({
+      title: "Downloading Material",
+      description: `Downloading ${material.title}`,
+    });
+    // Mock download - in a real app, this would trigger a file download
+    const element = document.createElement('a');
+    element.href = `/mock-material-${material.course.toLowerCase()}.pdf`;
+    element.download = `${material.title}.${material.format.toLowerCase()}`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const handleStartQuiz = (quiz: any) => {
+    if (!quiz.available) {
+      toast({
+        title: "Quiz Unavailable",
+        description: "This quiz is currently closed",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    toast({
+      title: "Starting Quiz",
+      description: `Starting ${quiz.title}`,
+    });
+    // Mock starting quiz - in a real app, this would redirect to quiz interface
+    window.open(`/quiz/${quiz.course.toLowerCase()}`, '_blank');
+  };
+
+  const handleNewAssignment = () => {
+    toast({
+      title: "Creating Assignment",
+      description: "Opening assignment creation form",
+    });
+  };
+
+  const handleUploadMaterial = () => {
+    toast({
+      title: "Upload Material",
+      description: "Opening file upload dialog",
+    });
+  };
+
+  const handleCreateQuiz = () => {
+    toast({
+      title: "Create Quiz",
+      description: "Opening quiz creation form",
+    });
+  };
 
   const assignments = [
     {
@@ -192,7 +279,10 @@ const StudyCenter = () => {
           <TabsContent value="assignments" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-foreground">Assignments & Homework</h2>
-              <Button className="bg-gradient-hero hover:shadow-glow transition-all">
+              <Button 
+                className="bg-gradient-hero hover:shadow-glow transition-all"
+                onClick={handleNewAssignment}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 New Assignment
               </Button>
@@ -220,12 +310,20 @@ const StudyCenter = () => {
                   <CardContent>
                     <p className="text-muted-foreground mb-4">{assignment.description}</p>
                     <div className="flex gap-2">
-                      <Button size="sm" className="bg-gradient-hero hover:shadow-glow transition-all">
+                      <Button 
+                        size="sm" 
+                        className="bg-gradient-hero hover:shadow-glow transition-all"
+                        onClick={() => handleViewAssignment(assignment)}
+                      >
                         <Eye className="h-4 w-4 mr-2" />
                         View Details
                       </Button>
                       {assignment.status !== "completed" && (
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleStartWork(assignment)}
+                        >
                           <FileText className="h-4 w-4 mr-2" />
                           Start Work
                         </Button>
@@ -241,7 +339,10 @@ const StudyCenter = () => {
           <TabsContent value="materials" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-foreground">Study Materials</h2>
-              <Button className="bg-gradient-hero hover:shadow-glow transition-all">
+              <Button 
+                className="bg-gradient-hero hover:shadow-glow transition-all"
+                onClick={handleUploadMaterial}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Upload Material
               </Button>
@@ -281,14 +382,22 @@ const StudyCenter = () => {
                         <span className="font-medium">{material.views}</span>
                       </div>
                       <div className="flex gap-2 pt-2">
-                        <Button size="sm" className="flex-1 bg-gradient-hero hover:shadow-glow transition-all">
+                        <Button 
+                          size="sm" 
+                          className="flex-1 bg-gradient-hero hover:shadow-glow transition-all"
+                          onClick={() => handleViewMaterial(material)}
+                        >
                           {material.type === "video" ? (
                             <><Video className="h-4 w-4 mr-2" />Watch</>
                           ) : (
                             <><Eye className="h-4 w-4 mr-2" />View</>
                           )}
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleDownloadMaterial(material)}
+                        >
                           <Download className="h-4 w-4" />
                         </Button>
                       </div>
@@ -303,7 +412,10 @@ const StudyCenter = () => {
           <TabsContent value="quizzes" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-foreground">Practice Quizzes</h2>
-              <Button className="bg-gradient-hero hover:shadow-glow transition-all">
+              <Button 
+                className="bg-gradient-hero hover:shadow-glow transition-all"
+                onClick={handleCreateQuiz}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Quiz
               </Button>
@@ -351,12 +463,20 @@ const StudyCenter = () => {
                           Deadline: {quiz.deadline}
                         </p>
                         {quiz.available ? (
-                          <Button className="w-full bg-gradient-hero hover:shadow-glow transition-all">
+                          <Button 
+                            className="w-full bg-gradient-hero hover:shadow-glow transition-all"
+                            onClick={() => handleStartQuiz(quiz)}
+                          >
                             <Award className="h-4 w-4 mr-2" />
                             Start Quiz
                           </Button>
                         ) : (
-                          <Button variant="outline" disabled className="w-full">
+                          <Button 
+                            variant="outline" 
+                            disabled 
+                            className="w-full"
+                            onClick={() => handleStartQuiz(quiz)}
+                          >
                             <AlertTriangle className="h-4 w-4 mr-2" />
                             Quiz Closed
                           </Button>
