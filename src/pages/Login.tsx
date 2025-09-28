@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
   GraduationCap, 
   Mail, 
@@ -33,7 +34,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const { signIn, signInWithGoogle, user } = useAuth();
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [isResetLoading, setIsResetLoading] = useState(false);
+  const { signIn, signInWithGoogle, forgotPassword, user } = useAuth();
   const navigate = useNavigate();
 
   const form = useForm<LoginForm>({
@@ -63,6 +66,16 @@ const Login = () => {
     setIsGoogleLoading(true);
     await signInWithGoogle();
     setIsGoogleLoading(false);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!forgotPasswordEmail) {
+      return;
+    }
+    setIsResetLoading(true);
+    await forgotPassword(forgotPasswordEmail);
+    setIsResetLoading(false);
+    setForgotPasswordEmail("");
   };
 
   const universities = [
@@ -186,9 +199,41 @@ const Login = () => {
                       Remember me
                     </Label>
                   </div>
-                  <Button variant="link" className="px-0 font-normal text-primary hover:text-primary-glow" disabled={isLoading}>
-                    Forgot password?
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="link" className="px-0 font-normal text-primary hover:text-primary-glow" disabled={isLoading}>
+                        Forgot password?
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Reset Password</DialogTitle>
+                        <DialogDescription>
+                          Enter your email address and we'll send you a link to reset your password.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="reset-email">Email Address</Label>
+                          <Input
+                            id="reset-email"
+                            type="email"
+                            placeholder="student@university.ac.zw"
+                            value={forgotPasswordEmail}
+                            onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                            disabled={isResetLoading}
+                          />
+                        </div>
+                        <Button 
+                          onClick={handleForgotPassword}
+                          disabled={!forgotPasswordEmail || isResetLoading}
+                          className="w-full"
+                        >
+                          {isResetLoading ? "Sending..." : "Send Reset Link"}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
 
                 {/* Sign In Button */}
