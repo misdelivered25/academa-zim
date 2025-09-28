@@ -52,8 +52,10 @@ const Footer = () => {
 
               {/* Social Links */}
               <div className="flex space-x-4">
-                <Button variant="ghost" size="icon" className="hover:bg-background/10 text-background hover:text-background">
-                  <Facebook className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="hover:bg-background/10 text-background hover:text-background" asChild>
+                  <a href="https://www.facebook.com/micheal.hore" target="_blank" rel="noopener noreferrer">
+                    <Facebook className="h-4 w-4" />
+                  </a>
                 </Button>
                 <Button variant="ghost" size="icon" className="hover:bg-background/10 text-background hover:text-background">
                   <Twitter className="h-4 w-4" />
