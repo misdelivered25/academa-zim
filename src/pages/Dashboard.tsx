@@ -294,29 +294,47 @@ const Dashboard = () => {
             const IconComponent = stat.icon;
             const isPrimary = stat.color === "primary";
             
+            // Define navigation for each stat
+            const getNavigationPath = (label: string) => {
+              switch (label) {
+                case "Courses":
+                  return "/study-center";
+                case "Assignments Due":
+                  return "/study-center";
+                case "Study Hours":
+                  return "/study-center";
+                case "Completion Rate":
+                  return "/study-center";
+                default:
+                  return "/study-center";
+              }
+            };
+            
             return (
-              <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
-                      <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                      <p className={`text-xs ${
-                        stat.change.startsWith('+') ? 'text-primary' : 'text-secondary'
+              <Link key={index} to={getNavigationPath(stat.label)}>
+                <Card className="bg-gradient-card border-border hover:shadow-card transition-all cursor-pointer hover:scale-105">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
+                        <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                        <p className={`text-xs ${
+                          stat.change.startsWith('+') ? 'text-primary' : 'text-secondary'
+                        }`}>
+                          {stat.change} this week
+                        </p>
+                      </div>
+                      <div className={`p-3 rounded-lg ${
+                        isPrimary ? 'bg-primary/10' : 'bg-secondary/10'
                       }`}>
-                        {stat.change} this week
-                      </p>
+                        <IconComponent className={`h-6 w-6 ${
+                          isPrimary ? 'text-primary' : 'text-secondary'
+                        }`} />
+                      </div>
                     </div>
-                    <div className={`p-3 rounded-lg ${
-                      isPrimary ? 'bg-primary/10' : 'bg-secondary/10'
-                    }`}>
-                      <IconComponent className={`h-6 w-6 ${
-                        isPrimary ? 'text-primary' : 'text-secondary'
-                      }`} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             );
           })}
         </div>
