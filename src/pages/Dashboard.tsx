@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   BookOpen, 
   Calendar, 
@@ -21,7 +22,10 @@ import {
   GraduationCap,
   MapPin,
   Database,
-  Loader2
+  Loader2,
+  Bot,
+  Play,
+  Search
 } from "lucide-react";
 import Header from "@/components/Header";
 import { Link } from "react-router-dom";
@@ -32,6 +36,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { StudyAssistant } from "@/components/StudyAssistant";
+import { VideoTutorials } from "@/components/VideoTutorials";
+import { ScholarSearch } from "@/components/ScholarSearch";
 
 type Assignment = {
   id: string;
@@ -339,10 +346,32 @@ const Dashboard = () => {
           })}
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Assignments & Courses */}
-          <div className="lg:col-span-2 space-y-8">
+        {/* Tabs for different sections */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">
+              <GraduationCap className="h-4 w-4 mr-2" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="ai-assistant">
+              <Bot className="h-4 w-4 mr-2" />
+              AI Assistant
+            </TabsTrigger>
+            <TabsTrigger value="tutorials">
+              <Play className="h-4 w-4 mr-2" />
+              Tutorials
+            </TabsTrigger>
+            <TabsTrigger value="research">
+              <Search className="h-4 w-4 mr-2" />
+              Research
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview">
+            {/* Main Content Grid */}
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Left Column - Assignments & Courses */}
+              <div className="lg:col-span-2 space-y-8">
             {/* Upcoming Assignments */}
             <Card className="bg-gradient-card border-border">
               <CardHeader>
@@ -577,6 +606,20 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
+          </TabsContent>
+
+          <TabsContent value="ai-assistant">
+            <StudyAssistant />
+          </TabsContent>
+
+          <TabsContent value="tutorials">
+            <VideoTutorials />
+          </TabsContent>
+
+          <TabsContent value="research">
+            <ScholarSearch />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
