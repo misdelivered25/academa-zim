@@ -39,6 +39,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { StudyAssistant } from "@/components/StudyAssistant";
 import { VideoTutorials } from "@/components/VideoTutorials";
 import { ScholarSearch } from "@/components/ScholarSearch";
+import CourseManagement from "@/components/CourseManagement";
+import AssignmentCreation from "@/components/AssignmentCreation";
+import CampusMap from "@/components/CampusMap";
 
 type Assignment = {
   id: string;

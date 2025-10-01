@@ -14,29 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      assignment_templates: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          difficulty: string | null
+          estimated_hours: number | null
+          id: string
+          subject: string | null
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          estimated_hours?: number | null
+          id?: string
+          subject?: string | null
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          estimated_hours?: number | null
+          id?: string
+          subject?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       assignments: {
         Row: {
+          ai_analysis: Json | null
           course_id: string | null
           created_at: string | null
+          description: string | null
+          difficulty_rating: string | null
           due_date: string | null
+          estimated_hours: number | null
           id: string
           status: string | null
           title: string
           user_id: string | null
         }
         Insert: {
+          ai_analysis?: Json | null
           course_id?: string | null
           created_at?: string | null
+          description?: string | null
+          difficulty_rating?: string | null
           due_date?: string | null
+          estimated_hours?: number | null
           id?: string
           status?: string | null
           title: string
           user_id?: string | null
         }
         Update: {
+          ai_analysis?: Json | null
           course_id?: string | null
           created_at?: string | null
+          description?: string | null
+          difficulty_rating?: string | null
           due_date?: string | null
+          estimated_hours?: number | null
           id?: string
           status?: string | null
           title?: string
@@ -91,6 +136,68 @@ export type Database = {
           },
         ]
       }
+      library_items: {
+        Row: {
+          author: string | null
+          category: string
+          created_at: string | null
+          description: string | null
+          downloads: number | null
+          file_path: string | null
+          id: string
+          is_public: boolean | null
+          subject: string | null
+          title: string
+          type: string
+          university: string | null
+          uploaded_by: string | null
+          url: string | null
+          views: number | null
+        }
+        Insert: {
+          author?: string | null
+          category: string
+          created_at?: string | null
+          description?: string | null
+          downloads?: number | null
+          file_path?: string | null
+          id?: string
+          is_public?: boolean | null
+          subject?: string | null
+          title: string
+          type: string
+          university?: string | null
+          uploaded_by?: string | null
+          url?: string | null
+          views?: number | null
+        }
+        Update: {
+          author?: string | null
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          downloads?: number | null
+          file_path?: string | null
+          id?: string
+          is_public?: boolean | null
+          subject?: string | null
+          title?: string
+          type?: string
+          university?: string | null
+          uploaded_by?: string | null
+          url?: string | null
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_items_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -117,6 +224,159 @@ export type Database = {
           student_email?: string | null
         }
         Relationships: []
+      }
+      quiz_questions: {
+        Row: {
+          correct_answer: string
+          created_at: string | null
+          id: string
+          options: Json | null
+          points: number | null
+          question_text: string
+          question_type: string | null
+          quiz_id: string
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string | null
+          id?: string
+          options?: Json | null
+          points?: number | null
+          question_text: string
+          question_type?: string | null
+          quiz_id: string
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string | null
+          id?: string
+          options?: Json | null
+          points?: number | null
+          question_text?: string
+          question_type?: string | null
+          quiz_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          course_id: string | null
+          created_at: string | null
+          description: string | null
+          difficulty: string | null
+          duration_minutes: number | null
+          id: string
+          passing_score: number | null
+          title: string
+          total_questions: number | null
+          user_id: string | null
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          duration_minutes?: number | null
+          id?: string
+          passing_score?: number | null
+          title: string
+          total_questions?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          duration_minutes?: number | null
+          id?: string
+          passing_score?: number | null
+          title?: string
+          total_questions?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quizzes_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_reminders: {
+        Row: {
+          assignment_id: string | null
+          course_id: string | null
+          created_at: string | null
+          id: string
+          is_sent: boolean | null
+          message: string | null
+          reminder_time: string
+          reminder_type: string
+          user_id: string
+        }
+        Insert: {
+          assignment_id?: string | null
+          course_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_sent?: boolean | null
+          message?: string | null
+          reminder_time: string
+          reminder_type: string
+          user_id: string
+        }
+        Update: {
+          assignment_id?: string | null
+          course_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_sent?: boolean | null
+          message?: string | null
+          reminder_time?: string
+          reminder_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_reminders_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_reminders_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       study_sessions: {
         Row: {
@@ -160,12 +420,55 @@ export type Database = {
           },
         ]
       }
+      zim_university_courses: {
+        Row: {
+          course_code: string | null
+          course_name: string
+          created_at: string | null
+          department: string | null
+          description: string | null
+          faculty: string | null
+          id: string
+          level: string | null
+          university_name: string
+        }
+        Insert: {
+          course_code?: string | null
+          course_name: string
+          created_at?: string | null
+          department?: string | null
+          description?: string | null
+          faculty?: string | null
+          id?: string
+          level?: string | null
+          university_name: string
+        }
+        Update: {
+          course_code?: string | null
+          course_name?: string
+          created_at?: string | null
+          department?: string | null
+          description?: string | null
+          faculty?: string | null
+          id?: string
+          level?: string | null
+          university_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_library_downloads: {
+        Args: { item_id: string }
+        Returns: undefined
+      }
+      increment_library_views: {
+        Args: { item_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
