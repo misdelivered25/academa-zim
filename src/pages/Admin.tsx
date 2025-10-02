@@ -3,11 +3,13 @@ import { Navigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Library, GraduationCap, FileText, Users } from 'lucide-react';
+import { Library, GraduationCap, FileText, Users, Shield, UserCircle } from 'lucide-react';
 import LibraryItemsManager from '@/components/admin/LibraryItemsManager';
 import UniversityCoursesManager from '@/components/admin/UniversityCoursesManager';
 import AssignmentTemplatesManager from '@/components/admin/AssignmentTemplatesManager';
 import UserRolesManager from '@/components/admin/UserRolesManager';
+import SecurityAuditViewer from '@/components/admin/SecurityAuditViewer';
+import UserProfilesViewer from '@/components/admin/UserProfilesViewer';
 
 const Admin = () => {
   const { isAdmin, loading } = useAdmin();
@@ -39,7 +41,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="library" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="library" className="gap-2">
               <Library className="h-4 w-4" />
               Library
@@ -54,7 +56,15 @@ const Admin = () => {
             </TabsTrigger>
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
-              Users
+              Roles
+            </TabsTrigger>
+            <TabsTrigger value="profiles" className="gap-2">
+              <UserCircle className="h-4 w-4" />
+              Profiles
+            </TabsTrigger>
+            <TabsTrigger value="audit" className="gap-2">
+              <Shield className="h-4 w-4" />
+              Audit
             </TabsTrigger>
           </TabsList>
 
@@ -72,6 +82,14 @@ const Admin = () => {
 
           <TabsContent value="users">
             <UserRolesManager />
+          </TabsContent>
+
+          <TabsContent value="profiles">
+            <UserProfilesViewer />
+          </TabsContent>
+
+          <TabsContent value="audit">
+            <SecurityAuditViewer />
           </TabsContent>
         </Tabs>
       </div>
