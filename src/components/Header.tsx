@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAdmin } from "@/hooks/useAdmin";
 import { 
   BookOpen, 
   GraduationCap, 
@@ -11,12 +12,14 @@ import {
   User,
   Mail,
   Moon,
-  Sun
+  Sun,
+  Shield
 } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { isAdmin } = useAdmin();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
@@ -66,6 +69,12 @@ const Header = () => {
                 <Mail className="h-4 w-4" />
                 <span>Contact</span>
               </Link>
+              {isAdmin && (
+                <Link to="/admin" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
+                  <Shield className="h-4 w-4" />
+                  <span>Admin</span>
+                </Link>
+              )}
           </nav>
 
           {/* Desktop Auth Buttons */}
@@ -115,6 +124,12 @@ const Header = () => {
                 <Mail className="h-4 w-4" />
                 <span>Contact</span>
               </Link>
+              {isAdmin && (
+                <Link to="/admin" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
+                  <Shield className="h-4 w-4" />
+                  <span>Admin</span>
+                </Link>
+              )}
               <div className="flex flex-col space-y-2 px-4 pt-4 border-t border-border">
               <Link to="/login">
                 <Button variant="ghost" size="sm">

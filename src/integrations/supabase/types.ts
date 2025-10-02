@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_limits: {
+        Row: {
+          endpoint: string
+          last_request: string | null
+          request_count: number | null
+          user_id: string
+        }
+        Insert: {
+          endpoint: string
+          last_request?: string | null
+          request_count?: number | null
+          user_id: string
+        }
+        Update: {
+          endpoint?: string
+          last_request?: string | null
+          request_count?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      app_data: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       assignment_templates: {
         Row: {
           category: string
@@ -204,6 +249,7 @@ export type Database = {
           created_at: string | null
           full_name: string
           id: string
+          is_admin: boolean
           phone_number: string | null
           student_email: string | null
         }
@@ -212,6 +258,7 @@ export type Database = {
           created_at?: string | null
           full_name: string
           id?: string
+          is_admin?: boolean
           phone_number?: string | null
           student_email?: string | null
         }
@@ -220,6 +267,7 @@ export type Database = {
           created_at?: string | null
           full_name?: string
           id?: string
+          is_admin?: boolean
           phone_number?: string | null
           student_email?: string | null
         }
@@ -319,6 +367,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      security_audit_log: {
+        Row: {
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          operation: string
+          table_name: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          operation: string
+          table_name: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          operation?: string
+          table_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       study_reminders: {
         Row: {
@@ -420,6 +501,27 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       zim_university_courses: {
         Row: {
           course_code: string | null
@@ -461,6 +563,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: { max_requests: number; window_minutes: number }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       increment_library_downloads: {
         Args: { item_id: string }
         Returns: undefined
@@ -469,9 +582,13 @@ export type Database = {
         Args: { item_id: string }
         Returns: undefined
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -598,6 +715,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

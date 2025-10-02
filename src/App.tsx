@@ -14,6 +14,7 @@ import StudyCenter from "./pages/StudyCenter";
 import Libraries from "./pages/Libraries";
 import Campus from "./pages/Campus";
 import Contact from "./pages/Contact";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,11 @@ const App = () => (
             <Route path="/campus" element={
               <ProtectedRoute>
                 <Campus />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <Admin />
               </ProtectedRoute>
             } />
             <Route path="/contact" element={<Contact />} />
