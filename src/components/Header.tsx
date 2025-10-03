@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { 
   BookOpen, 
-  GraduationCap, 
   MapPin, 
   Database, 
   Menu, 
@@ -15,6 +14,7 @@ import {
   Sun,
   Shield
 } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,15 +41,13 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="bg-gradient-hero rounded-lg p-2">
-              <GraduationCap className="h-6 w-6 text-primary-foreground" />
-            </div>
+          <Link to="/" className="flex items-center space-x-3">
+            <img src={logo} alt="ZimUni Hub Logo" className="h-12 w-12 object-contain" />
             <div>
               <h1 className="text-xl font-bold text-foreground">ZimUni Hub</h1>
               <p className="text-xs text-muted-foreground">Academic Excellence Platform</p>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
