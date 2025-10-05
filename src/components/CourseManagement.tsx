@@ -15,6 +15,8 @@ export default function CourseManagement() {
   const [isOpen, setIsOpen] = useState(false);
   const [newCourse, setNewCourse] = useState({ course_name: "", semester: "" });
   const [selectedUniversity, setSelectedUniversity] = useState("");
+  const [selectedFaculty, setSelectedFaculty] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -109,9 +111,15 @@ export default function CourseManagement() {
   };
 
   const universities = [...new Set(universityCourses.map(c => c.university_name))];
-  const filteredCatalog = selectedUniversity
-    ? universityCourses.filter(c => c.university_name === selectedUniversity)
-    : universityCourses;
+  const faculties = [...new Set(universityCourses.map(c => c.faculty).filter(Boolean))];
+  const levels = [...new Set(universityCourses.map(c => c.level).filter(Boolean))];
+  
+  const filteredCatalog = universityCourses.filter(c => {
+    if (selectedUniversity && selectedUniversity !== "all" && c.university_name !== selectedUniversity) return false;
+    if (selectedFaculty && selectedFaculty !== "all" && c.faculty !== selectedFaculty) return false;
+    if (selectedLevel && selectedLevel !== "all" && c.level !== selectedLevel) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -154,26 +162,80 @@ export default function CourseManagement() {
 
               <div className="border-t pt-6 space-y-4">
                 <h3 className="font-semibold">Add from Zimbabwe Universities Catalog</h3>
-                <Select value={selectedUniversity} onValueChange={setSelectedUniversity}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by university" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Universities</SelectItem>
-                    {universities.map((uni) => (
-                      <SelectItem key={uni} value={uni}>{uni}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                
+                <div className="grid gap-3 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <Label>University</Label>
+                    <Select value={selectedUniversity} onValueChange={setSelectedUniversity}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Universities" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Universities</SelectItem>
+                        {universities.map((uni) => (
+                          <SelectItem key={uni} value={uni}>{uni}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  <div className="space-y-2">
+                    <Label>Faculty</Label>
+                    <Select value={selectedFaculty} onValueChange={setSelectedFaculty}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Faculties" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Faculties</SelectItem>
+                        {faculties.map((faculty) => (
+                          <SelectItem key={faculty} value={faculty}>{faculty}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Level</Label>
+                    <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Levels" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Levels</SelectItem>
+                        {levels.map((level) => (
+                          <SelectItem key={level} value={level}>{level}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="text-sm text-muted-foreground">
+                  Showing {filteredCatalog.length} course{filteredCatalog.length !== 1 ? 's' : ''}
+                </div>
+
+                <div className="space-y-2 max-h-[500px] overflow-y-auto">
                   {filteredCatalog.map((course) => (
-                    <Card key={course.id} className="cursor-pointer hover:bg-accent" onClick={() => handleAddFromCatalog(course)}>
+                    <Card key={course.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => handleAddFromCatalog(course)}>
                       <CardHeader className="p-4">
-                        <CardTitle className="text-sm">{course.course_code} - {course.course_name}</CardTitle>
-                        <CardDescription className="text-xs">
-                          {course.university_name} • {course.faculty} • {course.level}
-                        </CardDescription>
+                        <div className="space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <CardTitle className="text-base leading-tight">{course.course_name}</CardTitle>
+                            <span className="text-xs font-mono bg-primary/10 text-primary px-2 py-1 rounded shrink-0">
+                              {course.course_code}
+                            </span>
+                          </div>
+                          <CardDescription className="text-xs space-y-1">
+                            <div className="flex flex-wrap gap-2">
+                              <span className="bg-muted px-2 py-0.5 rounded">{course.university_name}</span>
+                              {course.faculty && <span className="bg-muted px-2 py-0.5 rounded">{course.faculty}</span>}
+                              {course.level && <span className="bg-muted px-2 py-0.5 rounded">{course.level}</span>}
+                            </div>
+                            {course.description && (
+                              <p className="mt-2 text-muted-foreground line-clamp-2">{course.description}</p>
+                            )}
+                          </CardDescription>
+                        </div>
                       </CardHeader>
                     </Card>
                   ))}
