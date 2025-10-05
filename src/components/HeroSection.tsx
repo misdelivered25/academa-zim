@@ -9,6 +9,7 @@ import {
   Calendar,
   Award
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import heroImage from "@/assets/hero-education.jpg";
 
 const HeroSection = () => {
@@ -163,13 +164,34 @@ const HeroSection = () => {
           <p className="text-center text-muted-foreground text-sm mb-8">
             Connecting students across Zimbabwe's leading universities
           </p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-            {universities.map((uni, index) => (
-              <div key={index} className="px-4 py-2 bg-accent/50 rounded-full">
-                {uni}
-              </div>
-            ))}
-          </div>
+          <TooltipProvider>
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+              {universities.map((uni, index) => (
+                uni === "Chinhoyi University of Technology" ? (
+                  <Tooltip key={index}>
+                    <TooltipTrigger asChild>
+                      <div className="px-4 py-2 bg-accent/50 rounded-full cursor-pointer hover:bg-accent transition-colors">
+                        {uni}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-md p-4">
+                      <div className="space-y-2">
+                        <h4 className="font-semibold">Historical Background</h4>
+                        <p className="text-sm">Chinhoyi University of Technology (CUT) was established in 2001 as a state-owned university focused on technological education and applied sciences. Located in Chinhoyi, Mashonaland West Province, the university has grown to become one of Zimbabwe's leading institutions for technology-oriented education.</p>
+                        <h4 className="font-semibold mt-3">Vision and Mission</h4>
+                        <p className="text-sm"><strong>Vision:</strong> To be a premier technological university producing innovative graduates for sustainable development.</p>
+                        <p className="text-sm"><strong>Mission:</strong> To provide high-quality technological education, research, and community engagement through applied learning and innovation.</p>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <div key={index} className="px-4 py-2 bg-accent/50 rounded-full">
+                    {uni}
+                  </div>
+                )
+              ))}
+            </div>
+          </TooltipProvider>
         </div>
       </div>
     </section>
