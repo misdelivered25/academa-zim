@@ -170,9 +170,14 @@ const HeroSection = () => {
                 uni === "Chinhoyi University of Technology" ? (
                   <Tooltip key={index}>
                     <TooltipTrigger asChild>
-                      <div className="px-4 py-2 bg-accent/50 rounded-full cursor-pointer hover:bg-accent transition-colors">
+                      <a 
+                        href="https://www.cut.ac.zw" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-accent/50 rounded-full cursor-pointer hover:bg-accent transition-colors inline-block"
+                      >
                         {uni}
-                      </div>
+                      </a>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-md p-4">
                       <div className="space-y-2">
