@@ -42,6 +42,7 @@ import { ScholarSearch } from "@/components/ScholarSearch";
 import CourseManagement from "@/components/CourseManagement";
 import AssignmentCreation from "@/components/AssignmentCreation";
 import CampusMap from "@/components/CampusMap";
+import RealtimeDashboard from "@/components/RealtimeDashboard";
 
 type Assignment = {
   id: string;
@@ -351,10 +352,14 @@ const Dashboard = () => {
 
         {/* Tabs for different sections */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">
               <GraduationCap className="h-4 w-4 mr-2" />
               Overview
+            </TabsTrigger>
+            <TabsTrigger value="realtime">
+              <Clock className="h-4 w-4 mr-2" />
+              Realtime
             </TabsTrigger>
             <TabsTrigger value="ai-assistant">
               <Bot className="h-4 w-4 mr-2" />
@@ -609,6 +614,10 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
+          </TabsContent>
+
+          <TabsContent value="realtime">
+            <RealtimeDashboard />
           </TabsContent>
 
           <TabsContent value="ai-assistant">
