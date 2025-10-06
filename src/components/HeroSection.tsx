@@ -10,7 +10,7 @@ import {
   Award
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import heroImage from "@/assets/hero-education.jpg";
+import heroImage from "@/assets/hero-education.webp";
 
 const HeroSection = () => {
   const universities = [
@@ -30,6 +30,7 @@ const HeroSection = () => {
           src={heroImage}
           alt="Students studying in modern library"
           className="w-full h-full object-cover"
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/60"></div>
       </div>

@@ -14,7 +14,7 @@ import {
   Sun,
   Shield
 } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.webp";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
