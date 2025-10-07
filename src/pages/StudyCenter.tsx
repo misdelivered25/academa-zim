@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,14 +20,83 @@ import {
   Award,
   CheckCircle,
   AlertTriangle,
-  Plus
+  Plus,
+  Trash2
 } from "lucide-react";
 import Header from "@/components/Header";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const StudyCenter = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch user's assignments and courses
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      const [assignmentsRes, coursesRes] = await Promise.all([
+        (supabase as any)
+          .from('assignments')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('due_date', { ascending: true }),
+        (supabase as any)
+          .from('courses')
+          .select('*')
+          .eq('user_id', user.id)
+      ]);
+
+      if (assignmentsRes.data) setAssignments(assignmentsRes.data);
+      if (coursesRes.data) setCourses(coursesRes.data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load your data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteAssignment = async (assignmentId: string) => {
+    try {
+      const { error } = await (supabase as any)
+        .from('assignments')
+        .delete()
+        .eq('id', assignmentId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Assignment deleted successfully",
+      });
+
+      fetchUserData();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete assignment",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Handler functions for button actions
   const handleViewAssignment = (assignment: any) => {
@@ -114,38 +183,6 @@ const StudyCenter = () => {
     });
   };
 
-  const assignments = [
-    {
-      title: "Data Structures Assignment 3: Binary Trees",
-      course: "CS301",
-      type: "assignment",
-      dueDate: "2024-01-15",
-      status: "pending",
-      difficulty: "hard",
-      points: 25,
-      description: "Implement binary search tree operations including insertion, deletion, and traversal."
-    },
-    {
-      title: "Linear Algebra Problem Set 5",
-      course: "MATH201",
-      type: "homework",
-      dueDate: "2024-01-18",
-      status: "in-progress",
-      difficulty: "medium",
-      points: 15,
-      description: "Solve eigenvalue and eigenvector problems for various matrices."
-    },
-    {
-      title: "African History Research Paper",
-      course: "HIST101",
-      type: "essay",
-      dueDate: "2024-01-20",
-      status: "completed",
-      difficulty: "medium",
-      points: 30,
-      description: "Analyze the impact of colonialism on Zimbabwe's political structures."
-    }
-  ];
 
   const studyMaterials = [
     {
@@ -289,49 +326,74 @@ const StudyCenter = () => {
             </div>
 
             <div className="grid gap-6">
-              {assignments.map((assignment, index) => (
-                <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2">
-                        <CardTitle className="text-lg">{assignment.title}</CardTitle>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline">{assignment.course}</Badge>
-                          <Badge variant={getStatusColor(assignment.status)}>{assignment.status}</Badge>
-                          <Badge variant={getDifficultyColor(assignment.difficulty)}>{assignment.difficulty}</Badge>
+              {loading ? (
+                <p className="text-center text-muted-foreground py-8">Loading your assignments...</p>
+              ) : assignments.length > 0 ? (
+                assignments.map((assignment) => {
+                  const course = courses.find(c => c.id === assignment.course_id);
+                  return (
+                    <Card key={assignment.id} className="bg-gradient-card border-border hover:shadow-card transition-all">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2">
+                            <CardTitle className="text-lg">{assignment.title}</CardTitle>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">{course?.course_name || 'No Course'}</Badge>
+                              <Badge variant={getStatusColor(assignment.status)}>{assignment.status}</Badge>
+                              {assignment.difficulty_rating && (
+                                <Badge variant={getDifficultyColor(assignment.difficulty_rating)}>{assignment.difficulty_rating}</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            {assignment.estimated_hours && (
+                              <p className="text-sm font-medium text-foreground">{assignment.estimated_hours}h</p>
+                            )}
+                            <p className="text-sm text-muted-foreground">
+                              Due {assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'No date'}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-foreground">{assignment.points} pts</p>
-                        <p className="text-sm text-muted-foreground">Due {assignment.dueDate}</p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">{assignment.description}</p>
-                    <div className="flex gap-2">
-                      <Button 
-                        size="sm" 
-                        className="bg-gradient-hero hover:shadow-glow transition-all"
-                        onClick={() => handleViewAssignment(assignment)}
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        View Details
-                      </Button>
-                      {assignment.status !== "completed" && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleStartWork(assignment)}
-                        >
-                          <FileText className="h-4 w-4 mr-2" />
-                          Start Work
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                      </CardHeader>
+                      <CardContent>
+                        {assignment.description && (
+                          <p className="text-muted-foreground mb-4">{assignment.description}</p>
+                        )}
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            className="bg-gradient-hero hover:shadow-glow transition-all"
+                            onClick={() => handleViewAssignment(assignment)}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </Button>
+                          {assignment.status !== "completed" && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleStartWork(assignment)}
+                            >
+                              <FileText className="h-4 w-4 mr-2" />
+                              Start Work
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteAssignment(assignment.id)}
+                            className="ml-auto hover:bg-destructive/10 hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              ) : (
+                <p className="text-center text-muted-foreground py-8">No assignments yet. Create one to get started!</p>
+              )}
             </div>
           </TabsContent>
 
