@@ -25,7 +25,8 @@ import {
   Loader2,
   Bot,
   Play,
-  Search
+  Search,
+  Trash2
 } from "lucide-react";
 import Header from "@/components/Header";
 import { Link } from "react-router-dom";
@@ -208,6 +209,31 @@ const Dashboard = () => {
       toast({
         title: "Error",
         description: "Failed to update assignment",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteAssignment = async (assignmentId: string) => {
+    try {
+      const { error } = await (supabase as any)
+        .from('assignments')
+        .delete()
+        .eq('id', assignmentId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Assignment deleted successfully",
+      });
+
+      fetchDashboardData();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete assignment",
         variant: "destructive",
       });
     }
@@ -454,16 +480,26 @@ const Dashboard = () => {
                             <AlertCircle className="h-5 w-5 text-muted-foreground cursor-pointer" />
                           )}
                         </button>
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-medium text-foreground">{assignment.title}</h4>
                           <p className="text-sm text-muted-foreground">
                             {course?.course_name || 'Unknown Course'} • Due {new Date(assignment.due_date).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
-                      <Badge variant={getPriorityColor(assignment.status)}>
-                        {assignment.status}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={getPriorityColor(assignment.status)}>
+                          {assignment.status}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteAssignment(assignment.id)}
+                          className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   );
                 }) : (
