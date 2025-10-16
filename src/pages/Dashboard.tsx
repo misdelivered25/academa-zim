@@ -438,15 +438,21 @@ const Dashboard = () => {
                         <div>
                           <Label htmlFor="course">Course</Label>
                           <Select value={newAssignment.course_id} onValueChange={(value) => setNewAssignment({ ...newAssignment, course_id: value })}>
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-background">
                               <SelectValue placeholder="Select a course" />
                             </SelectTrigger>
-                            <SelectContent>
-                              {courses.map((course) => (
-                                <SelectItem key={course.id} value={course.id}>
-                                  {course.course_name}
-                                </SelectItem>
-                              ))}
+                            <SelectContent className="bg-background border border-border z-50">
+                              {courses.length === 0 ? (
+                                <div className="p-2 text-sm text-muted-foreground">
+                                  No courses yet. Go to "Courses" tab to add courses first!
+                                </div>
+                              ) : (
+                                courses.map((course) => (
+                                  <SelectItem key={course.id} value={course.id}>
+                                    {course.course_name}
+                                  </SelectItem>
+                                ))
+                              )}
                             </SelectContent>
                           </Select>
                         </div>
