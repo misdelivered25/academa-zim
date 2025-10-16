@@ -55,7 +55,7 @@ const HeroSection = () => {
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-2xl">
-                Connect to every university database in Zimbabwe. Access assignments, exam prep, 
+                Founded by <strong className="text-foreground">Miguel Hore</strong>, connecting every university database in Zimbabwe. Access assignments, exam prep, 
                 research libraries, campus maps, and academic resources - all in one platform.
               </p>
             </div>

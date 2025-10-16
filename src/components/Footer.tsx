@@ -106,10 +106,10 @@ const Footer = () => {
 
               {/* Contact Info */}
               <div className="space-y-3">
-                <h5 className="font-medium text-background mb-2">Contact CEO</h5>
+                <h5 className="font-medium text-background mb-2">Contact</h5>
                 <div>
                   <p className="text-background text-sm font-medium">Miguel Hore</p>
-                  <p className="text-background/70 text-xs mb-2">CUT CEO</p>
+                  <p className="text-background/70 text-xs mb-2">CEO & Founder, ZimUni Hub</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-background/60" />
