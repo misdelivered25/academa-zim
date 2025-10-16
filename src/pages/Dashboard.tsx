@@ -378,10 +378,14 @@ const Dashboard = () => {
 
         {/* Tabs for different sections */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">
               <GraduationCap className="h-4 w-4 mr-2" />
               Overview
+            </TabsTrigger>
+            <TabsTrigger value="courses">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Courses
             </TabsTrigger>
             <TabsTrigger value="realtime">
               <Clock className="h-4 w-4 mr-2" />
@@ -656,6 +660,10 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
+          </TabsContent>
+
+          <TabsContent value="courses">
+            <CourseManagement />
           </TabsContent>
 
           <TabsContent value="realtime">
