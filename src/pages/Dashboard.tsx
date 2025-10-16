@@ -90,6 +90,7 @@ const Dashboard = () => {
   const [studySessions, setStudySessions] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
   const [newAssignment, setNewAssignment] = useState({
     title: "",
     course_id: "",
@@ -377,7 +378,7 @@ const Dashboard = () => {
         </div>
 
         {/* Tabs for different sections */}
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">
               <GraduationCap className="h-4 w-4 mr-2" />
@@ -526,10 +527,21 @@ const Dashboard = () => {
             {/* Current Courses */}
             <Card className="bg-gradient-card border-border">
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <BookOpen className="h-5 w-5 mr-2" />
-                  Current Courses
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center">
+                    <BookOpen className="h-5 w-5 mr-2" />
+                    Current Courses
+                  </CardTitle>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setActiveTab("courses")}
+                    className="gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Course
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {courses.length > 0 ? courses.map((course, index) => {
