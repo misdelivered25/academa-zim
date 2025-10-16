@@ -101,6 +101,8 @@ export type Database = {
           difficulty_rating: string | null
           due_date: string | null
           estimated_hours: number | null
+          file_name: string | null
+          file_path: string | null
           id: string
           status: string | null
           title: string
@@ -114,6 +116,8 @@ export type Database = {
           difficulty_rating?: string | null
           due_date?: string | null
           estimated_hours?: number | null
+          file_name?: string | null
+          file_path?: string | null
           id?: string
           status?: string | null
           title: string
@@ -127,6 +131,8 @@ export type Database = {
           difficulty_rating?: string | null
           due_date?: string | null
           estimated_hours?: number | null
+          file_name?: string | null
+          file_path?: string | null
           id?: string
           status?: string | null
           title?: string
