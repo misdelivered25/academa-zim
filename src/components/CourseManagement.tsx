@@ -167,10 +167,10 @@ export default function CourseManagement() {
                   <div className="space-y-2">
                     <Label>University</Label>
                     <Select value={selectedUniversity} onValueChange={setSelectedUniversity}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-background">
                         <SelectValue placeholder="All Universities" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-background border border-border z-50">
                         <SelectItem value="all">All Universities</SelectItem>
                         {universities.map((uni) => (
                           <SelectItem key={uni} value={uni}>{uni}</SelectItem>
@@ -182,10 +182,10 @@ export default function CourseManagement() {
                   <div className="space-y-2">
                     <Label>Faculty</Label>
                     <Select value={selectedFaculty} onValueChange={setSelectedFaculty}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-background">
                         <SelectValue placeholder="All Faculties" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-background border border-border z-50">
                         <SelectItem value="all">All Faculties</SelectItem>
                         {faculties.map((faculty) => (
                           <SelectItem key={faculty} value={faculty}>{faculty}</SelectItem>
@@ -197,10 +197,10 @@ export default function CourseManagement() {
                   <div className="space-y-2">
                     <Label>Level</Label>
                     <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-background">
                         <SelectValue placeholder="All Levels" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-background border border-border z-50">
                         <SelectItem value="all">All Levels</SelectItem>
                         {levels.map((level) => (
                           <SelectItem key={level} value={level}>{level}</SelectItem>
@@ -210,35 +210,47 @@ export default function CourseManagement() {
                   </div>
                 </div>
 
-                <div className="text-sm text-muted-foreground">
-                  Showing {filteredCatalog.length} course{filteredCatalog.length !== 1 ? 's' : ''}
+                <div className="text-sm text-muted-foreground mb-2">
+                  {universityCourses.length === 0 ? (
+                    <span className="text-orange-500">No Zimbabwe courses in catalog yet. Contact admin to add courses.</span>
+                  ) : (
+                    <span>Showing {filteredCatalog.length} course{filteredCatalog.length !== 1 ? 's' : ''}</span>
+                  )}
                 </div>
 
                 <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                  {filteredCatalog.map((course) => (
-                    <Card key={course.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => handleAddFromCatalog(course)}>
-                      <CardHeader className="p-4">
-                        <div className="space-y-2">
-                          <div className="flex items-start justify-between gap-2">
-                            <CardTitle className="text-base leading-tight">{course.course_name}</CardTitle>
-                            <span className="text-xs font-mono bg-primary/10 text-primary px-2 py-1 rounded shrink-0">
-                              {course.course_code}
-                            </span>
-                          </div>
-                          <CardDescription className="text-xs space-y-1">
-                            <div className="flex flex-wrap gap-2">
-                              <span className="bg-muted px-2 py-0.5 rounded">{course.university_name}</span>
-                              {course.faculty && <span className="bg-muted px-2 py-0.5 rounded">{course.faculty}</span>}
-                              {course.level && <span className="bg-muted px-2 py-0.5 rounded">{course.level}</span>}
+                  {filteredCatalog.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No courses found matching your filters.</p>
+                      <p className="text-sm mt-2">Try adjusting the filters or create a custom course above.</p>
+                    </div>
+                  ) : (
+                    filteredCatalog.map((course) => (
+                      <Card key={course.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => handleAddFromCatalog(course)}>
+                        <CardHeader className="p-4">
+                          <div className="space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <CardTitle className="text-base leading-tight">{course.course_name}</CardTitle>
+                              <span className="text-xs font-mono bg-primary/10 text-primary px-2 py-1 rounded shrink-0">
+                                {course.course_code}
+                              </span>
                             </div>
-                            {course.description && (
-                              <p className="mt-2 text-muted-foreground line-clamp-2">{course.description}</p>
-                            )}
-                          </CardDescription>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  ))}
+                            <CardDescription className="text-xs space-y-1">
+                              <div className="flex flex-wrap gap-2">
+                                <span className="bg-muted px-2 py-0.5 rounded">{course.university_name}</span>
+                                {course.faculty && <span className="bg-muted px-2 py-0.5 rounded">{course.faculty}</span>}
+                                {course.level && <span className="bg-muted px-2 py-0.5 rounded">{course.level}</span>}
+                              </div>
+                              {course.description && (
+                                <p className="mt-2 text-muted-foreground line-clamp-2">{course.description}</p>
+                              )}
+                            </CardDescription>
+                          </div>
+                        </CardHeader>
+                      </Card>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
