@@ -105,8 +105,7 @@ const StudyCenter = () => {
       title: "Opening Assignment",
       description: `Opening ${assignment.title}${course ? ` for ${course.course_name}` : ''}`,
     });
-    // Mock opening a document - in a real app, this would open a PDF or document viewer
-    window.open(`/mock-assignment-${assignment.id}.pdf`, '_blank');
+    window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
   };
 
   const handleStartWork = (assignment: any) => {
@@ -114,8 +113,7 @@ const StudyCenter = () => {
       title: "Starting Assignment",
       description: `Starting work on ${assignment.title}`,
     });
-    // Mock starting work - in a real app, this might redirect to an assignment editor
-    window.open(`/assignment-editor?id=${assignment.id}`, '_blank');
+    window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
   };
 
   const handleViewMaterial = (material: any) => {
@@ -123,12 +121,7 @@ const StudyCenter = () => {
       title: "Opening Study Material", 
       description: `Opening ${material.title}`,
     });
-    // Mock opening study material
-    if (material.type === "video") {
-      window.open(`/mock-video-${material.course.toLowerCase()}.mp4`, '_blank');
-    } else {
-      window.open(`/mock-material-${material.course.toLowerCase()}.pdf`, '_blank');
-    }
+    window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
   };
 
   const handleDownloadMaterial = (material: any) => {
@@ -136,13 +129,7 @@ const StudyCenter = () => {
       title: "Downloading Material",
       description: `Downloading ${material.title}`,
     });
-    // Mock download - in a real app, this would trigger a file download
-    const element = document.createElement('a');
-    element.href = `/mock-material-${material.course.toLowerCase()}.pdf`;
-    element.download = `${material.title}.${material.format.toLowerCase()}`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
   };
 
   const handleStartQuiz = (quiz: any) => {
@@ -159,8 +146,7 @@ const StudyCenter = () => {
       title: "Starting Quiz",
       description: `Starting ${quiz.title}`,
     });
-    // Mock starting quiz - in a real app, this would redirect to quiz interface
-    window.open(`/quiz/${quiz.course.toLowerCase()}`, '_blank');
+    window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
   };
 
   const handleNewAssignment = () => {
