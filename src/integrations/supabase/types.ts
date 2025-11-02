@@ -59,6 +59,56 @@ export type Database = {
         }
         Relationships: []
       }
+      assignment_progress: {
+        Row: {
+          assignment_id: string
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          progress_percentage: number | null
+          started_at: string | null
+          status: string
+          submitted_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          assignment_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          progress_percentage?: number | null
+          started_at?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          assignment_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          progress_percentage?: number | null
+          started_at?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignment_progress_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assignment_templates: {
         Row: {
           category: string
@@ -279,6 +329,59 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_attempts: {
+        Row: {
+          answers: Json | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          quiz_id: string
+          score: number | null
+          started_at: string | null
+          status: string
+          time_spent_minutes: number | null
+          total_points: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          answers?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          quiz_id: string
+          score?: number | null
+          started_at?: string | null
+          status?: string
+          time_spent_minutes?: number | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          answers?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          quiz_id?: string
+          score?: number | null
+          started_at?: string | null
+          status?: string
+          time_spent_minutes?: number | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_questions: {
         Row: {
           correct_answer: string
@@ -378,7 +481,7 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           new_values: Json | null
           old_values: Json | null
           operation: string
@@ -388,7 +491,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           operation: string
@@ -398,7 +501,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           operation?: string
@@ -584,14 +687,8 @@ export type Database = {
         Args: { item_id: string }
         Returns: undefined
       }
-      increment_library_views: {
-        Args: { item_id: string }
-        Returns: undefined
-      }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      increment_library_views: { Args: { item_id: string }; Returns: undefined }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"

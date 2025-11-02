@@ -35,6 +35,9 @@ const StudyCenter = () => {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [assignmentProgress, setAssignmentProgress] = useState<Record<string, any>>({});
+  const [quizAttempts, setQuizAttempts] = useState<Record<string, any[]>>({});
+  const [quizzes, setQuizzes] = useState<any[]>([]);
 
   // Fetch user's assignments and courses
   useEffect(() => {
@@ -48,7 +51,7 @@ const StudyCenter = () => {
     
     setLoading(true);
     try {
-      const [assignmentsRes, coursesRes] = await Promise.all([
+      const [assignmentsRes, coursesRes, progressRes, attemptsRes, quizzesRes] = await Promise.all([
         (supabase as any)
           .from('assignments')
           .select('*')
@@ -57,12 +60,48 @@ const StudyCenter = () => {
         (supabase as any)
           .from('courses')
           .select('*')
+          .eq('user_id', user.id),
+        (supabase as any)
+          .from('assignment_progress')
+          .select('*')
+          .eq('user_id', user.id),
+        (supabase as any)
+          .from('quiz_attempts')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        (supabase as any)
+          .from('quizzes')
+          .select('*')
           .eq('user_id', user.id)
       ]);
 
       if (assignmentsRes.data) setAssignments(assignmentsRes.data);
       if (coursesRes.data) setCourses(coursesRes.data);
+      if (quizzesRes.data) setQuizzes(quizzesRes.data);
+      
+      // Map progress by assignment_id
+      if (progressRes.data) {
+        const progressMap: Record<string, any> = {};
+        progressRes.data.forEach((p: any) => {
+          progressMap[p.assignment_id] = p;
+        });
+        setAssignmentProgress(progressMap);
+      }
+
+      // Map attempts by quiz_id
+      if (attemptsRes.data) {
+        const attemptsMap: Record<string, any[]> = {};
+        attemptsRes.data.forEach((a: any) => {
+          if (!attemptsMap[a.quiz_id]) {
+            attemptsMap[a.quiz_id] = [];
+          }
+          attemptsMap[a.quiz_id].push(a);
+        });
+        setQuizAttempts(attemptsMap);
+      }
     } catch (error) {
+      console.error('Error fetching user data:', error);
       toast({
         title: "Error",
         description: "Failed to load your data",
@@ -108,12 +147,36 @@ const StudyCenter = () => {
     window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
   };
 
-  const handleStartWork = (assignment: any) => {
-    toast({
-      title: "Starting Assignment",
-      description: `Starting work on ${assignment.title}`,
-    });
-    window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
+  const handleStartWork = async (assignment: any) => {
+    try {
+      // Update progress to in_progress
+      const { data, error } = await supabase.functions.invoke('update-assignment-progress', {
+        body: {
+          assignment_id: assignment.id,
+          status: 'in_progress',
+          progress_percentage: assignmentProgress[assignment.id]?.progress_percentage || 0,
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Starting Assignment",
+        description: `Starting work on ${assignment.title}`,
+      });
+
+      // Refresh progress
+      fetchUserData();
+      
+      window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
+    } catch (error) {
+      console.error('Error starting assignment:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start assignment",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleViewMaterial = (material: any) => {
@@ -132,7 +195,7 @@ const StudyCenter = () => {
     window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
   };
 
-  const handleStartQuiz = (quiz: any) => {
+  const handleStartQuiz = async (quiz: any) => {
     if (!quiz.available) {
       toast({
         title: "Quiz Unavailable",
@@ -141,12 +204,129 @@ const StudyCenter = () => {
       });
       return;
     }
-    
-    toast({
-      title: "Starting Quiz",
-      description: `Starting ${quiz.title}`,
+
+    try {
+      const { data, error } = await supabase.functions.invoke('start-quiz-attempt', {
+        body: { quiz_id: quiz.id }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Starting Quiz",
+        description: `Starting ${quiz.title}. Good luck!`,
+      });
+
+      // Refresh attempts
+      fetchUserData();
+      
+      window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
+    } catch (error) {
+      console.error('Error starting quiz:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start quiz",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleMarkComplete = async (assignment: any) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('update-assignment-progress', {
+        body: {
+          assignment_id: assignment.id,
+          status: 'completed',
+          progress_percentage: 100,
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Assignment Completed",
+        description: `Great job on completing ${assignment.title}!`,
+      });
+
+      // Refresh progress
+      fetchUserData();
+    } catch (error) {
+      console.error('Error marking assignment as complete:', error);
+      toast({
+        title: "Error",
+        description: "Failed to mark assignment as complete",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSubmitAssignment = async (assignment: any) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('update-assignment-progress', {
+        body: {
+          assignment_id: assignment.id,
+          status: 'submitted',
+          progress_percentage: 100,
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Assignment Submitted",
+        description: `${assignment.title} has been submitted successfully!`,
+      });
+
+      // Refresh progress
+      fetchUserData();
+    } catch (error) {
+      console.error('Error submitting assignment:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit assignment",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getAssignmentStatusBadge = (assignmentId: string) => {
+    const progress = assignmentProgress[assignmentId];
+    if (!progress) return <Badge variant="outline">Not Started</Badge>;
+
+    switch (progress.status) {
+      case 'in_progress':
+        return <Badge className="bg-blue-500">{progress.progress_percentage}% Complete</Badge>;
+      case 'submitted':
+        return <Badge className="bg-yellow-500">Submitted</Badge>;
+      case 'completed':
+        return <Badge className="bg-green-500">Completed</Badge>;
+      default:
+        return <Badge variant="outline">Not Started</Badge>;
+    }
+  };
+
+  const getQuizBestScore = (quizId: string) => {
+    const attempts = quizAttempts[quizId];
+    if (!attempts || attempts.length === 0) return null;
+
+    const completedAttempts = attempts.filter(a => a.status === 'completed');
+    if (completedAttempts.length === 0) return null;
+
+    const bestAttempt = completedAttempts.reduce((best, current) => {
+      const currentPercentage = current.total_points > 0 
+        ? (current.score / current.total_points) * 100 
+        : 0;
+      const bestPercentage = best.total_points > 0 
+        ? (best.score / best.total_points) * 100 
+        : 0;
+      return currentPercentage > bestPercentage ? current : best;
     });
-    window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
+
+    const percentage = bestAttempt.total_points > 0 
+      ? Math.round((bestAttempt.score / bestAttempt.total_points) * 100) 
+      : 0;
+
+    return { percentage, score: bestAttempt.score, totalPoints: bestAttempt.total_points };
   };
 
   const handleNewAssignment = () => {
@@ -201,39 +381,6 @@ const StudyCenter = () => {
       views: 189,
       rating: 4.6,
       lastUpdated: "2024-01-05"
-    }
-  ];
-
-  const quizzes = [
-    {
-      title: "Data Structures Mid-term Quiz",
-      course: "CS301",
-      questions: 20,
-      duration: "45 mins",
-      attempts: 2,
-      bestScore: 85,
-      available: true,
-      deadline: "2024-01-22"
-    },
-    {
-      title: "Linear Algebra Quick Assessment",
-      course: "MATH201",
-      questions: 10,
-      duration: "20 mins",
-      attempts: 1,
-      bestScore: 92,
-      available: true,
-      deadline: "2024-01-25"
-    },
-    {
-      title: "History Knowledge Check",
-      course: "HIST101",
-      questions: 15,
-      duration: "30 mins",
-      attempts: 3,
-      bestScore: 78,
-      available: false,
-      deadline: "2024-01-12"
     }
   ];
 
@@ -318,15 +465,16 @@ const StudyCenter = () => {
               ) : assignments.length > 0 ? (
                 assignments.map((assignment) => {
                   const course = courses.find(c => c.id === assignment.course_id);
+                  const progress = assignmentProgress[assignment.id];
                   return (
                     <Card key={assignment.id} className="bg-gradient-card border-border hover:shadow-card transition-all">
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div className="space-y-2">
                             <CardTitle className="text-lg">{assignment.title}</CardTitle>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <Badge variant="outline">{course?.course_name || 'No Course'}</Badge>
-                              <Badge variant={getStatusColor(assignment.status)}>{assignment.status}</Badge>
+                              {getAssignmentStatusBadge(assignment.id)}
                               {assignment.difficulty_rating && (
                                 <Badge variant={getDifficultyColor(assignment.difficulty_rating)}>{assignment.difficulty_rating}</Badge>
                               )}
@@ -346,7 +494,7 @@ const StudyCenter = () => {
                         {assignment.description && (
                           <p className="text-muted-foreground mb-4">{assignment.description}</p>
                         )}
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
                           <Button 
                             size="sm" 
                             className="bg-gradient-hero hover:shadow-glow transition-all"
@@ -355,15 +503,37 @@ const StudyCenter = () => {
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </Button>
-                          {assignment.status !== "completed" && (
+                          {(!progress || progress.status !== 'completed') && (
                             <Button 
                               variant="outline" 
                               size="sm"
                               onClick={() => handleStartWork(assignment)}
                             >
                               <FileText className="h-4 w-4 mr-2" />
-                              Start Work
+                              {progress?.status === 'in_progress' ? 'Continue Work' : 'Start Work'}
                             </Button>
+                          )}
+                          {progress && progress.status === 'in_progress' && (
+                            <>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="bg-yellow-500/10 hover:bg-yellow-500/20"
+                                onClick={() => handleSubmitAssignment(assignment)}
+                              >
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Submit
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="bg-green-500/10 hover:bg-green-500/20"
+                                onClick={() => handleMarkComplete(assignment)}
+                              >
+                                <Award className="h-4 w-4 mr-2" />
+                                Mark Complete
+                              </Button>
+                            </>
                           )}
                           <Button
                             variant="ghost"
@@ -471,70 +641,76 @@ const StudyCenter = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-              {quizzes.map((quiz, index) => (
-                <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
-                  <CardHeader>
-                    <div className="space-y-2">
-                      <CardTitle className="text-lg">{quiz.title}</CardTitle>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">{quiz.course}</Badge>
-                        {quiz.available ? (
-                          <Badge variant="secondary">Available</Badge>
-                        ) : (
-                          <Badge variant="destructive">Closed</Badge>
-                        )}
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Questions:</span>
-                          <span className="font-medium">{quiz.questions}</span>
+              {loading ? (
+                <p className="text-center text-muted-foreground py-8">Loading quizzes...</p>
+              ) : quizzes.length > 0 ? (
+                quizzes.map((quiz) => {
+                  const bestScore = getQuizBestScore(quiz.id);
+                  const attempts = quizAttempts[quiz.id] || [];
+                  const course = courses.find(c => c.id === quiz.course_id);
+                  
+                  return (
+                    <Card key={quiz.id} className="bg-gradient-card border-border hover:shadow-card transition-all">
+                      <CardHeader>
+                        <div className="space-y-2">
+                          <CardTitle className="text-lg">{quiz.title}</CardTitle>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline">{course?.course_name || 'No Course'}</Badge>
+                            {bestScore && (
+                              <Badge className="bg-green-500">Best: {bestScore.percentage}%</Badge>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Duration:</span>
-                          <span className="font-medium">{quiz.duration}</span>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          {quiz.description && (
+                            <p className="text-sm text-muted-foreground">{quiz.description}</p>
+                          )}
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Questions:</span>
+                              <span className="font-medium">{quiz.total_questions || 0}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Duration:</span>
+                              <span className="font-medium">{quiz.duration_minutes || 'N/A'} min</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Attempts:</span>
+                              <span className="font-medium">{attempts.filter(a => a.status === 'completed').length}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Difficulty:</span>
+                              <span className="font-medium capitalize">{quiz.difficulty || 'N/A'}</span>
+                            </div>
+                            {bestScore && (
+                              <div className="flex justify-between col-span-2">
+                                <span className="text-muted-foreground">Best Score:</span>
+                                <span className="font-medium text-green-500">
+                                  {bestScore.score}/{bestScore.totalPoints} ({bestScore.percentage}%)
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="pt-2">
+                            <Button 
+                              className="w-full bg-gradient-hero hover:shadow-glow transition-all"
+                              onClick={() => handleStartQuiz(quiz)}
+                            >
+                              <Award className="h-4 w-4 mr-2" />
+                              {attempts.length > 0 ? 'Retake Quiz' : 'Start Quiz'}
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Attempts:</span>
-                          <span className="font-medium">{quiz.attempts}/3</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Best Score:</span>
-                          <span className="font-medium">{quiz.bestScore}%</span>
-                        </div>
-                      </div>
-                      
-                      <div className="pt-2">
-                        <p className="text-sm text-muted-foreground mb-3">
-                          Deadline: {quiz.deadline}
-                        </p>
-                        {quiz.available ? (
-                          <Button 
-                            className="w-full bg-gradient-hero hover:shadow-glow transition-all"
-                            onClick={() => handleStartQuiz(quiz)}
-                          >
-                            <Award className="h-4 w-4 mr-2" />
-                            Start Quiz
-                          </Button>
-                        ) : (
-                          <Button 
-                            variant="outline" 
-                            disabled 
-                            className="w-full"
-                            onClick={() => handleStartQuiz(quiz)}
-                          >
-                            <AlertTriangle className="h-4 w-4 mr-2" />
-                            Quiz Closed
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              ) : (
+                <p className="text-center text-muted-foreground py-8 col-span-2">No quizzes yet. Create one to get started!</p>
+              )}
             </div>
           </TabsContent>
         </Tabs>

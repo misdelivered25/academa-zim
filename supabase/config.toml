@@ -5,3 +5,12 @@ verify_jwt = false
 
 [functions.analyze-assignment]
 verify_jwt = false
+
+[functions.update-assignment-progress]
+verify_jwt = true
+
+[functions.submit-quiz]
+verify_jwt = true
+
+[functions.start-quiz-attempt]
+verify_jwt = true
