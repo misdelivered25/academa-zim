@@ -100,12 +100,13 @@ const StudyCenter = () => {
 
   // Handler functions for button actions
   const handleViewAssignment = (assignment: any) => {
+    const course = courses.find(c => c.id === assignment.course_id);
     toast({
       title: "Opening Assignment",
-      description: `Opening ${assignment.title} for ${assignment.course}`,
+      description: `Opening ${assignment.title}${course ? ` for ${course.course_name}` : ''}`,
     });
     // Mock opening a document - in a real app, this would open a PDF or document viewer
-    window.open(`/mock-assignment-${assignment.course.toLowerCase()}.pdf`, '_blank');
+    window.open(`/mock-assignment-${assignment.id}.pdf`, '_blank');
   };
 
   const handleStartWork = (assignment: any) => {
@@ -114,7 +115,7 @@ const StudyCenter = () => {
       description: `Starting work on ${assignment.title}`,
     });
     // Mock starting work - in a real app, this might redirect to an assignment editor
-    window.open(`/assignment-editor?id=${assignment.course}`, '_blank');
+    window.open(`/assignment-editor?id=${assignment.id}`, '_blank');
   };
 
   const handleViewMaterial = (material: any) => {
