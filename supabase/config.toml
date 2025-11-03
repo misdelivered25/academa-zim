@@ -4,7 +4,7 @@ project_id = "ozyugjyviyxxeuiadwaz"
 verify_jwt = false
 
 [functions.analyze-assignment]
-verify_jwt = false
+verify_jwt = true
 
 [functions.update-assignment-progress]
 verify_jwt = true

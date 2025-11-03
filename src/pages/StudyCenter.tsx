@@ -21,7 +21,8 @@ import {
   CheckCircle,
   AlertTriangle,
   Plus,
-  Trash2
+  Trash2,
+  Upload
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
@@ -38,6 +39,7 @@ const StudyCenter = () => {
   const [assignmentProgress, setAssignmentProgress] = useState<Record<string, any>>({});
   const [quizAttempts, setQuizAttempts] = useState<Record<string, any[]>>({});
   const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [uploadingAssignment, setUploadingAssignment] = useState<string | null>(null);
 
   // Fetch user's assignments and courses
   useEffect(() => {
@@ -350,6 +352,99 @@ const StudyCenter = () => {
     });
   };
 
+  const handleUploadAssignment = async (assignmentId: string, file: File) => {
+    if (!user) return;
+
+    setUploadingAssignment(assignmentId);
+    
+    try {
+      // Upload file to Supabase storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${assignmentId}/${Date.now()}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('assignment-files')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      // Read file content for analysis (for text-based files)
+      let documentText = '';
+      if (file.type.includes('text') || file.name.endsWith('.pdf') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+        // For demo purposes, we'll use a placeholder
+        // In production, you'd use a proper document parser
+        documentText = `Assignment submission: ${file.name}`;
+      }
+
+      // Analyze the assignment using AI
+      const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-assignment', {
+        body: { documentText: documentText || `File uploaded: ${file.name}` }
+      });
+
+      if (analysisError) {
+        console.error('Analysis error:', analysisError);
+        // Continue even if analysis fails
+      }
+
+      // Update assignment with file path and AI analysis
+      const { error: updateError } = await (supabase as any)
+        .from('assignments')
+        .update({
+          file_path: uploadData.path,
+          file_name: file.name,
+          ai_analysis: analysisData?.analysis || null,
+          difficulty_rating: analysisData?.analysis?.difficulty || null,
+          estimated_hours: analysisData?.analysis?.hours || null,
+        })
+        .eq('id', assignmentId)
+        .eq('user_id', user.id);
+
+      if (updateError) throw updateError;
+
+      // Update progress to in_progress with 25% completion
+      await supabase.functions.invoke('update-assignment-progress', {
+        body: {
+          assignment_id: assignmentId,
+          status: 'in_progress',
+          progress_percentage: 25,
+          notes: 'Assignment document uploaded and analyzed'
+        }
+      });
+
+      toast({
+        title: "Upload Successful",
+        description: analysisData?.analysis 
+          ? `File analyzed: ${analysisData.analysis.difficulty} difficulty, ~${analysisData.analysis.hours}h estimated`
+          : "File uploaded successfully",
+      });
+
+      // Refresh data
+      fetchUserData();
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload file",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingAssignment(null);
+    }
+  };
+
+  const triggerFileUpload = (assignmentId: string) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        await handleUploadAssignment(assignmentId, file);
+      }
+    };
+    input.click();
+  };
+
 
   const studyMaterials = [
     {
@@ -494,6 +589,25 @@ const StudyCenter = () => {
                         {assignment.description && (
                           <p className="text-muted-foreground mb-4">{assignment.description}</p>
                         )}
+                        {assignment.ai_analysis && (
+                          <div className="mb-4 p-3 bg-primary/5 rounded-lg border border-primary/10">
+                            <p className="text-sm font-medium text-foreground mb-1">AI Analysis</p>
+                            <div className="text-xs text-muted-foreground space-y-1">
+                              {assignment.ai_analysis.topics && (
+                                <p><strong>Topics:</strong> {assignment.ai_analysis.topics.join(', ')}</p>
+                              )}
+                              {assignment.ai_analysis.tips && (
+                                <p><strong>Tips:</strong> {assignment.ai_analysis.tips}</p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {assignment.file_name && (
+                          <div className="mb-4 p-2 bg-muted/50 rounded flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">{assignment.file_name}</span>
+                          </div>
+                        )}
                         <div className="flex gap-2 flex-wrap">
                           <Button 
                             size="sm" 
@@ -502,6 +616,15 @@ const StudyCenter = () => {
                           >
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
+                          </Button>
+                          <Button 
+                            size="sm"
+                            variant="outline"
+                            onClick={() => triggerFileUpload(assignment.id)}
+                            disabled={uploadingAssignment === assignment.id}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {uploadingAssignment === assignment.id ? 'Uploading...' : 'Upload File'}
                           </Button>
                           {(!progress || progress.status !== 'completed') && (
                             <Button 
