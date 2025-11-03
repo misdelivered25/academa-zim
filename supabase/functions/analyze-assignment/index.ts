@@ -73,12 +73,17 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const analysis = data.choices[0].message.content;
+    let analysisContent = data.choices[0].message.content;
     
-    console.log("Analysis complete:", analysis);
+    console.log("Analysis complete:", analysisContent);
+
+    // Strip markdown code blocks if present
+    analysisContent = analysisContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    
+    const parsedAnalysis = JSON.parse(analysisContent);
 
     return new Response(
-      JSON.stringify({ analysis: JSON.parse(analysis) }),
+      JSON.stringify({ analysis: parsedAnalysis }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
