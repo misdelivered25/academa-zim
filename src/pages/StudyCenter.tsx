@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
 import { 
   BookOpen, 
   Search, 
@@ -22,7 +25,9 @@ import {
   AlertTriangle,
   Plus,
   Trash2,
-  Upload
+  Upload,
+  Sparkles,
+  RefreshCw
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
@@ -40,6 +45,9 @@ const StudyCenter = () => {
   const [quizAttempts, setQuizAttempts] = useState<Record<string, any[]>>({});
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [uploadingAssignment, setUploadingAssignment] = useState<string | null>(null);
+  const [selectedAssignment, setSelectedAssignment] = useState<any | null>(null);
+  const [analyzingDocument, setAnalyzingDocument] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
 
   // Fetch user's assignments and courses
   useEffect(() => {
@@ -141,12 +149,48 @@ const StudyCenter = () => {
 
   // Handler functions for button actions
   const handleViewAssignment = (assignment: any) => {
-    const course = courses.find(c => c.id === assignment.course_id);
-    toast({
-      title: "Opening Assignment",
-      description: `Opening ${assignment.title}${course ? ` for ${course.course_name}` : ''}`,
-    });
-    window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
+    setSelectedAssignment(assignment);
+    setAnalysisResult(assignment.ai_analysis || null);
+  };
+
+  const handleAnalyzeDocument = async () => {
+    if (!selectedAssignment) return;
+    
+    setAnalyzingDocument(true);
+    try {
+      const documentText = `Assignment: ${selectedAssignment.title}\nDescription: ${selectedAssignment.description || 'No description'}\nFile: ${selectedAssignment.file_name || 'No file uploaded'}`;
+      
+      const { data, error } = await supabase.functions.invoke('analyze-assignment', {
+        body: { documentText }
+      });
+
+      if (error) throw error;
+
+      setAnalysisResult(data.analysis);
+      
+      // Update the assignment with the new analysis
+      await (supabase as any)
+        .from('assignments')
+        .update({ ai_analysis: data.analysis })
+        .eq('id', selectedAssignment.id)
+        .eq('user_id', user?.id);
+
+      toast({
+        title: "Analysis Complete",
+        description: "Document has been analyzed successfully",
+      });
+
+      fetchUserData();
+    } catch (error) {
+      console.error('Analysis error:', error);
+      toast({
+        title: "Analysis Failed",
+        description: error instanceof Error ? error.message : "Failed to analyze document",
+        variant: "destructive",
+      });
+    } finally {
+      setAnalyzingDocument(false);
+    }
   };
 
   const handleStartWork = async (assignment: any) => {
@@ -852,6 +896,214 @@ const StudyCenter = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Assignment Analysis Dialog */}
+      <Dialog open={!!selectedAssignment} onOpenChange={(open) => !open && setSelectedAssignment(null)}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl flex items-center gap-2">
+              <FileText className="h-6 w-6" />
+              {selectedAssignment?.title}
+            </DialogTitle>
+            <DialogDescription>
+              Document Analysis & Progress Tracking
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 mt-4">
+            {/* Assignment Info */}
+            <Card className="bg-gradient-card border-border">
+              <CardHeader>
+                <CardTitle className="text-lg">Assignment Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Course</p>
+                    <p className="font-medium">{courses.find(c => c.id === selectedAssignment?.course_id)?.course_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Due Date</p>
+                    <p className="font-medium">
+                      {selectedAssignment?.due_date ? new Date(selectedAssignment.due_date).toLocaleDateString() : 'No date'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Difficulty</p>
+                    <p className="font-medium capitalize">{selectedAssignment?.difficulty_rating || 'Not analyzed'}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Estimated Time</p>
+                    <p className="font-medium">{selectedAssignment?.estimated_hours ? `${selectedAssignment.estimated_hours}h` : 'N/A'}</p>
+                  </div>
+                </div>
+                {selectedAssignment?.description && (
+                  <div>
+                    <p className="text-muted-foreground text-sm">Description</p>
+                    <p className="text-sm mt-1">{selectedAssignment.description}</p>
+                  </div>
+                )}
+                {selectedAssignment?.file_name && (
+                  <div className="p-3 bg-muted/50 rounded flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">{selectedAssignment.file_name}</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Progress Tracking */}
+            <Card className="bg-gradient-card border-border">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5" />
+                  Progress Tracking
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {selectedAssignment && assignmentProgress[selectedAssignment.id] ? (
+                  <>
+                    <div>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-muted-foreground">Completion</span>
+                        <span className="font-medium">{assignmentProgress[selectedAssignment.id].progress_percentage}%</span>
+                      </div>
+                      <Progress value={assignmentProgress[selectedAssignment.id].progress_percentage} className="h-3" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-muted-foreground">Status</p>
+                        <Badge className="mt-1">{assignmentProgress[selectedAssignment.id].status.replace('_', ' ')}</Badge>
+                      </div>
+                      {assignmentProgress[selectedAssignment.id].started_at && (
+                        <div>
+                          <p className="text-muted-foreground">Started</p>
+                          <p className="font-medium mt-1">{new Date(assignmentProgress[selectedAssignment.id].started_at).toLocaleDateString()}</p>
+                        </div>
+                      )}
+                    </div>
+                    {assignmentProgress[selectedAssignment.id].notes && (
+                      <div>
+                        <p className="text-muted-foreground text-sm">Notes</p>
+                        <p className="text-sm mt-1">{assignmentProgress[selectedAssignment.id].notes}</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No progress recorded yet. Start working on this assignment to track your progress.</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* AI Analysis Section */}
+            <Card className="bg-gradient-card border-border">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    AI Document Analysis
+                  </CardTitle>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleAnalyzeDocument}
+                    disabled={analyzingDocument}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${analyzingDocument ? 'animate-spin' : ''}`} />
+                    {analyzingDocument ? 'Analyzing...' : 'Re-analyze'}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {analysisResult ? (
+                  <>
+                    {analysisResult.difficulty && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground mb-1">Difficulty Level</p>
+                        <Badge variant={getDifficultyColor(analysisResult.difficulty)} className="capitalize">
+                          {analysisResult.difficulty}
+                        </Badge>
+                      </div>
+                    )}
+                    
+                    {analysisResult.hours && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground mb-1">Estimated Time</p>
+                        <p className="text-sm">{analysisResult.hours} hours</p>
+                      </div>
+                    )}
+
+                    {analysisResult.topics && analysisResult.topics.length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground mb-2">Key Topics</p>
+                        <div className="flex flex-wrap gap-2">
+                          {analysisResult.topics.map((topic: string, idx: number) => (
+                            <Badge key={idx} variant="outline">{topic}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {analysisResult.tips && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground mb-2">Study Tips</p>
+                        <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
+                          <p className="text-sm">{analysisResult.tips}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {analysisResult.resources && analysisResult.resources.length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground mb-2">Recommended Resources</p>
+                        <ul className="space-y-1">
+                          {analysisResult.resources.map((resource: string, idx: number) => (
+                            <li key={idx} className="text-sm flex items-start gap-2">
+                              <BookOpen className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                              <span>{resource}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <Sparkles className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                    <p className="text-sm text-muted-foreground mb-4">
+                      No analysis available yet. Upload a document or click analyze to get AI-powered insights.
+                    </p>
+                    <Button onClick={handleAnalyzeDocument} disabled={analyzingDocument}>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Analyze Now
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => triggerFileUpload(selectedAssignment?.id)}
+                disabled={uploadingAssignment === selectedAssignment?.id}
+                className="flex-1"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {uploadingAssignment === selectedAssignment?.id ? 'Uploading...' : 'Upload New Document'}
+              </Button>
+              <Button
+                onClick={() => handleStartWork(selectedAssignment)}
+                className="flex-1 bg-gradient-hero hover:shadow-glow transition-all"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                {assignmentProgress[selectedAssignment?.id]?.status === 'in_progress' ? 'Continue Work' : 'Start Work'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
