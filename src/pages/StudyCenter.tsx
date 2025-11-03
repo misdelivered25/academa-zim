@@ -402,14 +402,28 @@ const StudyCenter = () => {
       if (updateError) throw updateError;
 
       // Update progress to in_progress with 25% completion
-      await supabase.functions.invoke('update-assignment-progress', {
-        body: {
-          assignment_id: assignmentId,
-          status: 'in_progress',
-          progress_percentage: 25,
-          notes: 'Assignment document uploaded and analyzed'
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        const progressResponse = await fetch(`https://ozyugjyviyxxeuiadwaz.supabase.co/functions/v1/update-assignment-progress`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96eXVnanl2aXl4eGV1aWFkd2F6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NjcxNzgsImV4cCI6MjA3NDQ0MzE3OH0.kGGVK1vHNghegMLMg752PhqFau8VyNWr0LsboQu-mmM',
+          },
+          body: JSON.stringify({
+            assignment_id: assignmentId,
+            status: 'in_progress',
+            progress_percentage: 25,
+            notes: 'Assignment document uploaded and analyzed'
+          })
+        });
+
+        if (!progressResponse.ok) {
+          console.error('Failed to update progress:', await progressResponse.text());
         }
-      });
+      }
 
       toast({
         title: "Upload Successful",

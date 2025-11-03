@@ -31,26 +31,53 @@ serve(async (req) => {
         messages: [
           { 
             role: "system", 
-            content: `You are an academic assignment analyzer. Analyze assignment documents and provide:
-            1. Difficulty rating (easy, medium, hard)
-            2. Estimated hours needed to complete
-            3. Key topics and skills required
-            4. Study tips and resources
-            
-            Respond ONLY with valid JSON in this exact format:
-            {
-              "difficulty": "medium",
-              "hours": 8,
-              "topics": ["topic1", "topic2"],
-              "tips": "Detailed study tips here",
-              "resources": ["resource1", "resource2"]
-            }`
+            content: "You are an academic assignment analyzer. Analyze documents and provide structured analysis."
           },
           {
             role: "user",
-            content: `Analyze this assignment document and provide difficulty analysis:\n\n${documentText}`
+            content: `Analyze this assignment document:\n\n${documentText}`
           }
         ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "analyze_assignment",
+              description: "Analyze an assignment and provide difficulty rating, time estimate, topics, tips, and resources",
+              parameters: {
+                type: "object",
+                properties: {
+                  difficulty: {
+                    type: "string",
+                    enum: ["easy", "medium", "hard"],
+                    description: "Difficulty level of the assignment"
+                  },
+                  hours: {
+                    type: "number",
+                    description: "Estimated hours needed to complete"
+                  },
+                  topics: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "Key topics and skills required"
+                  },
+                  tips: {
+                    type: "string",
+                    description: "Detailed study tips"
+                  },
+                  resources: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "Recommended study resources"
+                  }
+                },
+                required: ["difficulty", "hours", "topics", "tips", "resources"],
+                additionalProperties: false
+              }
+            }
+          }
+        ],
+        tool_choice: { type: "function", function: { name: "analyze_assignment" } }
       }),
     });
 
@@ -73,14 +100,14 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    let analysisContent = data.choices[0].message.content;
+    const toolCall = data.choices[0].message.tool_calls?.[0];
     
-    console.log("Analysis complete:", analysisContent);
-
-    // Strip markdown code blocks if present
-    analysisContent = analysisContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    if (!toolCall || !toolCall.function?.arguments) {
+      throw new Error("No valid tool call response from AI");
+    }
     
-    const parsedAnalysis = JSON.parse(analysisContent);
+    const parsedAnalysis = JSON.parse(toolCall.function.arguments);
+    console.log("Analysis complete:", parsedAnalysis);
 
     return new Response(
       JSON.stringify({ analysis: parsedAnalysis }),
