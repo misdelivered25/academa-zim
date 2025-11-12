@@ -8,7 +8,7 @@ All colors MUST be HSL for optimal theming support.
 
 @layer base {
   :root {
-    --background: 0 0% 100% / 0.7;
+    --background: 0 0% 100%;
     --foreground: 220 13% 18%;
 
     --card: 0 0% 100%;
@@ -71,7 +71,7 @@ All colors MUST be HSL for optimal theming support.
   }
 
   .dark {
-    --background: 222.2 84% 4.9% / 0.7;
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
     --card: 222.2 84% 4.9%;
@@ -115,24 +115,6 @@ All colors MUST be HSL for optimal theming support.
   }
 
   body {
-    @apply text-foreground;
-    position: relative;
-    background: 
-      radial-gradient(ellipse at 20% 30%, rgba(66, 153, 225, 0.4) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, rgba(159, 122, 234, 0.4) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, rgba(79, 70, 229, 0.3) 0%, transparent 60%),
-      radial-gradient(circle at 30% 80%, rgba(236, 72, 153, 0.3) 0%, transparent 40%),
-      radial-gradient(circle at 70% 20%, rgba(251, 191, 36, 0.3) 0%, transparent 40%),
-      hsl(0 0% 98%);
-  }
-
-  .dark body {
-    background: 
-      radial-gradient(ellipse at 20% 30%, rgba(30, 64, 175, 0.5) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, rgba(88, 28, 135, 0.5) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, rgba(49, 46, 129, 0.4) 0%, transparent 60%),
-      radial-gradient(circle at 30% 80%, rgba(131, 24, 67, 0.4) 0%, transparent 40%),
-      radial-gradient(circle at 70% 20%, rgba(180, 83, 9, 0.4) 0%, transparent 40%),
-      hsl(222.2 84% 4.9%);
+    @apply bg-background text-foreground;
   }
 }
