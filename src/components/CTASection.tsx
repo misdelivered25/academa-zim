@@ -15,17 +15,17 @@ const CTASection = () => {
   return (
     <section className="relative py-20 overflow-hidden">
       {/* Cosmic Galaxy Background */}
-      <div className="absolute inset-0 bg-[#0a1628]">
-        <div className="absolute inset-0 opacity-80"
+      <div className="absolute inset-0 bg-[#020817]">
+        <div className="absolute inset-0 opacity-70"
           style={{
             background: `
-              radial-gradient(ellipse at 15% 20%, rgba(30, 58, 138, 0.5) 0%, transparent 50%),
-              radial-gradient(ellipse at 85% 80%, rgba(29, 78, 216, 0.4) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.3) 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 30%, rgba(59, 130, 246, 0.4) 0%, transparent 45%),
-              radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.35) 0%, transparent 40%),
-              radial-gradient(ellipse at 90% 10%, rgba(37, 99, 235, 0.35) 0%, transparent 50%),
-              radial-gradient(circle at 20% 90%, rgba(29, 78, 216, 0.4) 0%, transparent 45%)
+              radial-gradient(ellipse at 15% 20%, rgba(30, 58, 138, 0.4) 0%, transparent 50%),
+              radial-gradient(ellipse at 85% 80%, rgba(29, 78, 216, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.25) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(59, 130, 246, 0.3) 0%, transparent 45%),
+              radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.25) 0%, transparent 40%),
+              radial-gradient(ellipse at 90% 10%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
+              radial-gradient(circle at 20% 90%, rgba(29, 78, 216, 0.3) 0%, transparent 45%)
             `
           }}
         />
@@ -46,7 +46,7 @@ const CTASection = () => {
           }}
         />
         {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-background/85"></div>
+        <div className="absolute inset-0 bg-background/60"></div>
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
