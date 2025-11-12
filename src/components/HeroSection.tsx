@@ -24,6 +24,41 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Cosmic Galaxy Background */}
+      <div className="absolute inset-0 bg-[#0a0e27]">
+        <div className="absolute inset-0 opacity-80"
+          style={{
+            background: `
+              radial-gradient(ellipse at 15% 20%, rgba(138, 43, 226, 0.4) 0%, transparent 50%),
+              radial-gradient(ellipse at 85% 80%, rgba(75, 0, 130, 0.5) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(25, 25, 112, 0.3) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(147, 51, 234, 0.4) 0%, transparent 45%),
+              radial-gradient(circle at 30% 70%, rgba(219, 39, 119, 0.3) 0%, transparent 40%),
+              radial-gradient(ellipse at 90% 10%, rgba(59, 130, 246, 0.35) 0%, transparent 50%),
+              radial-gradient(circle at 20% 90%, rgba(168, 85, 247, 0.4) 0%, transparent 45%)
+            `
+          }}
+        />
+        {/* Stars effect */}
+        <div className="absolute inset-0 opacity-50"
+          style={{
+            backgroundImage: `
+              radial-gradient(2px 2px at 20% 30%, white, transparent),
+              radial-gradient(2px 2px at 60% 70%, white, transparent),
+              radial-gradient(1px 1px at 50% 50%, white, transparent),
+              radial-gradient(1px 1px at 80% 10%, white, transparent),
+              radial-gradient(2px 2px at 90% 60%, white, transparent),
+              radial-gradient(1px 1px at 33% 85%, white, transparent),
+              radial-gradient(1px 1px at 15% 55%, white, transparent)
+            `,
+            backgroundSize: '200% 200%',
+            backgroundPosition: '50% 50%'
+          }}
+        />
+        {/* Gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/50"></div>
+      </div>
+      
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
