@@ -25,17 +25,17 @@ const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Cosmic Galaxy Background */}
-      <div className="absolute inset-0 bg-[#0a1628]">
-        <div className="absolute inset-0 opacity-80"
+      <div className="absolute inset-0 bg-[#020817]">
+        <div className="absolute inset-0 opacity-70"
           style={{
             background: `
-              radial-gradient(ellipse at 15% 20%, rgba(30, 58, 138, 0.5) 0%, transparent 50%),
-              radial-gradient(ellipse at 85% 80%, rgba(29, 78, 216, 0.4) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.3) 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 30%, rgba(59, 130, 246, 0.4) 0%, transparent 45%),
-              radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.35) 0%, transparent 40%),
-              radial-gradient(ellipse at 90% 10%, rgba(37, 99, 235, 0.35) 0%, transparent 50%),
-              radial-gradient(circle at 20% 90%, rgba(29, 78, 216, 0.4) 0%, transparent 45%)
+              radial-gradient(ellipse at 15% 20%, rgba(30, 58, 138, 0.4) 0%, transparent 50%),
+              radial-gradient(ellipse at 85% 80%, rgba(29, 78, 216, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.25) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(59, 130, 246, 0.3) 0%, transparent 45%),
+              radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.25) 0%, transparent 40%),
+              radial-gradient(ellipse at 90% 10%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
+              radial-gradient(circle at 20% 90%, rgba(29, 78, 216, 0.3) 0%, transparent 45%)
             `
           }}
         />
@@ -56,7 +56,7 @@ const HeroSection = () => {
           }}
         />
         {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/50"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/40 to-background/30"></div>
       </div>
       
       {/* Content */}
