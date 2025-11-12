@@ -47,6 +47,11 @@ const CTASection = () => {
         />
         {/* Gradient overlay for readability */}
         <div className="absolute inset-0 bg-background/60"></div>
+        
+        {/* Shooting stars */}
+        <div className="absolute top-[25%] left-[35%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '1s', animationDuration: '3.6s' }}></div>
+        <div className="absolute top-[55%] left-[75%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '2s', animationDuration: '3.3s' }}></div>
+        <div className="absolute top-[80%] left-[20%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '3s', animationDuration: '4s' }}></div>
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

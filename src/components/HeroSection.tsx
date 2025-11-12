@@ -57,6 +57,11 @@ const HeroSection = () => {
         />
         {/* Gradient overlay for readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/40 to-background/30"></div>
+        
+        {/* Shooting stars */}
+        <div className="absolute top-[10%] left-[10%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
+        <div className="absolute top-[30%] left-[20%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
+        <div className="absolute top-[60%] left-[70%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '2s', animationDuration: '3.5s' }}></div>
       </div>
       
       {/* Content */}

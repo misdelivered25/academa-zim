@@ -115,6 +115,11 @@ const FeaturesSection = () => {
         />
         {/* Gradient overlay for readability */}
         <div className="absolute inset-0 bg-background/60"></div>
+        
+        {/* Shooting stars */}
+        <div className="absolute top-[15%] left-[15%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}></div>
+        <div className="absolute top-[40%] left-[60%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '1.5s', animationDuration: '4s' }}></div>
+        <div className="absolute top-[70%] left-[30%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '2.5s', animationDuration: '3s' }}></div>
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

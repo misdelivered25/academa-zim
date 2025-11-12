@@ -73,6 +73,11 @@ const TestimonialsSection = () => {
         />
         {/* Gradient overlay for readability */}
         <div className="absolute inset-0 bg-background/60"></div>
+        
+        {/* Shooting stars */}
+        <div className="absolute top-[20%] left-[25%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '0.8s', animationDuration: '3.8s' }}></div>
+        <div className="absolute top-[50%] left-[65%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '1.8s', animationDuration: '3.2s' }}></div>
+        <div className="absolute top-[75%] left-[40%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '2.8s', animationDuration: '4.2s' }}></div>
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

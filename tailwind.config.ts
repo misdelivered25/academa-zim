@@ -95,10 +95,24 @@ export default {
             height: "0",
           },
         },
+        "shooting-star": {
+          "0%": {
+            transform: "translateX(0) translateY(0)",
+            opacity: "1",
+          },
+          "70%": {
+            opacity: "1",
+          },
+          "100%": {
+            transform: "translateX(300px) translateY(300px)",
+            opacity: "0",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "shooting-star": "shooting-star 3s linear infinite",
       },
     },
   },
