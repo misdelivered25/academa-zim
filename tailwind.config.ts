@@ -74,6 +74,11 @@ export default {
         'elegant': 'var(--shadow-elegant)',
         'glow': 'var(--shadow-glow)',
       },
+      textShadow: {
+        sm: 'var(--text-shadow-sm)',
+        md: 'var(--text-shadow-md)',
+        lg: 'var(--text-shadow-lg)',
+      },
       transitionTimingFunction: {
         'smooth': 'var(--transition-smooth)',
         'spring': 'var(--transition-spring)',
@@ -116,5 +121,17 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ matchUtilities, theme }: any) {
+      matchUtilities(
+        {
+          'text-shadow': (value: string) => ({
+            textShadow: value,
+          }),
+        },
+        { values: theme('textShadow') }
+      )
+    },
+  ],
 } satisfies Config;

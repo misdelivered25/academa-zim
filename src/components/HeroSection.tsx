@@ -76,9 +76,9 @@ const HeroSection = () => {
                 </div>
               </div>
               
-              <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight">
+              <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight text-shadow-lg">
                 Your Academic
-                <span className="block bg-gradient-hero bg-clip-text text-transparent">
+                <span className="block bg-gradient-hero bg-clip-text text-transparent text-shadow-md">
                   Success Hub
                 </span>
               </h1>
@@ -107,15 +107,15 @@ const HeroSection = () => {
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-6 pt-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">15+</div>
+                <div className="text-2xl font-bold text-primary text-shadow-md">15+</div>
                 <div className="text-sm text-muted-foreground">Universities</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">50K+</div>
+                <div className="text-2xl font-bold text-primary text-shadow-md">50K+</div>
                 <div className="text-sm text-muted-foreground">Students</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">1M+</div>
+                <div className="text-2xl font-bold text-primary text-shadow-md">1M+</div>
                 <div className="text-sm text-muted-foreground">Resources</div>
               </div>
             </div>
@@ -130,7 +130,7 @@ const HeroSection = () => {
                     <Calendar className="h-6 w-6 text-primary" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">Assignment Tracker</h3>
+                    <h3 className="font-semibold text-foreground text-shadow-sm">Assignment Tracker</h3>
                     <p className="text-muted-foreground text-sm">
                       Never miss a deadline with our integrated assignment and exam calendar
                     </p>
@@ -146,7 +146,7 @@ const HeroSection = () => {
                     <Database className="h-6 w-6 text-secondary" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">Research Libraries</h3>
+                    <h3 className="font-semibold text-foreground text-shadow-sm">Research Libraries</h3>
                     <p className="text-muted-foreground text-sm">
                       Access digital libraries and databases from all participating universities
                     </p>
@@ -162,7 +162,7 @@ const HeroSection = () => {
                     <MapPin className="h-6 w-6 text-primary" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">Campus Navigation</h3>
+                    <h3 className="font-semibold text-foreground text-shadow-sm">Campus Navigation</h3>
                     <p className="text-muted-foreground text-sm">
                       Interactive maps and directions for all university campuses
                     </p>
@@ -178,7 +178,7 @@ const HeroSection = () => {
                     <Award className="h-6 w-6 text-secondary" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">Exam Preparation</h3>
+                    <h3 className="font-semibold text-foreground text-shadow-sm">Exam Preparation</h3>
                     <p className="text-muted-foreground text-sm">
                       Study guides, past papers, and collaborative study groups
                     </p>
