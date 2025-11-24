@@ -44,6 +44,7 @@ import CourseManagement from "@/components/CourseManagement";
 import AssignmentCreation from "@/components/AssignmentCreation";
 import CampusMap from "@/components/CampusMap";
 import RealtimeDashboard from "@/components/RealtimeDashboard";
+import { NotificationManager } from "@/components/NotificationManager";
 
 type Assignment = {
   id: string;
@@ -324,6 +325,11 @@ const Dashboard = () => {
           >
             Sign Out
           </Button>
+        </div>
+
+        {/* Notification Manager */}
+        <div className="mb-8">
+          <NotificationManager />
         </div>
 
         {/* Quick Stats */}
