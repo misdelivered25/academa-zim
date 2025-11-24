@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { differenceInHours, differenceInMinutes, isPast, parseISO } from 'date-fns';
+import { useNotificationSounds, NotificationType } from './useNotificationSounds';
 
 interface Assignment {
   id: string;
@@ -23,6 +24,7 @@ export const useNotifications = () => {
     enableAIReminders: true,
   });
   const [permission, setPermission] = useState<NotificationPermission>('default');
+  const { playNotificationSound } = useNotificationSounds();
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -72,7 +74,7 @@ export const useNotifications = () => {
     }
   }, [preferences.enableBrowserNotifications]);
 
-  const sendInAppNotification = useCallback((title: string, description?: string, type: 'info' | 'warning' | 'error' | 'success' = 'info') => {
+  const sendInAppNotification = useCallback((title: string, description?: string, type: 'info' | 'warning' | 'error' | 'success' = 'info', soundType?: NotificationType) => {
     if (!preferences.enableInAppNotifications) {
       return;
     }
@@ -82,7 +84,21 @@ export const useNotifications = () => {
                     type === 'success' ? toast.success : toast.info;
 
     toastFn(title, { description });
-  }, [preferences.enableInAppNotifications]);
+
+    // Play notification sound
+    if (soundType) {
+      playNotificationSound(soundType);
+    } else {
+      // Map toast type to sound type
+      const soundMap: Record<typeof type, NotificationType> = {
+        'info': 'info',
+        'warning': 'warning',
+        'error': 'error',
+        'success': 'success',
+      };
+      playNotificationSound(soundMap[type]);
+    }
+  }, [preferences.enableInAppNotifications, playNotificationSound]);
 
   const checkAssignmentDeadlines = useCallback(async (userId: string) => {
     try {
@@ -114,7 +130,8 @@ export const useNotifications = () => {
           sendInAppNotification(
             '⏰ Assignment Due Soon!',
             `"${assignment.title}" is due in 24 hours`,
-            'warning'
+            'warning',
+            'deadline'
           );
           sendBrowserNotification('Assignment Due Soon!', {
             body: `"${assignment.title}" is due in 24 hours`,
@@ -128,7 +145,8 @@ export const useNotifications = () => {
           sendInAppNotification(
             '🚨 Urgent: Assignment Due Soon!',
             `"${assignment.title}" is due in 1 hour`,
-            'error'
+            'error',
+            'deadline'
           );
           sendBrowserNotification('Urgent: Assignment Due Soon!', {
             body: `"${assignment.title}" is due in 1 hour`,
@@ -160,7 +178,8 @@ export const useNotifications = () => {
           sendInAppNotification(
             '💡 AI Study Suggestion',
             rec.message,
-            'info'
+            'info',
+            'ai_suggestion'
           );
         });
       }
