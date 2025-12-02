@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { differenceInHours, differenceInMinutes, isPast, parseISO } from 'date-fns';
 import { useNotificationSounds, NotificationType } from './useNotificationSounds';
+import { useNotificationHistory } from './useNotificationHistory';
 
 interface Assignment {
   id: string;
@@ -25,6 +26,7 @@ export const useNotifications = () => {
   });
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const { playNotificationSound } = useNotificationSounds();
+  const notificationHistory = useNotificationHistory();
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -75,6 +77,10 @@ export const useNotifications = () => {
   }, [preferences.enableBrowserNotifications]);
 
   const sendInAppNotification = useCallback((title: string, description?: string, type: 'info' | 'warning' | 'error' | 'success' = 'info', soundType?: NotificationType) => {
+    // Always add to history
+    const finalSoundType = soundType || (type as NotificationType);
+    notificationHistory.addNotification(title, description, type, finalSoundType);
+
     if (!preferences.enableInAppNotifications) {
       return;
     }
@@ -98,7 +104,7 @@ export const useNotifications = () => {
       };
       playNotificationSound(soundMap[type]);
     }
-  }, [preferences.enableInAppNotifications, playNotificationSound]);
+  }, [preferences.enableInAppNotifications, playNotificationSound, notificationHistory]);
 
   const checkAssignmentDeadlines = useCallback(async (userId: string) => {
     try {
@@ -197,5 +203,6 @@ export const useNotifications = () => {
     sendInAppNotification,
     checkAssignmentDeadlines,
     getAIRecommendations,
+    notificationHistory,
   };
 };

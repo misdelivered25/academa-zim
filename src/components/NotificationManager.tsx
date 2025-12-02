@@ -9,7 +9,9 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Bell, BellOff, Volume2, VolumeX, Play } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Bell, BellOff, Volume2, VolumeX, Play, History, Settings } from 'lucide-react';
+import { NotificationHistoryPanel } from './NotificationHistoryPanel';
 
 export const NotificationManager = () => {
   const { user } = useAuth();
@@ -21,6 +23,7 @@ export const NotificationManager = () => {
     sendInAppNotification,
     checkAssignmentDeadlines,
     getAIRecommendations,
+    notificationHistory,
   } = useNotifications();
 
   const {
@@ -152,10 +155,28 @@ export const NotificationManager = () => {
           Manage your notification preferences and stay on top of deadlines
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Notification Types */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold">Notification Settings</h3>
+      <CardContent className="p-0">
+        <Tabs defaultValue="settings" className="w-full">
+          <TabsList className="w-full grid grid-cols-2 rounded-none border-b">
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Settings
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center gap-2">
+              <History className="h-4 w-4" />
+              History
+              {notificationHistory.history.filter(n => !n.dismissed).length > 0 && (
+                <span className="ml-1 bg-primary text-primary-foreground text-xs rounded-full px-1.5 py-0.5">
+                  {notificationHistory.history.filter(n => !n.dismissed).length}
+                </span>
+              )}
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="settings" className="p-6 space-y-6 mt-0">
+            {/* Notification Types */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold">Notification Settings</h3>
           
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
@@ -319,14 +340,26 @@ export const NotificationManager = () => {
           )}
         </div>
 
-        {permission === 'denied' && (
-          <>
-            <Separator />
-            <div className="text-xs text-destructive">
-              Browser notifications are blocked. Please enable them in your browser settings.
-            </div>
-          </>
-        )}
+            {permission === 'denied' && (
+              <>
+                <Separator />
+                <div className="text-xs text-destructive">
+                  Browser notifications are blocked. Please enable them in your browser settings.
+                </div>
+              </>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="history" className="mt-0">
+            <NotificationHistoryPanel
+              history={notificationHistory.history}
+              onDismiss={notificationHistory.dismissNotification}
+              onDismissAll={notificationHistory.dismissAll}
+              onClear={notificationHistory.clearHistory}
+              getFilteredHistory={notificationHistory.getFilteredHistory}
+            />
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );
