@@ -20,117 +20,378 @@ import {
 import Header from "@/components/Header";
 import GoogleMapCampus from "@/components/GoogleMapCampus";
 
+// University-specific data
+const universityData: Record<string, {
+  name: string;
+  location: string;
+  campusLocations: Array<{
+    name: string;
+    type: string;
+    building: string;
+    floor: string;
+    hours: string;
+    phone: string;
+    services: string[];
+    capacity: string;
+    description: string;
+  }>;
+  transportOptions: Array<{
+    type: string;
+    route: string;
+    schedule: string;
+    cost: string;
+    hours: string;
+    icon: typeof Bus;
+  }>;
+  emergencyContacts: Array<{
+    service: string;
+    number: string;
+    type: string;
+    hours: string;
+  }>;
+}> = {
+  UZ: {
+    name: "University of Zimbabwe",
+    location: "Harare",
+    campusLocations: [
+      {
+        name: "Main Library",
+        type: "Library",
+        building: "Central Block",
+        floor: "Ground Floor",
+        hours: "7:00 AM - 10:00 PM",
+        phone: "+263 24 230 3211",
+        services: ["Study Spaces", "Computer Lab", "Printing", "WiFi"],
+        capacity: "500 students",
+        description: "The largest library on campus with extensive collection of books and digital resources."
+      },
+      {
+        name: "Computer Science Department",
+        type: "Academic",
+        building: "Technology Block",
+        floor: "3rd Floor",
+        hours: "8:00 AM - 5:00 PM",
+        phone: "+263 24 230 3245",
+        services: ["Computer Labs", "WiFi", "Printing", "Study Rooms"],
+        capacity: "200 students",
+        description: "Home to computer science courses with state-of-the-art computing facilities."
+      },
+      {
+        name: "Student Cafeteria",
+        type: "Dining",
+        building: "Student Center",
+        floor: "Ground Floor",
+        hours: "6:00 AM - 8:00 PM",
+        phone: "+263 24 230 3267",
+        services: ["Meals", "Coffee", "WiFi", "Seating Area"],
+        capacity: "300 students",
+        description: "Main dining facility offering affordable meals and refreshments for students."
+      },
+      {
+        name: "Medical Center",
+        type: "Health",
+        building: "Health Block",
+        floor: "Ground Floor",
+        hours: "24/7 Emergency",
+        phone: "+263 24 230 3289",
+        services: ["Medical Care", "First Aid", "Counseling", "Pharmacy"],
+        capacity: "50 patients",
+        description: "On-campus medical facility providing healthcare services to students and staff."
+      }
+    ],
+    transportOptions: [
+      {
+        type: "University Shuttle",
+        route: "Main Gate - Library - Hostels",
+        schedule: "Every 15 minutes",
+        cost: "Free",
+        hours: "6:00 AM - 10:00 PM",
+        icon: Bus
+      },
+      {
+        type: "City Bus (ZUPCO)",
+        route: "Campus - City Center (Fourth Street)",
+        schedule: "Every 20 minutes",
+        cost: "$0.50 USD",
+        hours: "5:30 AM - 9:00 PM",
+        icon: Bus
+      },
+      {
+        type: "Parking Areas",
+        route: "Various locations on campus",
+        schedule: "24/7 Access",
+        cost: "$2/day",
+        hours: "Always available",
+        icon: Car
+      }
+    ],
+    emergencyContacts: [
+      { service: "Campus Security", number: "+263 24 230 3300", type: "Emergency", hours: "24/7" },
+      { service: "Medical Emergency", number: "+263 24 230 3289", type: "Health", hours: "24/7" },
+      { service: "Student Services", number: "+263 24 230 3250", type: "Support", hours: "8:00 AM - 5:00 PM" },
+      { service: "IT Helpdesk", number: "+263 24 230 3275", type: "Technical", hours: "8:00 AM - 8:00 PM" }
+    ]
+  },
+  NUST: {
+    name: "National University of Science and Technology",
+    location: "Bulawayo",
+    campusLocations: [
+      {
+        name: "NUST Library",
+        type: "Library",
+        building: "Library Complex",
+        floor: "Ground & 1st Floor",
+        hours: "7:30 AM - 9:00 PM",
+        phone: "+263 29 228 2842",
+        services: ["E-Resources", "Study Pods", "Computer Lab", "WiFi"],
+        capacity: "600 students",
+        description: "Modern library with extensive electronic resources and quiet study spaces."
+      },
+      {
+        name: "Faculty of Industrial Technology",
+        type: "Academic",
+        building: "FIT Building",
+        floor: "All Floors",
+        hours: "8:00 AM - 5:00 PM",
+        phone: "+263 29 228 2890",
+        services: ["Labs", "Workshops", "WiFi", "Lecture Halls"],
+        capacity: "400 students",
+        description: "Engineering and technology faculty with practical workshops and labs."
+      },
+      {
+        name: "NUST Cafeteria",
+        type: "Dining",
+        building: "Student Union Building",
+        floor: "Ground Floor",
+        hours: "6:30 AM - 7:30 PM",
+        phone: "+263 29 228 2860",
+        services: ["Meals", "Snacks", "WiFi", "Outdoor Seating"],
+        capacity: "350 students",
+        description: "Central dining facility with variety of local and international cuisine."
+      },
+      {
+        name: "University Clinic",
+        type: "Health",
+        building: "Health Services Building",
+        floor: "Ground Floor",
+        hours: "24/7 Emergency",
+        phone: "+263 29 228 2880",
+        services: ["Medical Care", "First Aid", "Mental Health", "Pharmacy"],
+        capacity: "40 patients",
+        description: "Full-service clinic providing comprehensive healthcare to NUST community."
+      }
+    ],
+    transportOptions: [
+      {
+        type: "Campus Shuttle",
+        route: "Main Gate - Academic Blocks - Hostels",
+        schedule: "Every 20 minutes",
+        cost: "Free",
+        hours: "6:30 AM - 9:00 PM",
+        icon: Bus
+      },
+      {
+        type: "ZUPCO Bus",
+        route: "Campus - Bulawayo CBD",
+        schedule: "Every 25 minutes",
+        cost: "$0.50 USD",
+        hours: "5:00 AM - 8:00 PM",
+        icon: Bus
+      },
+      {
+        type: "Student Parking",
+        route: "Designated parking lots",
+        schedule: "24/7 Access",
+        cost: "$1.50/day",
+        hours: "Always available",
+        icon: Car
+      }
+    ],
+    emergencyContacts: [
+      { service: "Security Control Room", number: "+263 29 228 2842", type: "Emergency", hours: "24/7" },
+      { service: "University Clinic", number: "+263 29 228 2880", type: "Health", hours: "24/7" },
+      { service: "Dean of Students", number: "+263 29 228 2800", type: "Support", hours: "8:00 AM - 4:30 PM" },
+      { service: "ICT Helpdesk", number: "+263 29 228 2855", type: "Technical", hours: "8:00 AM - 5:00 PM" }
+    ]
+  },
+  MSU: {
+    name: "Midlands State University",
+    location: "Gweru",
+    campusLocations: [
+      {
+        name: "MSU Main Library",
+        type: "Library",
+        building: "Library Building",
+        floor: "Ground to 3rd Floor",
+        hours: "7:00 AM - 10:00 PM",
+        phone: "+263 54 226 0464",
+        services: ["Research Resources", "Computer Lab", "Group Study", "WiFi"],
+        capacity: "700 students",
+        description: "Multi-floor library with comprehensive academic resources and research facilities."
+      },
+      {
+        name: "Faculty of Commerce",
+        type: "Academic",
+        building: "Commerce Block",
+        floor: "All Floors",
+        hours: "8:00 AM - 5:00 PM",
+        phone: "+263 54 226 0470",
+        services: ["Computer Labs", "Tutorial Rooms", "WiFi", "Auditorium"],
+        capacity: "500 students",
+        description: "Business and commerce faculty with modern teaching facilities."
+      },
+      {
+        name: "Main Dining Hall",
+        type: "Dining",
+        building: "Dining Complex",
+        floor: "Ground Floor",
+        hours: "6:00 AM - 8:00 PM",
+        phone: "+263 54 226 0455",
+        services: ["Breakfast", "Lunch", "Dinner", "Takeaway"],
+        capacity: "400 students",
+        description: "Large dining facility serving the entire campus community."
+      },
+      {
+        name: "Health Center",
+        type: "Health",
+        building: "Clinic Building",
+        floor: "Ground Floor",
+        hours: "24/7 Emergency",
+        phone: "+263 54 226 0480",
+        services: ["General Medicine", "First Aid", "Counseling", "Referrals"],
+        capacity: "30 patients",
+        description: "Campus health facility with emergency and general medical services."
+      }
+    ],
+    transportOptions: [
+      {
+        type: "Campus Bus",
+        route: "Main Campus - City Campus - Hostels",
+        schedule: "Every 30 minutes",
+        cost: "Free",
+        hours: "6:00 AM - 8:00 PM",
+        icon: Bus
+      },
+      {
+        type: "Gweru Kombis",
+        route: "Campus - Gweru Town Center",
+        schedule: "Frequent",
+        cost: "$0.30 USD",
+        hours: "5:30 AM - 7:00 PM",
+        icon: Bus
+      },
+      {
+        type: "Parking Facilities",
+        route: "Multiple parking areas",
+        schedule: "24/7 Access",
+        cost: "$1/day",
+        hours: "Always available",
+        icon: Car
+      }
+    ],
+    emergencyContacts: [
+      { service: "Campus Security", number: "+263 54 226 0450", type: "Emergency", hours: "24/7" },
+      { service: "Health Center", number: "+263 54 226 0480", type: "Health", hours: "24/7" },
+      { service: "Student Affairs", number: "+263 54 226 0460", type: "Support", hours: "8:00 AM - 4:30 PM" },
+      { service: "IT Support", number: "+263 54 226 0490", type: "Technical", hours: "8:00 AM - 5:00 PM" }
+    ]
+  },
+  CUT: {
+    name: "Chinhoyi University of Technology",
+    location: "Chinhoyi",
+    campusLocations: [
+      {
+        name: "CUT Library",
+        type: "Library",
+        building: "Central Library",
+        floor: "Ground & 1st Floor",
+        hours: "7:30 AM - 9:00 PM",
+        phone: "+263 67 222 3032",
+        services: ["Digital Library", "Reading Rooms", "Computer Lab", "WiFi"],
+        capacity: "400 students",
+        description: "Technology-focused library with extensive digital resources."
+      },
+      {
+        name: "School of Engineering",
+        type: "Academic",
+        building: "Engineering Block",
+        floor: "All Floors",
+        hours: "8:00 AM - 5:00 PM",
+        phone: "+263 67 222 3040",
+        services: ["Engineering Labs", "Workshops", "CAD Lab", "WiFi"],
+        capacity: "300 students",
+        description: "Engineering school with practical labs and workshop facilities."
+      },
+      {
+        name: "Student Cafeteria",
+        type: "Dining",
+        building: "Student Services Building",
+        floor: "Ground Floor",
+        hours: "6:30 AM - 7:00 PM",
+        phone: "+263 67 222 3055",
+        services: ["Meals", "Beverages", "Snacks", "WiFi"],
+        capacity: "250 students",
+        description: "Main campus eatery offering affordable student meals."
+      },
+      {
+        name: "University Clinic",
+        type: "Health",
+        building: "Health Services",
+        floor: "Ground Floor",
+        hours: "24/7 Emergency",
+        phone: "+263 67 222 3060",
+        services: ["Primary Care", "First Aid", "Referrals", "Counseling"],
+        capacity: "25 patients",
+        description: "On-campus clinic providing basic healthcare services."
+      }
+    ],
+    transportOptions: [
+      {
+        type: "Campus Shuttle",
+        route: "Main Gate - Academic Buildings - Hostels",
+        schedule: "Every 25 minutes",
+        cost: "Free",
+        hours: "6:30 AM - 8:00 PM",
+        icon: Bus
+      },
+      {
+        type: "Local Transport",
+        route: "Campus - Chinhoyi Town",
+        schedule: "Regular intervals",
+        cost: "$0.30 USD",
+        hours: "6:00 AM - 6:00 PM",
+        icon: Bus
+      },
+      {
+        type: "Parking Lots",
+        route: "Designated areas",
+        schedule: "24/7 Access",
+        cost: "$1/day",
+        hours: "Always available",
+        icon: Car
+      }
+    ],
+    emergencyContacts: [
+      { service: "Security Office", number: "+263 67 222 3020", type: "Emergency", hours: "24/7" },
+      { service: "University Clinic", number: "+263 67 222 3060", type: "Health", hours: "24/7" },
+      { service: "Student Services", number: "+263 67 222 3050", type: "Support", hours: "8:00 AM - 4:30 PM" },
+      { service: "ICT Department", number: "+263 67 222 3070", type: "Technical", hours: "8:00 AM - 5:00 PM" }
+    ]
+  }
+};
+
+const universities = [
+  { code: "UZ", name: "University of Zimbabwe", location: "Harare" },
+  { code: "NUST", name: "National University of Science and Technology", location: "Bulawayo" },
+  { code: "MSU", name: "Midlands State University", location: "Gweru" },
+  { code: "CUT", name: "Chinhoyi University of Technology", location: "Chinhoyi" }
+];
+
 const Campus = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("UZ");
 
-  const universities = [
-    { code: "UZ", name: "University of Zimbabwe", location: "Harare" },
-    { code: "NUST", name: "National University of Science and Technology", location: "Bulawayo" },
-    { code: "MSU", name: "Midlands State University", location: "Gweru" },
-    { code: "CUT", name: "Chinhoyi University of Technology", location: "Chinhoyi" }
-  ];
-
-  const campusLocations = [
-    {
-      name: "Main Library",
-      type: "Library",
-      building: "Central Block",
-      floor: "Ground Floor",
-      hours: "7:00 AM - 10:00 PM",
-      phone: "+263 4 303211",
-      services: ["Study Spaces", "Computer Lab", "Printing", "WiFi"],
-      capacity: "500 students",
-      description: "The largest library on campus with extensive collection of books and digital resources."
-    },
-    {
-      name: "Computer Science Department",
-      type: "Academic",
-      building: "Technology Block",
-      floor: "3rd Floor",
-      hours: "8:00 AM - 5:00 PM",
-      phone: "+263 4 303245",
-      services: ["Computer Labs", "WiFi", "Printing", "Study Rooms"],
-      capacity: "200 students",
-      description: "Home to computer science courses with state-of-the-art computing facilities."
-    },
-    {
-      name: "Student Cafeteria",
-      type: "Dining",
-      building: "Student Center",
-      floor: "Ground Floor",
-      hours: "6:00 AM - 8:00 PM",
-      phone: "+263 4 303267",
-      services: ["Meals", "Coffee", "WiFi", "Seating Area"],
-      capacity: "300 students",
-      description: "Main dining facility offering affordable meals and refreshments for students."
-    },
-    {
-      name: "Medical Center",
-      type: "Health",
-      building: "Health Block",
-      floor: "Ground Floor",
-      hours: "24/7 Emergency",
-      phone: "+263 4 303289",
-      services: ["Medical Care", "First Aid", "Counseling", "Pharmacy"],
-      capacity: "50 patients",
-      description: "On-campus medical facility providing healthcare services to students and staff."
-    }
-  ];
-
-  const transportOptions = [
-    {
-      type: "University Shuttle",
-      route: "Main Gate - Library - Hostels",
-      schedule: "Every 15 minutes",
-      cost: "Free",
-      hours: "6:00 AM - 10:00 PM",
-      icon: Bus
-    },
-    {
-      type: "City Bus",
-      route: "Campus - City Center",
-      schedule: "Every 30 minutes",
-      cost: "$0.50",
-      hours: "5:30 AM - 11:00 PM",
-      icon: Bus
-    },
-    {
-      type: "Parking Areas",
-      route: "Various locations on campus",
-      schedule: "24/7 Access",
-      cost: "$2/day",
-      hours: "Always available",
-      icon: Car
-    }
-  ];
-
-  const emergencyContacts = [
-    {
-      service: "Campus Security",
-      number: "+263 4 303300",
-      type: "Emergency",
-      hours: "24/7"
-    },
-    {
-      service: "Medical Emergency",
-      number: "+263 4 303289",
-      type: "Health",
-      hours: "24/7"
-    },
-    {
-      service: "Student Services",
-      number: "+263 4 303250",
-      type: "Support",
-      hours: "8:00 AM - 5:00 PM"
-    },
-    {
-      service: "IT Helpdesk",
-      number: "+263 4 303275",
-      type: "Technical",
-      hours: "8:00 AM - 8:00 PM"
-    }
-  ];
+  const currentUniData = universityData[selectedUniversity];
 
   const getLocationIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -161,7 +422,7 @@ const Campus = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Campus Navigation</h1>
           <p className="text-muted-foreground">
-            Find your way around campus with interactive maps, directions, and location information
+            Find your way around {currentUniData.name} with interactive maps, directions, and location information
           </p>
         </div>
 
@@ -212,7 +473,7 @@ const Campus = () => {
           {/* Campus Locations */}
           <TabsContent value="locations" className="space-y-6">
             <div className="grid gap-6">
-              {campusLocations.map((location, index) => {
+              {currentUniData.campusLocations.map((location, index) => {
                 const IconComponent = getLocationIcon(location.type);
                 return (
                   <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
@@ -289,7 +550,7 @@ const Campus = () => {
           {/* Transportation */}
           <TabsContent value="transport" className="space-y-6">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {transportOptions.map((transport, index) => {
+              {currentUniData.transportOptions.map((transport, index) => {
                 const IconComponent = transport.icon;
                 return (
                   <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
@@ -332,7 +593,7 @@ const Campus = () => {
           {/* Emergency Information */}
           <TabsContent value="emergency" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
-              {emergencyContacts.map((contact, index) => (
+              {currentUniData.emergencyContacts.map((contact, index) => (
                 <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -354,6 +615,7 @@ const Campus = () => {
                     <Button 
                       className="w-full mt-4 bg-gradient-hero hover:shadow-glow transition-all" 
                       size="sm"
+                      onClick={() => window.location.href = `tel:${contact.number.replace(/\s/g, '')}`}
                     >
                       <Phone className="h-4 w-4 mr-2" />
                       Call Now
@@ -366,9 +628,9 @@ const Campus = () => {
             {/* Emergency Procedures */}
             <Card className="bg-gradient-card border-border">
               <CardHeader>
-                <CardTitle className="text-xl text-destructive">Emergency Procedures</CardTitle>
+                <CardTitle className="text-xl text-destructive">Emergency Procedures - {currentUniData.name}</CardTitle>
                 <CardDescription>
-                  Important safety information for campus emergencies
+                  Important safety information for campus emergencies at {currentUniData.location}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -379,13 +641,13 @@ const Campus = () => {
                       <li>• Activate the nearest fire alarm</li>
                       <li>• Evacuate immediately using the nearest exit</li>
                       <li>• Do not use elevators</li>
-                      <li>• Call Campus Security: +263 4 303300</li>
+                      <li>• Call Campus Security: {currentUniData.emergencyContacts[0].number}</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">Medical Emergency:</h4>
                     <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                      <li>• Call Medical Emergency: +263 4 303289</li>
+                      <li>• Call Medical Emergency: {currentUniData.emergencyContacts[1].number}</li>
                       <li>• Provide exact location on campus</li>
                       <li>• Stay with the person if safe to do so</li>
                       <li>• Follow dispatcher's instructions</li>
