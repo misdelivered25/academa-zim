@@ -72,14 +72,20 @@ const mapContainerStyle = {
   height: "100%",
 };
 
+// Static libraries array to prevent reloading
+const LIBRARIES: ("places")[] = ["places"];
 
 interface GoogleMapCampusProps {
   selectedUniversity: string;
   searchQuery: string;
 }
 
-export default function GoogleMapCampus({ selectedUniversity, searchQuery }: GoogleMapCampusProps) {
-  const [apiKey, setApiKey] = useState<string | null>(null);
+// Inner component that uses the Google Maps hooks
+function GoogleMapInner({ 
+  selectedUniversity, 
+  searchQuery, 
+  apiKey 
+}: GoogleMapCampusProps & { apiKey: string }) {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
@@ -89,24 +95,9 @@ export default function GoogleMapCampus({ selectedUniversity, searchQuery }: Goo
 
   const universityData = universitiesData[selectedUniversity] || universitiesData["UZ"];
 
-  // Fetch API key from edge function
-  useEffect(() => {
-    const fetchApiKey = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke("get-maps-api-key");
-        if (error) throw error;
-        setApiKey(data.apiKey);
-      } catch (error) {
-        console.error("Failed to fetch Google Maps API key:", error);
-        toast.error("Failed to load map. Please check your Google Maps API key configuration.");
-      }
-    };
-    fetchApiKey();
-  }, []);
-
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: apiKey || "",
-    libraries: ["places"],
+    googleMapsApiKey: apiKey,
+    libraries: LIBRARIES,
   });
 
   // Filter buildings based on search query
@@ -206,21 +197,6 @@ export default function GoogleMapCampus({ selectedUniversity, searchQuery }: Goo
       scale: 12,
     };
   };
-
-  if (!apiKey) {
-    return (
-      <Card className="bg-gradient-card border-border">
-        <CardContent className="p-6">
-          <div className="h-96 flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <Loader2 className="h-12 w-12 text-primary mx-auto animate-spin" />
-              <p className="text-muted-foreground">Loading map configuration...</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   if (loadError) {
     return (
@@ -409,5 +385,69 @@ export default function GoogleMapCampus({ selectedUniversity, searchQuery }: Goo
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+// Wrapper component that fetches API key first
+export default function GoogleMapCampus({ selectedUniversity, searchQuery }: GoogleMapCampusProps) {
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchApiKey = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("get-maps-api-key");
+        if (error) throw error;
+        if (!data.apiKey) throw new Error("No API key returned");
+        setApiKey(data.apiKey);
+      } catch (err) {
+        console.error("Failed to fetch Google Maps API key:", err);
+        setError("Failed to load map configuration");
+        toast.error("Failed to load map. Please check your Google Maps API key configuration.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApiKey();
+  }, []);
+
+  if (loading) {
+    return (
+      <Card className="bg-gradient-card border-border">
+        <CardContent className="p-6">
+          <div className="h-96 flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <Loader2 className="h-12 w-12 text-primary mx-auto animate-spin" />
+              <p className="text-muted-foreground">Loading map configuration...</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error || !apiKey) {
+    return (
+      <Card className="bg-gradient-card border-border">
+        <CardContent className="p-6">
+          <div className="h-96 flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <MapPin className="h-12 w-12 text-destructive mx-auto" />
+              <p className="text-destructive">{error || "Failed to load map"}</p>
+              <p className="text-sm text-muted-foreground">Please configure your Google Maps API key</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <GoogleMapInner 
+      selectedUniversity={selectedUniversity} 
+      searchQuery={searchQuery} 
+      apiKey={apiKey} 
+    />
   );
 }
