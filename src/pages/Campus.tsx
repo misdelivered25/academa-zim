@@ -10,19 +10,15 @@ import {
   Navigation, 
   Clock, 
   Phone, 
-  Mail,
   Building,
   Users,
   Car,
   Bus,
   Utensils,
-  Coffee,
   BookOpen,
-  Wifi,
-  Printer,
-  Computer
 } from "lucide-react";
 import Header from "@/components/Header";
+import GoogleMapCampus from "@/components/GoogleMapCampus";
 
 const Campus = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -197,26 +193,13 @@ const Campus = () => {
           </div>
         </div>
 
-        {/* Interactive Map Placeholder */}
-        <Card className="mb-8 bg-gradient-card border-border">
-          <CardContent className="p-0">
-            <div className="h-96 bg-gradient-to-br from-accent/20 to-muted/30 rounded-lg flex items-center justify-center">
-              <div className="text-center space-y-4">
-                <MapPin className="h-16 w-16 text-primary mx-auto" />
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Interactive Campus Map</h3>
-                  <p className="text-muted-foreground">
-                    Click on buildings and locations for detailed information and directions
-                  </p>
-                </div>
-                <Button className="bg-gradient-hero hover:shadow-glow transition-all">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Load Interactive Map
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Interactive Google Map */}
+        <div className="mb-8">
+          <GoogleMapCampus 
+            selectedUniversity={selectedUniversity} 
+            searchQuery={searchQuery} 
+          />
+        </div>
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="locations" className="space-y-6">
