@@ -48,6 +48,17 @@ const StudyCenter = () => {
   const [selectedAssignment, setSelectedAssignment] = useState<any | null>(null);
   const [analyzingDocument, setAnalyzingDocument] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [showCreateQuizDialog, setShowCreateQuizDialog] = useState(false);
+  const [creatingQuiz, setCreatingQuiz] = useState(false);
+  const [newQuiz, setNewQuiz] = useState({
+    title: '',
+    description: '',
+    course_id: '',
+    difficulty: 'medium',
+    duration_minutes: 30,
+    passing_score: 70,
+    total_questions: 10
+  });
 
   // Fetch user's assignments and courses
   useEffect(() => {
@@ -390,10 +401,65 @@ const StudyCenter = () => {
   };
 
   const handleCreateQuiz = () => {
-    toast({
-      title: "Create Quiz",
-      description: "Opening quiz creation form",
+    setNewQuiz({
+      title: '',
+      description: '',
+      course_id: courses.length > 0 ? courses[0].id : '',
+      difficulty: 'medium',
+      duration_minutes: 30,
+      passing_score: 70,
+      total_questions: 10
     });
+    setShowCreateQuizDialog(true);
+  };
+
+  const handleSaveQuiz = async () => {
+    if (!user) return;
+    if (!newQuiz.title.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a quiz title",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setCreatingQuiz(true);
+    try {
+      const { data, error } = await (supabase as any)
+        .from('quizzes')
+        .insert({
+          user_id: user.id,
+          title: newQuiz.title.trim(),
+          description: newQuiz.description.trim() || null,
+          course_id: newQuiz.course_id || null,
+          difficulty: newQuiz.difficulty,
+          duration_minutes: newQuiz.duration_minutes,
+          passing_score: newQuiz.passing_score,
+          total_questions: newQuiz.total_questions
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Quiz created successfully! You can now add questions to it.",
+      });
+
+      setShowCreateQuizDialog(false);
+      fetchUserData();
+    } catch (error) {
+      console.error('Error creating quiz:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create quiz",
+        variant: "destructive",
+      });
+    } finally {
+      setCreatingQuiz(false);
+    }
   };
 
   const handleUploadAssignment = async (assignmentId: string, file: File) => {
@@ -1099,6 +1165,125 @@ const StudyCenter = () => {
               >
                 <FileText className="h-4 w-4 mr-2" />
                 {assignmentProgress[selectedAssignment?.id]?.status === 'in_progress' ? 'Continue Work' : 'Start Work'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Quiz Dialog */}
+      <Dialog open={showCreateQuizDialog} onOpenChange={setShowCreateQuizDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl flex items-center gap-2">
+              <Award className="h-5 w-5" />
+              Create New Quiz
+            </DialogTitle>
+            <DialogDescription>
+              Set up a new quiz to test your knowledge
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Quiz Title *</label>
+              <Input
+                placeholder="e.g., Chapter 5 Review"
+                value={newQuiz.title}
+                onChange={(e) => setNewQuiz({ ...newQuiz, title: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Course</label>
+              <select
+                className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                value={newQuiz.course_id}
+                onChange={(e) => setNewQuiz({ ...newQuiz, course_id: e.target.value })}
+              >
+                <option value="">No course</option>
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.course_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Description</label>
+              <Textarea
+                placeholder="Brief description of what this quiz covers..."
+                value={newQuiz.description}
+                onChange={(e) => setNewQuiz({ ...newQuiz, description: e.target.value })}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Difficulty</label>
+                <select
+                  className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                  value={newQuiz.difficulty}
+                  onChange={(e) => setNewQuiz({ ...newQuiz, difficulty: e.target.value })}
+                >
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Duration (minutes)</label>
+                <Input
+                  type="number"
+                  min={5}
+                  max={180}
+                  value={newQuiz.duration_minutes}
+                  onChange={(e) => setNewQuiz({ ...newQuiz, duration_minutes: parseInt(e.target.value) || 30 })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Passing Score (%)</label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={newQuiz.passing_score}
+                  onChange={(e) => setNewQuiz({ ...newQuiz, passing_score: parseInt(e.target.value) || 70 })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Total Questions</label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={newQuiz.total_questions}
+                  onChange={(e) => setNewQuiz({ ...newQuiz, total_questions: parseInt(e.target.value) || 10 })}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowCreateQuizDialog(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveQuiz}
+                disabled={creatingQuiz || !newQuiz.title.trim()}
+                className="flex-1 bg-gradient-hero hover:shadow-glow transition-all"
+              >
+                {creatingQuiz ? 'Creating...' : 'Create Quiz'}
               </Button>
             </div>
           </div>
