@@ -3,9 +3,11 @@ import { GoogleMap, useJsApiLoader, Marker, DirectionsRenderer, InfoWindow } fro
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Navigation, Locate, Loader2 } from "lucide-react";
+import { MapPin, Navigation, Locate, Loader2, Wifi, WifiOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useOfflineMapData } from "@/hooks/useOfflineMapData";
+import OfflineCampusMap from "@/components/OfflineCampusMap";
 
 interface Building {
   name: string;
@@ -21,7 +23,7 @@ interface UniversityData {
   buildings: Building[];
 }
 
-const universitiesData: { [key: string]: UniversityData } = {
+export const universitiesData: { [key: string]: UniversityData } = {
   "UZ": {
     name: "University of Zimbabwe",
     center: { lat: -17.7833, lng: 31.0500 },
@@ -236,6 +238,10 @@ function GoogleMapInner({
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-primary" />
             {universityData.name}
+            <Badge variant="outline" className="text-xs flex items-center gap-1 text-emerald-600 border-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 ml-2">
+              <Wifi className="h-3 w-3" />
+              Online
+            </Badge>
           </CardTitle>
           <div className="flex gap-2 flex-wrap">
             <Button
@@ -388,14 +394,30 @@ function GoogleMapInner({
   );
 }
 
-// Wrapper component that fetches API key first
+// Wrapper component that fetches API key first and handles offline mode
 export default function GoogleMapCampus({ selectedUniversity, searchQuery }: GoogleMapCampusProps) {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isOnline, cacheMapData, getCacheAge, hasCachedData } = useOfflineMapData();
+
+  const universityData = universitiesData[selectedUniversity] || universitiesData["UZ"];
+
+  // Cache university data when online
+  useEffect(() => {
+    if (isOnline) {
+      cacheMapData(universitiesData);
+    }
+  }, [isOnline, cacheMapData]);
 
   useEffect(() => {
     const fetchApiKey = async () => {
+      // If offline, skip API key fetch and use cached data
+      if (!isOnline) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const { data, error } = await supabase.functions.invoke("get-maps-api-key");
         if (error) throw error;
@@ -410,7 +432,18 @@ export default function GoogleMapCampus({ selectedUniversity, searchQuery }: Goo
       }
     };
     fetchApiKey();
-  }, []);
+  }, [isOnline]);
+
+  // Show offline map when not online
+  if (!isOnline) {
+    return (
+      <OfflineCampusMap
+        universityData={universityData}
+        searchQuery={searchQuery}
+        cacheAge={getCacheAge()}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -428,6 +461,17 @@ export default function GoogleMapCampus({ selectedUniversity, searchQuery }: Goo
   }
 
   if (error || !apiKey) {
+    // If we have cached data and API fails, show offline map
+    if (hasCachedData) {
+      return (
+        <OfflineCampusMap
+          universityData={universityData}
+          searchQuery={searchQuery}
+          cacheAge={getCacheAge()}
+        />
+      );
+    }
+
     return (
       <Card className="bg-gradient-card border-border">
         <CardContent className="p-6">
