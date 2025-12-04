@@ -57,7 +57,7 @@ const CTASection = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-hero rounded-3xl p-12 lg:p-16 shadow-glow">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl lg:text-5xl font-bold text-primary-foreground mb-6 text-shadow-lg">
+            <h2 className="text-3xl lg:text-5xl font-bold text-primary-foreground mb-6">
               Ready to Transform Your Academic Journey?
             </h2>
             <p className="text-xl text-primary-foreground/90 mb-8">
