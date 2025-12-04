@@ -125,9 +125,9 @@ const FeaturesSection = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4 text-shadow-lg">
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
             Everything You Need for 
-            <span className="block bg-gradient-hero bg-clip-text text-transparent text-shadow-md">
+            <span className="block bg-gradient-hero bg-clip-text text-transparent">
               Academic Success
             </span>
           </h2>
@@ -160,7 +160,7 @@ const FeaturesSection = () => {
                     } group-hover:scale-110 transition-transform`} />
                   </div>
                   
-                  <h3 className="text-lg font-semibold text-foreground mb-2 text-shadow-sm">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     {feature.title}
                   </h3>
                   
@@ -176,7 +176,7 @@ const FeaturesSection = () => {
         {/* Call to Action */}
         <div className="text-center">
           <div className="bg-gradient-card rounded-2xl p-8 border border-border shadow-elegant max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-foreground mb-4 text-shadow-md">
+            <h3 className="text-2xl font-bold text-foreground mb-4">
               Ready to Transform Your Studies?
             </h3>
             <p className="text-muted-foreground mb-6">

@@ -86,7 +86,7 @@ const TestimonialsSection = () => {
           <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-4">
             <Quote className="h-6 w-6 text-primary" />
           </div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4 text-shadow-lg">
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
             What Students Say
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -137,19 +137,19 @@ const TestimonialsSection = () => {
         <div className="mt-16 pt-12 border-t border-border">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-primary mb-2 text-shadow-md">98%</div>
+              <div className="text-3xl font-bold text-primary mb-2">98%</div>
               <div className="text-sm text-muted-foreground">Student Satisfaction</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-2 text-shadow-md">15+</div>
+              <div className="text-3xl font-bold text-primary mb-2">15+</div>
               <div className="text-sm text-muted-foreground">Partner Universities</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-2 text-shadow-md">50K+</div>
+              <div className="text-3xl font-bold text-primary mb-2">50K+</div>
               <div className="text-sm text-muted-foreground">Active Students</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-2 text-shadow-md">24/7</div>
+              <div className="text-3xl font-bold text-primary mb-2">24/7</div>
               <div className="text-sm text-muted-foreground">Platform Access</div>
             </div>
           </div>
