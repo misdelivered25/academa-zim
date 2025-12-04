@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import hgcLogo from "@/assets/hgc-logo.png";
+import tatendaLogo from "@/assets/tatenda-foundation-logo.png";
 const Footer = () => {
   const quickLinks = [{
     name: "Study Center",
@@ -127,6 +129,27 @@ const Footer = () => {
                   <MapPin className="h-4 w-4 text-background/60" />
                   <span className="text-background/80 text-sm">Chinhoyi University of Technology</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Branding Section */}
+        <div className="py-8 border-t border-background/10">
+          <div className="flex flex-col items-center space-y-4">
+            <p className="text-background/70 text-sm">A product of</p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
+              <div className="flex items-center gap-3">
+                <img src={hgcLogo} alt="HGC Private Limited" className="h-12 w-12 object-contain rounded-lg" />
+                <span className="text-background font-semibold">HGC Private Limited</span>
+              </div>
+              <div className="flex items-center gap-2 text-background/60">
+                <span className="hidden sm:inline">|</span>
+                <span className="text-background/70 text-sm">Proudly sponsored by</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <img src={tatendaLogo} alt="Tatenda Foundation" className="h-12 w-12 object-contain rounded-full" />
+                <span className="text-background font-semibold">Tatenda Foundation</span>
               </div>
             </div>
           </div>
