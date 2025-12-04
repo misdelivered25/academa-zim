@@ -12,7 +12,8 @@ import {
   Mail,
   Moon,
   Sun,
-  Shield
+  Shield,
+  Info
 } from "lucide-react";
 import logo from "@/assets/logo.webp";
 
@@ -66,6 +67,10 @@ const Header = () => {
               <Link to="/contact" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
                 <span>Contact</span>
+              </Link>
+              <Link to="/about" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
+                <Info className="h-4 w-4" />
+                <span>About</span>
               </Link>
               {isAdmin && (
                 <Link to="/admin" className="text-foreground hover:text-primary transition-colors flex items-center space-x-2">
@@ -121,6 +126,10 @@ const Header = () => {
               <Link to="/contact" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
                 <Mail className="h-4 w-4" />
                 <span>Contact</span>
+              </Link>
+              <Link to="/about" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
+                <Info className="h-4 w-4" />
+                <span>About</span>
               </Link>
               {isAdmin && (
                 <Link to="/admin" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors">
