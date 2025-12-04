@@ -27,11 +27,15 @@ import {
   Trash2,
   Upload,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  Settings,
+  Play
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import QuizTaker from "@/components/QuizTaker";
+import QuizQuestionsManager from "@/components/QuizQuestionsManager";
 
 const StudyCenter = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,6 +63,13 @@ const StudyCenter = () => {
     passing_score: 70,
     total_questions: 10
   });
+  
+  // Quiz taking state
+  const [activeQuiz, setActiveQuiz] = useState<any>(null);
+  const [activeAttemptId, setActiveAttemptId] = useState<string | null>(null);
+  const [activeQuizQuestions, setActiveQuizQuestions] = useState<any[]>([]);
+  const [managingQuestionsQuiz, setManagingQuestionsQuiz] = useState<any>(null);
+  const [quizQuestionsForManager, setQuizQuestionsForManager] = useState<any[]>([]);
 
   // Fetch user's assignments and courses
   useEffect(() => {
@@ -253,15 +264,6 @@ const StudyCenter = () => {
   };
 
   const handleStartQuiz = async (quiz: any) => {
-    if (!quiz.available) {
-      toast({
-        title: "Quiz Unavailable",
-        description: "This quiz is currently closed",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
       const { data, error } = await supabase.functions.invoke('start-quiz-attempt', {
         body: { quiz_id: quiz.id }
@@ -269,20 +271,52 @@ const StudyCenter = () => {
 
       if (error) throw error;
 
+      const questions = data.data?.quiz?.quiz_questions || [];
+      
+      if (questions.length === 0) {
+        toast({
+          title: "No Questions",
+          description: "This quiz has no questions yet. Add questions first.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setActiveQuiz(quiz);
+      setActiveAttemptId(data.data?.attempt_id);
+      setActiveQuizQuestions(questions);
+
       toast({
         title: "Starting Quiz",
         description: `Starting ${quiz.title}. Good luck!`,
       });
 
-      // Refresh attempts
-      fetchUserData();
-      
-      window.open('https://www.canva.com/design/DAG3jzZvP1o/gwkgpltTj8kBVHWQACiUWA/view?utm_content=DAG3jzZvP1o&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2a6c4773cb', '_blank');
     } catch (error) {
       console.error('Error starting quiz:', error);
       toast({
         title: "Error",
         description: "Failed to start quiz",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleManageQuestions = async (quiz: any) => {
+    try {
+      const { data: questions, error } = await (supabase as any)
+        .from('quiz_questions')
+        .select('*')
+        .eq('quiz_id', quiz.id);
+
+      if (error) throw error;
+
+      setManagingQuestionsQuiz(quiz);
+      setQuizQuestionsForManager(questions || []);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load questions",
         variant: "destructive",
       });
     }
@@ -941,13 +975,21 @@ const StudyCenter = () => {
                             )}
                           </div>
                           
-                          <div className="pt-2">
+                          <div className="pt-2 space-y-2">
                             <Button 
                               className="w-full bg-gradient-hero hover:shadow-glow transition-all"
                               onClick={() => handleStartQuiz(quiz)}
                             >
-                              <Award className="h-4 w-4 mr-2" />
+                              <Play className="h-4 w-4 mr-2" />
                               {attempts.length > 0 ? 'Retake Quiz' : 'Start Quiz'}
+                            </Button>
+                            <Button 
+                              variant="outline"
+                              className="w-full"
+                              onClick={() => handleManageQuestions(quiz)}
+                            >
+                              <Settings className="h-4 w-4 mr-2" />
+                              Manage Questions
                             </Button>
                           </div>
                         </div>
@@ -1289,6 +1331,38 @@ const StudyCenter = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Quiz Taker */}
+      {activeQuiz && activeAttemptId && activeQuizQuestions.length > 0 && (
+        <QuizTaker
+          quiz={activeQuiz}
+          attemptId={activeAttemptId}
+          questions={activeQuizQuestions}
+          onComplete={() => {
+            fetchUserData();
+          }}
+          onClose={() => {
+            setActiveQuiz(null);
+            setActiveAttemptId(null);
+            setActiveQuizQuestions([]);
+          }}
+        />
+      )}
+
+      {/* Quiz Questions Manager */}
+      {managingQuestionsQuiz && (
+        <QuizQuestionsManager
+          quiz={managingQuestionsQuiz}
+          existingQuestions={quizQuestionsForManager}
+          onClose={() => {
+            setManagingQuestionsQuiz(null);
+            setQuizQuestionsForManager([]);
+          }}
+          onSaved={() => {
+            fetchUserData();
+          }}
+        />
+      )}
     </div>
   );
 };
