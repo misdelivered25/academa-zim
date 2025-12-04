@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
+import FoundersMessage from "@/components/FoundersMessage";
 import FeaturesSection from "@/components/FeaturesSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
@@ -23,6 +24,7 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
+        <FoundersMessage />
         <FeaturesSection />
         <TestimonialsSection />
         <CTASection />
