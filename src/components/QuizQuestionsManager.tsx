@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Plus, Trash2, Save, X, Sparkles, Upload, Loader2 } from "lucide-react";
+import { Plus, Trash2, Save, X, Sparkles, Upload, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -67,26 +67,57 @@ const QuizQuestionsManager = ({ quiz, existingQuestions, onClose, onSaved }: Qui
     setQuestions(updated);
   };
 
+  const [pdfFile, setPdfFile] = useState<string | null>(null);
+  const [pdfFileName, setPdfFileName] = useState<string>('');
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.type !== 'text/plain' && !file.name.endsWith('.txt') && !file.name.endsWith('.md')) {
+    const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+    const isText = file.type === 'text/plain' || file.name.endsWith('.txt') || file.name.endsWith('.md');
+
+    if (!isPdf && !isText) {
       toast({
         title: "Unsupported File",
-        description: "Please upload a .txt or .md file",
+        description: "Please upload a .pdf, .txt, or .md file",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      const text = await file.text();
-      setAiDocument(text);
-      toast({
-        title: "File Loaded",
-        description: `Loaded ${file.name} (${text.length} characters)`,
-      });
+      if (isPdf) {
+        // Convert PDF to base64
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = reader.result as string;
+          setPdfFile(base64);
+          setPdfFileName(file.name);
+          setAiDocument(''); // Clear text when PDF is uploaded
+          toast({
+            title: "PDF Loaded",
+            description: `Loaded ${file.name}`,
+          });
+        };
+        reader.onerror = () => {
+          toast({
+            title: "Error",
+            description: "Failed to read PDF file",
+            variant: "destructive",
+          });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        const text = await file.text();
+        setAiDocument(text);
+        setPdfFile(null);
+        setPdfFileName('');
+        toast({
+          title: "File Loaded",
+          description: `Loaded ${file.name} (${text.length} characters)`,
+        });
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -97,7 +128,7 @@ const QuizQuestionsManager = ({ quiz, existingQuestions, onClose, onSaved }: Qui
   };
 
   const generateAIQuestions = async () => {
-    if (!aiTopic.trim() && !aiDocument.trim()) {
+    if (!aiTopic.trim() && !aiDocument.trim() && !pdfFile) {
       toast({
         title: "Missing Input",
         description: "Please enter a topic or upload course materials",
@@ -112,6 +143,7 @@ const QuizQuestionsManager = ({ quiz, existingQuestions, onClose, onSaved }: Qui
         body: {
           topic: aiTopic.trim(),
           documentText: aiDocument.trim() || undefined,
+          pdfBase64: pdfFile || undefined,
           numberOfQuestions: aiNumQuestions,
           difficulty: aiDifficulty,
         },
@@ -404,19 +436,36 @@ const QuizQuestionsManager = ({ quiz, existingQuestions, onClose, onSaved }: Qui
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Course Materials (Optional)</label>
-              <Textarea
-                placeholder="Paste your notes, textbook content, or any study material here..."
-                value={aiDocument}
-                onChange={(e) => setAiDocument(e.target.value)}
-                rows={4}
-              />
+              {pdfFile ? (
+                <div className="flex items-center justify-between p-3 bg-primary/10 rounded-md border border-primary/30">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-medium">{pdfFileName}</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => { setPdfFile(null); setPdfFileName(''); }}
+                    className="h-8 w-8 p-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Textarea
+                  placeholder="Paste your notes, textbook content, or any study material here..."
+                  value={aiDocument}
+                  onChange={(e) => setAiDocument(e.target.value)}
+                  rows={4}
+                />
+              )}
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
                   <Upload className="h-4 w-4" />
-                  <span>Upload .txt or .md file</span>
+                  <span>Upload PDF, .txt, or .md file</span>
                   <input
                     type="file"
-                    accept=".txt,.md"
+                    accept=".pdf,.txt,.md,application/pdf"
                     className="hidden"
                     onChange={handleFileUpload}
                   />
@@ -463,7 +512,7 @@ const QuizQuestionsManager = ({ quiz, existingQuestions, onClose, onSaved }: Qui
               </Button>
               <Button
                 onClick={generateAIQuestions}
-                disabled={generating || (!aiTopic.trim() && !aiDocument.trim())}
+                disabled={generating || (!aiTopic.trim() && !aiDocument.trim() && !pdfFile)}
                 className="flex-1 bg-gradient-hero hover:shadow-glow transition-all"
               >
                 {generating ? (
