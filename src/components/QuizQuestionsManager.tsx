@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Plus, Trash2, Save, X } from "lucide-react";
+import { Plus, Trash2, Save, X, Sparkles, Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -32,6 +32,12 @@ const QuizQuestionsManager = ({ quiz, existingQuestions, onClose, onSaved }: Qui
       : [{ question_text: '', options: ['', '', '', ''], correct_answer: '', points: 1, question_type: 'multiple_choice' }]
   );
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [showAIDialog, setShowAIDialog] = useState(false);
+  const [aiTopic, setAiTopic] = useState(quiz.title || '');
+  const [aiDocument, setAiDocument] = useState('');
+  const [aiNumQuestions, setAiNumQuestions] = useState(5);
+  const [aiDifficulty, setAiDifficulty] = useState(quiz.difficulty || 'medium');
   const { toast } = useToast();
 
   const addQuestion = () => {
@@ -59,6 +65,98 @@ const QuizQuestionsManager = ({ quiz, existingQuestions, onClose, onSaved }: Qui
     newOptions[optionIndex] = value;
     updated[questionIndex] = { ...updated[questionIndex], options: newOptions };
     setQuestions(updated);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'text/plain' && !file.name.endsWith('.txt') && !file.name.endsWith('.md')) {
+      toast({
+        title: "Unsupported File",
+        description: "Please upload a .txt or .md file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      setAiDocument(text);
+      toast({
+        title: "File Loaded",
+        description: `Loaded ${file.name} (${text.length} characters)`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to read file",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const generateAIQuestions = async () => {
+    if (!aiTopic.trim() && !aiDocument.trim()) {
+      toast({
+        title: "Missing Input",
+        description: "Please enter a topic or upload course materials",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-quiz-questions', {
+        body: {
+          topic: aiTopic.trim(),
+          documentText: aiDocument.trim() || undefined,
+          numberOfQuestions: aiNumQuestions,
+          difficulty: aiDifficulty,
+        },
+      });
+
+      if (error) throw error;
+      
+      if (data.error) {
+        toast({
+          title: "Generation Failed",
+          description: data.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.questions && data.questions.length > 0) {
+        const formattedQuestions: Question[] = data.questions.map((q: any) => ({
+          question_text: q.question_text,
+          options: q.options.slice(0, 4),
+          correct_answer: q.correct_answer,
+          points: q.points || 1,
+          question_type: 'multiple_choice',
+        }));
+
+        // Add to existing questions or replace empty ones
+        const hasEmptyOnly = questions.length === 1 && !questions[0].question_text.trim();
+        setQuestions(hasEmptyOnly ? formattedQuestions : [...questions, ...formattedQuestions]);
+        
+        toast({
+          title: "Questions Generated!",
+          description: `Added ${formattedQuestions.length} AI-generated questions`,
+        });
+        setShowAIDialog(false);
+      }
+    } catch (error) {
+      console.error('AI generation error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate questions. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleSave = async () => {
@@ -155,120 +253,236 @@ const QuizQuestionsManager = ({ quiz, existingQuestions, onClose, onSaved }: Qui
   };
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Manage Questions - {quiz.title}</DialogTitle>
-          <DialogDescription>Add or edit questions for this quiz</DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={true} onOpenChange={onClose}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Manage Questions - {quiz.title}</DialogTitle>
+            <DialogDescription>Add or edit questions for this quiz</DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-6 mt-4">
-          {questions.map((question, qIndex) => (
-            <Card key={qIndex} className="bg-gradient-card border-border">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Question {qIndex + 1}</CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">{question.points} pt{question.points !== 1 ? 's' : ''}</Badge>
-                    {questions.length > 1 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeQuestion(qIndex)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Question Text *</label>
-                  <Textarea
-                    placeholder="Enter your question..."
-                    value={question.question_text}
-                    onChange={(e) => updateQuestion(qIndex, 'question_text', e.target.value)}
-                    rows={2}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Answer Options *</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {question.options.map((option, oIndex) => (
-                      <Input
-                        key={oIndex}
-                        placeholder={`Option ${oIndex + 1}`}
-                        value={option}
-                        onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Correct Answer *</label>
-                    <select
-                      className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
-                      value={question.correct_answer}
-                      onChange={(e) => updateQuestion(qIndex, 'correct_answer', e.target.value)}
-                    >
-                      <option value="">Select correct answer</option>
-                      {question.options.filter(o => o.trim()).map((option, oIndex) => (
-                        <option key={oIndex} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Points</label>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={question.points}
-                      onChange={(e) => updateQuestion(qIndex, 'points', parseInt(e.target.value) || 1)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-
-          <Button
-            variant="outline"
-            onClick={addQuestion}
-            className="w-full"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Question
-          </Button>
-
-          <div className="flex gap-3 pt-4">
+          <div className="space-y-6 mt-4">
+            {/* AI Generation Button */}
             <Button
               variant="outline"
-              onClick={onClose}
-              className="flex-1"
+              onClick={() => setShowAIDialog(true)}
+              className="w-full bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary/20 hover:to-accent/20 border-primary/30"
             >
-              <X className="h-4 w-4 mr-2" />
-              Cancel
+              <Sparkles className="h-4 w-4 mr-2 text-primary" />
+              Generate Questions with AI
             </Button>
+
+            {questions.map((question, qIndex) => (
+              <Card key={qIndex} className="bg-gradient-card border-border">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Question {qIndex + 1}</CardTitle>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">{question.points} pt{question.points !== 1 ? 's' : ''}</Badge>
+                      {questions.length > 1 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeQuestion(qIndex)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Question Text *</label>
+                    <Textarea
+                      placeholder="Enter your question..."
+                      value={question.question_text}
+                      onChange={(e) => updateQuestion(qIndex, 'question_text', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Answer Options *</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {question.options.map((option, oIndex) => (
+                        <Input
+                          key={oIndex}
+                          placeholder={`Option ${oIndex + 1}`}
+                          value={option}
+                          onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Correct Answer *</label>
+                      <select
+                        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                        value={question.correct_answer}
+                        onChange={(e) => updateQuestion(qIndex, 'correct_answer', e.target.value)}
+                      >
+                        <option value="">Select correct answer</option>
+                        {question.options.filter(o => o.trim()).map((option, oIndex) => (
+                          <option key={oIndex} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Points</label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={10}
+                        value={question.points}
+                        onChange={(e) => updateQuestion(qIndex, 'points', parseInt(e.target.value) || 1)}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
             <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 bg-gradient-hero hover:shadow-glow transition-all"
+              variant="outline"
+              onClick={addQuestion}
+              className="w-full"
             >
-              <Save className="h-4 w-4 mr-2" />
-              {saving ? 'Saving...' : 'Save Questions'}
+              <Plus className="h-4 w-4 mr-2" />
+              Add Question
             </Button>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="flex-1"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex-1 bg-gradient-hero hover:shadow-glow transition-all"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {saving ? 'Saving...' : 'Save Questions'}
+              </Button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Generation Dialog */}
+      <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              AI Question Generator
+            </DialogTitle>
+            <DialogDescription>
+              Generate quiz questions from a topic or course materials
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Topic / Subject</label>
+              <Input
+                placeholder="e.g., Photosynthesis, Zimbabwean History, Algebra..."
+                value={aiTopic}
+                onChange={(e) => setAiTopic(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Course Materials (Optional)</label>
+              <Textarea
+                placeholder="Paste your notes, textbook content, or any study material here..."
+                value={aiDocument}
+                onChange={(e) => setAiDocument(e.target.value)}
+                rows={4}
+              />
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+                  <Upload className="h-4 w-4" />
+                  <span>Upload .txt or .md file</span>
+                  <input
+                    type="file"
+                    accept=".txt,.md"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Number of Questions</label>
+                <select
+                  className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                  value={aiNumQuestions}
+                  onChange={(e) => setAiNumQuestions(parseInt(e.target.value))}
+                >
+                  <option value={3}>3 questions</option>
+                  <option value={5}>5 questions</option>
+                  <option value={10}>10 questions</option>
+                  <option value={15}>15 questions</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Difficulty</label>
+                <select
+                  className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                  value={aiDifficulty}
+                  onChange={(e) => setAiDifficulty(e.target.value)}
+                >
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowAIDialog(false)}
+                className="flex-1"
+                disabled={generating}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={generateAIQuestions}
+                disabled={generating || (!aiTopic.trim() && !aiDocument.trim())}
+                className="flex-1 bg-gradient-hero hover:shadow-glow transition-all"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
