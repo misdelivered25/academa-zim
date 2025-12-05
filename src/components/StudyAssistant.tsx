@@ -25,19 +25,25 @@ export const StudyAssistant = () => {
   }, [messages]);
 
   const streamChat = async (userMessage: string) => {
-    const CHAT_URL = `https://ozyugjyviyxxeuiadwaz.supabase.co/functions/v1/study-assistant`;
+    const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/study-assistant`;
     
     try {
+      console.log('Sending message to study assistant...');
       const response = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96eXVnanl2aXl4eGV1aWFkd2F6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NjcxNzgsImV4cCI6MjA3NDQ0MzE3OH0.kGGVK1vHNghegMLMg752PhqFau8VyNWr0LsboQu-mmM`
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
         },
         body: JSON.stringify({ messages: [...messages, { role: 'user', content: userMessage }] }),
       });
 
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
+        const errorBody = await response.text();
+        console.error('Error response:', errorBody);
+        
         if (response.status === 429) {
           toast({
             title: "Rate Limit",
@@ -54,7 +60,14 @@ export const StudyAssistant = () => {
           });
           return;
         }
-        throw new Error('Failed to get response');
+        
+        // Try to parse error message
+        try {
+          const errorJson = JSON.parse(errorBody);
+          throw new Error(errorJson.error || 'Failed to get response');
+        } catch {
+          throw new Error('Failed to get response');
+        }
       }
 
       if (!response.body) throw new Error('No response body');
@@ -96,15 +109,24 @@ export const StudyAssistant = () => {
               });
             }
           } catch (e) {
-            console.error('Parse error:', e);
+            // Ignore incomplete JSON chunks
           }
         }
+      }
+
+      // If we got no content at all, show an error
+      if (!assistantContent) {
+        toast({
+          title: "No Response",
+          description: "The assistant didn't respond. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Chat error:', error);
       toast({
         title: "Error",
-        description: "Failed to get response. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to get response. Please try again.",
         variant: "destructive",
       });
     }
