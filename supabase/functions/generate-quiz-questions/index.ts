@@ -1,9 +1,24 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import * as pdfParse from "npm:pdf-parse@1.1.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+async function extractTextFromPDF(base64Data: string): Promise<string> {
+  try {
+    // Remove data URL prefix if present
+    const base64Clean = base64Data.replace(/^data:application\/pdf;base64,/, '');
+    const pdfBuffer = Uint8Array.from(atob(base64Clean), c => c.charCodeAt(0));
+    
+    const data = await pdfParse.default(pdfBuffer);
+    return data.text || '';
+  } catch (error) {
+    console.error('PDF parsing error:', error);
+    throw new Error('Failed to parse PDF document');
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -11,18 +26,28 @@ serve(async (req) => {
   }
 
   try {
-    const { topic, documentText, numberOfQuestions = 5, difficulty = "medium" } = await req.json();
+    const { topic, documentText, pdfBase64, numberOfQuestions = 5, difficulty = "medium" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const content = documentText 
-      ? `Based on this document/material:\n\n${documentText}\n\nGenerate ${numberOfQuestions} quiz questions.`
+    let materialText = documentText || '';
+    
+    // Parse PDF if provided
+    if (pdfBase64) {
+      console.log("Parsing PDF document...");
+      const pdfText = await extractTextFromPDF(pdfBase64);
+      materialText = pdfText;
+      console.log(`Extracted ${pdfText.length} characters from PDF`);
+    }
+
+    const content = materialText 
+      ? `Based on this document/material:\n\n${materialText.slice(0, 15000)}\n\nGenerate ${numberOfQuestions} quiz questions that test understanding of the key concepts.`
       : `Generate ${numberOfQuestions} quiz questions about: ${topic}`;
 
-    console.log("Generating quiz questions...", { topic, hasDocument: !!documentText, numberOfQuestions, difficulty });
+    console.log("Generating quiz questions...", { topic, hasDocument: !!materialText, numberOfQuestions, difficulty });
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -42,6 +67,7 @@ Create questions that are:
 - Educational and test understanding, not just memorization
 - Have exactly 4 answer options each
 - Have one clearly correct answer
+- Based directly on the provided material when available
 
 For Zimbabwean students, consider local context when relevant.`
           },
