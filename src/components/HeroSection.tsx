@@ -7,10 +7,11 @@ import {
   MapPin, 
   Database, 
   Calendar,
-  Award
+  Award,
+  ArrowRight
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import heroImage from "@/assets/hero-education.webp";
+import CosmicBackground from "@/components/CosmicBackground";
 
 const HeroSection = () => {
   const universities = [
@@ -22,82 +23,76 @@ const HeroSection = () => {
     "Great Zimbabwe University"
   ];
 
+  const featureCards = [
+    {
+      icon: Calendar,
+      title: "Assignment Tracker",
+      description: "Never miss a deadline with our integrated assignment and exam calendar",
+      path: "/study-center",
+      colorClass: "bg-primary/10 text-primary"
+    },
+    {
+      icon: Database,
+      title: "Research Libraries",
+      description: "Access digital libraries and databases from all participating universities",
+      path: "/libraries",
+      colorClass: "bg-secondary/10 text-secondary"
+    },
+    {
+      icon: MapPin,
+      title: "Campus Navigation",
+      description: "Interactive maps and directions for all university campuses",
+      path: "/campus",
+      colorClass: "bg-primary/10 text-primary"
+    },
+    {
+      icon: Award,
+      title: "Exam Preparation",
+      description: "Study guides, past papers, and collaborative study groups",
+      path: "/study-center",
+      colorClass: "bg-secondary/10 text-secondary"
+    }
+  ];
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Cosmic Galaxy Background */}
-      <div className="absolute inset-0 bg-[#020817]">
-        <div className="absolute inset-0 opacity-70"
-          style={{
-            background: `
-              radial-gradient(ellipse at 15% 20%, rgba(30, 58, 138, 0.4) 0%, transparent 50%),
-              radial-gradient(ellipse at 85% 80%, rgba(29, 78, 216, 0.3) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.25) 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 30%, rgba(59, 130, 246, 0.3) 0%, transparent 45%),
-              radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.25) 0%, transparent 40%),
-              radial-gradient(ellipse at 90% 10%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
-              radial-gradient(circle at 20% 90%, rgba(29, 78, 216, 0.3) 0%, transparent 45%)
-            `
-          }}
-        />
-        {/* Stars effect */}
-        <div className="absolute inset-0 opacity-50"
-          style={{
-            backgroundImage: `
-              radial-gradient(2px 2px at 20% 30%, white, transparent),
-              radial-gradient(2px 2px at 60% 70%, white, transparent),
-              radial-gradient(1px 1px at 50% 50%, white, transparent),
-              radial-gradient(1px 1px at 80% 10%, white, transparent),
-              radial-gradient(2px 2px at 90% 60%, white, transparent),
-              radial-gradient(1px 1px at 33% 85%, white, transparent),
-              radial-gradient(1px 1px at 15% 55%, white, transparent)
-            `,
-            backgroundSize: '200% 200%',
-            backgroundPosition: '50% 50%'
-          }}
-        />
-        {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/40 to-background/30"></div>
-        
-        {/* Shooting stars */}
-        <div className="absolute top-[10%] left-[10%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
-        <div className="absolute top-[30%] left-[20%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
-        <div className="absolute top-[60%] left-[70%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '2s', animationDuration: '3.5s' }}></div>
-      </div>
+      <CosmicBackground overlayOpacity={40} />
       
       {/* Content */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="relative container-responsive py-20 lg:py-28">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="bg-gradient-accent rounded-full px-3 py-1">
+          <div className="space-y-8 text-center lg:text-left">
+            <div className="space-y-6">
+              <div className="inline-flex items-center justify-center lg:justify-start">
+                <div className="bg-gradient-accent rounded-full px-4 py-1.5 shadow-sm">
                   <span className="text-sm font-semibold text-secondary-foreground">All Zimbabwe Universities</span>
                 </div>
               </div>
               
-              <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight tracking-tight">
                 Your Academic
-                <span className="block bg-gradient-hero bg-clip-text text-transparent">
+                <span className="block gradient-text mt-2">
                   Success Hub
                 </span>
               </h1>
               
-              <p className="text-xl text-muted-foreground max-w-2xl">
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0">
                 Founded by <strong className="text-foreground">Miguel Hore</strong>, connecting every university database in Zimbabwe. Access assignments, exam prep, 
-                research libraries, campus maps, and academic resources - all in one platform.
+                research libraries, and academic resources.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link to="/dashboard">
-                <Button size="lg" className="bg-gradient-hero hover:shadow-glow transition-all">
+                <Button size="lg" className="w-full sm:w-auto bg-gradient-hero btn-glow text-base font-semibold group">
                   <BookOpen className="mr-2 h-5 w-5" />
                   Start Learning
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <Link to="/signup">
-                <Button variant="outline" size="lg" className="hover:bg-accent transition-all">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto text-base font-semibold border-border/50 hover:bg-accent transition-all">
                   <Users className="mr-2 h-5 w-5" />
                   Join Community
                 </Button>
@@ -105,97 +100,55 @@ const HeroSection = () => {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">15+</div>
-                <div className="text-sm text-muted-foreground">Universities</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">50K+</div>
-                <div className="text-sm text-muted-foreground">Students</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">1M+</div>
-                <div className="text-sm text-muted-foreground">Resources</div>
-              </div>
+            <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-8 border-t border-border/50">
+              {[
+                { value: "15+", label: "Universities" },
+                { value: "50K+", label: "Students" },
+                { value: "1M+", label: "Resources" }
+              ].map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-2xl sm:text-3xl font-bold gradient-text">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Right Content - Feature Cards */}
-          <div className="space-y-6">
-            <Link to="/study-center" className="block">
-              <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 cursor-pointer hover:-translate-y-1">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-primary/10 rounded-lg p-3">
-                    <Calendar className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">Assignment Tracker</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Never miss a deadline with our integrated assignment and exam calendar
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-
-            <Link to="/libraries" className="block">
-              <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 cursor-pointer hover:-translate-y-1">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-secondary/10 rounded-lg p-3">
-                    <Database className="h-6 w-6 text-secondary" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">Research Libraries</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Access digital libraries and databases from all participating universities
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-
-            <Link to="/campus" className="block">
-              <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 cursor-pointer hover:-translate-y-1">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-primary/10 rounded-lg p-3">
-                    <MapPin className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">Campus Navigation</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Interactive maps and directions for all university campuses
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-
-            <Link to="/study-center" className="block">
-              <Card className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 cursor-pointer hover:-translate-y-1">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-secondary/10 rounded-lg p-3">
-                    <Award className="h-6 w-6 text-secondary" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">Exam Preparation</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Study guides, past papers, and collaborative study groups
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </Link>
+          <div className="space-y-4 lg:space-y-5">
+            {featureCards.map((card, index) => {
+              const IconComponent = card.icon;
+              return (
+                <Link key={index} to={card.path} className="block">
+                  <Card className="p-5 lg:p-6 glass-card hover-lift group">
+                    <div className="flex items-start space-x-4">
+                      <div className={`rounded-xl p-3 ${card.colorClass} transition-transform group-hover:scale-110`}>
+                        <IconComponent className="h-6 w-6" />
+                      </div>
+                      <div className="space-y-1.5 flex-1">
+                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                          {card.title}
+                        </h3>
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {card.description}
+                        </p>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
         {/* University Logos Scroll */}
-        <div className="mt-16 pt-8 border-t border-border">
+        <div className="mt-16 lg:mt-20 pt-8 border-t border-border/50">
           <p className="text-center text-muted-foreground text-sm mb-8">
             Connecting students across Zimbabwe's leading universities
           </p>
           <TooltipProvider>
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-sm text-muted-foreground">
               {universities.map((uni, index) => (
                 uni === "Chinhoyi University of Technology" ? (
                   <Tooltip key={index}>
@@ -204,7 +157,7 @@ const HeroSection = () => {
                         href="https://www.cut.ac.zw" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="px-4 py-2 bg-accent/50 rounded-full cursor-pointer hover:bg-accent transition-colors inline-block"
+                        className="px-4 py-2 bg-accent/70 rounded-full cursor-pointer hover:bg-accent hover:text-foreground transition-all text-xs sm:text-sm"
                       >
                         {uni}
                       </a>
@@ -212,15 +165,12 @@ const HeroSection = () => {
                     <TooltipContent className="max-w-md p-4">
                       <div className="space-y-2">
                         <h4 className="font-semibold">Historical Background</h4>
-                        <p className="text-sm">Chinhoyi University of Technology (CUT) was established in 2001 as a state-owned university focused on technological education and applied sciences. Located in Chinhoyi, Mashonaland West Province, the university has grown to become one of Zimbabwe's leading institutions for technology-oriented education.</p>
-                        <h4 className="font-semibold mt-3">Vision and Mission</h4>
-                        <p className="text-sm"><strong>Vision:</strong> To be a premier technological university producing innovative graduates for sustainable development.</p>
-                        <p className="text-sm"><strong>Mission:</strong> To provide high-quality technological education, research, and community engagement through applied learning and innovation.</p>
+                        <p className="text-sm">Chinhoyi University of Technology (CUT) was established in 2001 as a state-owned university focused on technological education and applied sciences.</p>
                       </div>
                     </TooltipContent>
                   </Tooltip>
                 ) : (
-                  <div key={index} className="px-4 py-2 bg-accent/50 rounded-full">
+                  <div key={index} className="px-4 py-2 bg-accent/50 rounded-full text-xs sm:text-sm hover:bg-accent/70 transition-colors">
                     {uni}
                   </div>
                 )
