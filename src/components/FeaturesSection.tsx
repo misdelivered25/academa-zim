@@ -10,8 +10,10 @@ import {
   Award,
   Search,
   Bell,
-  Clock
+  Clock,
+  ArrowRight
 } from "lucide-react";
+import CosmicBackground from "@/components/CosmicBackground";
 
 const FeaturesSection = () => {
   const features = [
@@ -81,64 +83,26 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="relative py-20 overflow-hidden">
-      {/* Cosmic Galaxy Background */}
-      <div className="absolute inset-0 bg-[#020817]">
-        <div className="absolute inset-0 opacity-70"
-          style={{
-            background: `
-              radial-gradient(ellipse at 15% 20%, rgba(30, 58, 138, 0.4) 0%, transparent 50%),
-              radial-gradient(ellipse at 85% 80%, rgba(29, 78, 216, 0.3) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.25) 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 30%, rgba(59, 130, 246, 0.3) 0%, transparent 45%),
-              radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.25) 0%, transparent 40%),
-              radial-gradient(ellipse at 90% 10%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
-              radial-gradient(circle at 20% 90%, rgba(29, 78, 216, 0.3) 0%, transparent 45%)
-            `
-          }}
-        />
-        {/* Stars effect */}
-        <div className="absolute inset-0 opacity-50"
-          style={{
-            backgroundImage: `
-              radial-gradient(2px 2px at 20% 30%, white, transparent),
-              radial-gradient(2px 2px at 60% 70%, white, transparent),
-              radial-gradient(1px 1px at 50% 50%, white, transparent),
-              radial-gradient(1px 1px at 80% 10%, white, transparent),
-              radial-gradient(2px 2px at 90% 60%, white, transparent),
-              radial-gradient(1px 1px at 33% 85%, white, transparent),
-              radial-gradient(1px 1px at 15% 55%, white, transparent)
-            `,
-            backgroundSize: '200% 200%',
-            backgroundPosition: '50% 50%'
-          }}
-        />
-        {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-background/60"></div>
-        
-        {/* Shooting stars */}
-        <div className="absolute top-[15%] left-[15%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}></div>
-        <div className="absolute top-[40%] left-[60%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '1.5s', animationDuration: '4s' }}></div>
-        <div className="absolute top-[70%] left-[30%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '2.5s', animationDuration: '3s' }}></div>
-      </div>
+    <section className="relative section-padding overflow-hidden" id="features">
+      <CosmicBackground overlayOpacity={65} />
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative container-responsive">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-12 lg:mb-16 max-w-3xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight">
             Everything You Need for 
-            <span className="block bg-gradient-hero bg-clip-text text-transparent">
+            <span className="block gradient-text mt-2">
               Academic Success
             </span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg text-muted-foreground">
             Our comprehensive platform brings together all the tools and resources 
             you need to excel in your university studies across Zimbabwe.
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             const isPrimary = feature.color === "primary";
@@ -147,20 +111,18 @@ const FeaturesSection = () => {
               <Link 
                 key={index}
                 to={feature.path}
-                className="block"
+                className="block group"
               >
-                <Card 
-                  className="p-6 bg-gradient-card border-border hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 group cursor-pointer h-full"
-                >
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
+                <Card className="p-6 glass-card hover-lift h-full">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${
                     isPrimary ? 'bg-primary/10' : 'bg-secondary/10'
                   }`}>
                     <IconComponent className={`h-6 w-6 ${
                       isPrimary ? 'text-primary' : 'text-secondary'
-                    } group-hover:scale-110 transition-transform`} />
+                    }`} />
                   </div>
                   
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {feature.title}
                   </h3>
                   
@@ -175,21 +137,22 @@ const FeaturesSection = () => {
 
         {/* Call to Action */}
         <div className="text-center">
-          <div className="bg-gradient-card rounded-2xl p-8 border border-border shadow-elegant max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
+          <div className="glass-card rounded-2xl p-8 lg:p-10 shadow-elegant max-w-2xl mx-auto">
+            <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
               Ready to Transform Your Studies?
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-muted-foreground mb-8">
               Join thousands of students already using ZimUni Hub to achieve academic excellence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/signup">
-                <Button size="lg" className="bg-gradient-hero hover:shadow-glow transition-all">
+                <Button size="lg" className="w-full sm:w-auto bg-gradient-hero btn-glow font-semibold group">
                   Get Started Free
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <Link to="/contact">
-                <Button variant="outline" size="lg" className="hover:bg-accent transition-all">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto font-semibold">
                   Learn More
                 </Button>
               </Link>

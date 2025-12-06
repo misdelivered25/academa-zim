@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle } from "lucide-react";
+import CosmicBackground from "@/components/CosmicBackground";
 
 const CTASection = () => {
   const benefits = [
@@ -13,64 +14,26 @@ const CTASection = () => {
   ];
 
   return (
-    <section className="relative py-20 overflow-hidden">
-      {/* Cosmic Galaxy Background */}
-      <div className="absolute inset-0 bg-[#020817]">
-        <div className="absolute inset-0 opacity-70"
-          style={{
-            background: `
-              radial-gradient(ellipse at 15% 20%, rgba(30, 58, 138, 0.4) 0%, transparent 50%),
-              radial-gradient(ellipse at 85% 80%, rgba(29, 78, 216, 0.3) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.25) 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 30%, rgba(59, 130, 246, 0.3) 0%, transparent 45%),
-              radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.25) 0%, transparent 40%),
-              radial-gradient(ellipse at 90% 10%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
-              radial-gradient(circle at 20% 90%, rgba(29, 78, 216, 0.3) 0%, transparent 45%)
-            `
-          }}
-        />
-        {/* Stars effect */}
-        <div className="absolute inset-0 opacity-50"
-          style={{
-            backgroundImage: `
-              radial-gradient(2px 2px at 20% 30%, white, transparent),
-              radial-gradient(2px 2px at 60% 70%, white, transparent),
-              radial-gradient(1px 1px at 50% 50%, white, transparent),
-              radial-gradient(1px 1px at 80% 10%, white, transparent),
-              radial-gradient(2px 2px at 90% 60%, white, transparent),
-              radial-gradient(1px 1px at 33% 85%, white, transparent),
-              radial-gradient(1px 1px at 15% 55%, white, transparent)
-            `,
-            backgroundSize: '200% 200%',
-            backgroundPosition: '50% 50%'
-          }}
-        />
-        {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-background/60"></div>
-        
-        {/* Shooting stars */}
-        <div className="absolute top-[25%] left-[35%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '1s', animationDuration: '3.6s' }}></div>
-        <div className="absolute top-[55%] left-[75%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '2s', animationDuration: '3.3s' }}></div>
-        <div className="absolute top-[80%] left-[20%] w-1 h-1 bg-white rounded-full animate-shooting-star" style={{ animationDelay: '3s', animationDuration: '4s' }}></div>
-      </div>
+    <section className="relative section-padding overflow-hidden">
+      <CosmicBackground overlayOpacity={50} showShootingStars={true} />
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-hero rounded-3xl p-12 lg:p-16 shadow-glow">
+      <div className="relative container-responsive">
+        <div className="bg-gradient-hero rounded-2xl lg:rounded-3xl p-8 sm:p-10 lg:p-16 shadow-glow">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl lg:text-5xl font-bold text-primary-foreground mb-6">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-primary-foreground mb-6 tracking-tight">
               Ready to Transform Your Academic Journey?
             </h2>
-            <p className="text-xl text-primary-foreground/90 mb-8">
+            <p className="text-lg lg:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
               Join thousands of students who are already excelling with ZimUni Hub. 
               Get instant access to all features - no credit card required.
             </p>
 
             {/* Benefits List */}
-            <div className="grid md:grid-cols-2 gap-4 mb-10 text-left max-w-2xl mx-auto">
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 mb-10 text-left max-w-2xl mx-auto">
               {benefits.map((benefit, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <CheckCircle className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-primary-foreground/90">{benefit}</span>
+                  <span className="text-primary-foreground/90 text-sm sm:text-base">{benefit}</span>
                 </div>
               ))}
             </div>
@@ -80,7 +43,7 @@ const CTASection = () => {
               <Link to="/signup">
                 <Button 
                   size="lg" 
-                  className="bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-lg hover:shadow-xl transition-all group"
+                  className="w-full sm:w-auto bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-lg hover:shadow-xl transition-all group font-semibold"
                 >
                   Get Started Free
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -90,7 +53,7 @@ const CTASection = () => {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/20"
+                  className="w-full sm:w-auto bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20 font-semibold"
                 >
                   Contact Us
                 </Button>
