@@ -50,6 +50,7 @@ import CampusMap from "@/components/CampusMap";
 import RealtimeDashboard from "@/components/RealtimeDashboard";
 import { NotificationManager } from "@/components/NotificationManager";
 import CosmicBackground from "@/components/CosmicBackground";
+import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 
 type Assignment = {
   id: string;
@@ -386,14 +387,8 @@ const Dashboard = () => {
       <div className="min-h-screen bg-background relative">
         <CosmicBackground showStars={true} showShootingStars={false} overlayOpacity={95} />
         <Header />
-        <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
-              <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary" />
-            </div>
-            <p className="text-muted-foreground animate-pulse">Loading your dashboard...</p>
-          </div>
+        <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+          <DashboardSkeleton />
         </main>
       </div>
     );
