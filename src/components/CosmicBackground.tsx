@@ -28,20 +28,20 @@ const CosmicBackground = ({
   return (
     <div className={`absolute inset-0 ${className}`}>
       {/* Base cosmic gradient */}
-      <div className="absolute inset-0 bg-[hsl(222_84%_4.9%)]" />
+      <div className="absolute inset-0 bg-[hsl(270_84%_4%)]" />
       
       {/* Nebula gradients */}
       <div
         className="absolute inset-0 opacity-70"
         style={{
           background: `
-            radial-gradient(ellipse at 15% 20%, hsl(225 84% 35% / 0.4) 0%, transparent 50%),
-            radial-gradient(ellipse at 85% 80%, hsl(217 84% 55% / 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 50% 50%, hsl(210 84% 60% / 0.25) 0%, transparent 60%),
-            radial-gradient(ellipse at 70% 30%, hsl(210 84% 60% / 0.3) 0%, transparent 45%),
-            radial-gradient(circle at 30% 70%, hsl(225 84% 35% / 0.25) 0%, transparent 40%),
-            radial-gradient(ellipse at 90% 10%, hsl(210 84% 60% / 0.25) 0%, transparent 50%),
-            radial-gradient(circle at 10% 90%, hsl(217 84% 55% / 0.3) 0%, transparent 45%)
+            radial-gradient(ellipse at 15% 20%, hsl(280 84% 35% / 0.5) 0%, transparent 50%),
+            radial-gradient(ellipse at 85% 80%, hsl(260 84% 55% / 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, hsl(290 70% 50% / 0.3) 0%, transparent 60%),
+            radial-gradient(ellipse at 70% 30%, hsl(270 84% 60% / 0.35) 0%, transparent 45%),
+            radial-gradient(circle at 30% 70%, hsl(300 70% 40% / 0.3) 0%, transparent 40%),
+            radial-gradient(ellipse at 90% 10%, hsl(250 84% 60% / 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 10% 90%, hsl(280 84% 55% / 0.35) 0%, transparent 45%)
           `,
         }}
       />
