@@ -150,7 +150,37 @@ const HeroSection = () => {
           <TooltipProvider>
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-sm text-muted-foreground">
               {universities.map((uni, index) => (
-                uni === "Chinhoyi University of Technology" ? (
+                uni === "University of Zimbabwe" ? (
+                  <Tooltip key={index}>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="https://www.uz.ac.zw/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-accent/70 rounded-full cursor-pointer hover:bg-accent hover:text-foreground transition-all text-xs sm:text-sm"
+                      >
+                        {uni}
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-lg p-4" side="top">
+                      <div className="space-y-3">
+                        <div>
+                          <h4 className="font-semibold text-base">University of Zimbabwe</h4>
+                          <p className="text-xs text-muted-foreground">Harare • Founded 1952</p>
+                        </div>
+                        <p className="text-sm">Founded as the University College of Rhodesia and Nyasaland, later becoming University of Rhodesia and then University of Zimbabwe after independence in 1980. It is the oldest and largest university in Zimbabwe.</p>
+                        <div>
+                          <h5 className="font-medium text-sm mb-1">Academic Structure</h5>
+                          <p className="text-xs">11 Faculties: Agriculture; Arts & Humanities; Business & Economics; Computer Engineering & Informatics; Education; Engineering & Built Environment; Law; Medicine & Health Sciences; Science; Social & Behavioural Sciences; Veterinary Science.</p>
+                        </div>
+                        <div>
+                          <h5 className="font-medium text-sm mb-1">Student Population</h5>
+                          <p className="text-xs">20,000+ students with undergraduate, postgraduate degrees, diplomas, and research opportunities including the Lake Kariba Research Station.</p>
+                        </div>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : uni === "Chinhoyi University of Technology" ? (
                   <Tooltip key={index}>
                     <TooltipTrigger asChild>
                       <a 
