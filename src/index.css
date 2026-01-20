@@ -9,25 +9,25 @@ All colors MUST be HSL for optimal theming support.
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 222 47% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 222 47% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 222 47% 8%;
 
     /* Academic Blue Theme - Refined */
-    --primary: 217 91% 60%;
+    --primary: 217 91% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 217 91% 70%;
+    --primary-glow: 217 91% 60%;
 
     /* Gold Accent - Warmer */
-    --secondary: 45 93% 47%;
-    --secondary-foreground: 30 20% 10%;
+    --secondary: 45 93% 42%;
+    --secondary-foreground: 30 25% 8%;
 
     --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215 20% 35%;
 
     --accent: 217 35% 96%;
     --accent-foreground: 217 91% 60%;
