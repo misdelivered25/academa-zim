@@ -12,10 +12,203 @@ import {
   GraduationCap,
   Building2,
   FlaskConical,
-  ExternalLink
+  ExternalLink,
+  Microscope,
+  BookMarked,
+  Landmark
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import CosmicBackground from "@/components/CosmicBackground";
+
+interface UniversityInfo {
+  name: string;
+  shortName: string;
+  location: string;
+  founded: string;
+  website: string;
+  description: string;
+  stats: {
+    icon: React.ElementType;
+    title: string;
+    subtitle: string;
+  }[];
+  highlight?: {
+    icon: React.ElementType;
+    title: string;
+    description: string;
+  };
+}
+
+const universityData: Record<string, UniversityInfo> = {
+  "University of Zimbabwe": {
+    name: "University of Zimbabwe",
+    shortName: "UZ",
+    location: "Harare",
+    founded: "1952",
+    website: "https://www.uz.ac.zw/",
+    description: "The oldest and largest university in Zimbabwe. Originally founded as the University College of Rhodesia and Nyasaland.",
+    stats: [
+      { icon: Building2, title: "11 Faculties", subtitle: "Including Medicine, Law, Engineering" },
+      { icon: Users, title: "20,000+", subtitle: "Students enrolled" }
+    ],
+    highlight: {
+      icon: FlaskConical,
+      title: "Research Excellence",
+      description: "Lake Kariba Research Station & community outreach programs"
+    }
+  },
+  "National University of Science and Technology": {
+    name: "National University of Science and Technology",
+    shortName: "NUST",
+    location: "Bulawayo",
+    founded: "1991",
+    website: "https://www.nust.ac.zw/",
+    description: "Zimbabwe's second largest university, established to focus on science, technology, and engineering education.",
+    stats: [
+      { icon: Building2, title: "7 Faculties", subtitle: "Science, Engineering, Medicine" },
+      { icon: Users, title: "15,000+", subtitle: "Students enrolled" }
+    ],
+    highlight: {
+      icon: Microscope,
+      title: "Innovation Hub",
+      description: "Leading in technological research and industrial partnerships"
+    }
+  },
+  "Midlands State University": {
+    name: "Midlands State University",
+    shortName: "MSU",
+    location: "Gweru",
+    founded: "1999",
+    website: "https://www.msu.ac.zw/",
+    description: "One of Zimbabwe's fastest-growing universities, known for its diverse academic programs and vibrant campus life.",
+    stats: [
+      { icon: Building2, title: "9 Faculties", subtitle: "Arts, Commerce, Science, Law" },
+      { icon: Users, title: "25,000+", subtitle: "Students enrolled" }
+    ],
+    highlight: {
+      icon: BookMarked,
+      title: "Academic Excellence",
+      description: "Strong focus on research, innovation, and community engagement"
+    }
+  },
+  "Chinhoyi University of Technology": {
+    name: "Chinhoyi University of Technology",
+    shortName: "CUT",
+    location: "Chinhoyi",
+    founded: "2001",
+    website: "https://www.cut.ac.zw/",
+    description: "A state-owned university focused on technological education and applied sciences.",
+    stats: [
+      { icon: Building2, title: "6 Schools", subtitle: "Technology, Agriculture, Business" },
+      { icon: Users, title: "8,000+", subtitle: "Students enrolled" }
+    ],
+    highlight: {
+      icon: FlaskConical,
+      title: "Technology Focus",
+      description: "Specializing in applied sciences and technological innovation"
+    }
+  },
+  "Bindura University of Science Education": {
+    name: "Bindura University of Science Education",
+    shortName: "BUSE",
+    location: "Bindura",
+    founded: "1996",
+    website: "https://www.buse.ac.zw/",
+    description: "Specializes in science education and teacher training, producing highly qualified science educators for Zimbabwe.",
+    stats: [
+      { icon: Building2, title: "4 Faculties", subtitle: "Science, Agriculture, Commerce" },
+      { icon: Users, title: "6,000+", subtitle: "Students enrolled" }
+    ],
+    highlight: {
+      icon: GraduationCap,
+      title: "Teacher Training",
+      description: "Leading institution for science education and pedagogy"
+    }
+  },
+  "Great Zimbabwe University": {
+    name: "Great Zimbabwe University",
+    shortName: "GZU",
+    location: "Masvingo",
+    founded: "1999",
+    website: "https://www.gzu.ac.zw/",
+    description: "Named after the historic Great Zimbabwe monument, offering diverse programs with a focus on heritage and culture.",
+    stats: [
+      { icon: Building2, title: "7 Faculties", subtitle: "Education, Arts, Commerce, Law" },
+      { icon: Users, title: "12,000+", subtitle: "Students enrolled" }
+    ],
+    highlight: {
+      icon: Landmark,
+      title: "Cultural Heritage",
+      description: "Strong emphasis on Zimbabwean culture and heritage studies"
+    }
+  }
+};
+
+const UniversityTooltipCard = ({ uni }: { uni: UniversityInfo }) => {
+  const HighlightIcon = uni.highlight?.icon || FlaskConical;
+  
+  return (
+    <div className="bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-primary/20 to-secondary/20 px-4 py-3 border-b border-border/50">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/20">
+            <GraduationCap className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h4 className="font-semibold text-base text-foreground">{uni.name}</h4>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <MapPin className="h-3 w-3" />
+              <span>{uni.location}</span>
+              <span className="text-border">•</span>
+              <span>Est. {uni.founded}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Content */}
+      <div className="p-4 space-y-3">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {uni.description}
+        </p>
+        
+        <div className="grid grid-cols-2 gap-3">
+          {uni.stats.map((stat, idx) => {
+            const StatIcon = stat.icon;
+            return (
+              <div key={idx} className="flex items-start gap-2 p-2 rounded-lg bg-accent/50">
+                <StatIcon className="h-4 w-4 text-primary mt-0.5" />
+                <div>
+                  <p className="text-xs font-medium text-foreground">{stat.title}</p>
+                  <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        
+        {uni.highlight && (
+          <div className="flex items-start gap-2 p-2 rounded-lg bg-accent/50">
+            <HighlightIcon className="h-4 w-4 text-primary mt-0.5" />
+            <div>
+              <p className="text-xs font-medium text-foreground">{uni.highlight.title}</p>
+              <p className="text-xs text-muted-foreground">{uni.highlight.description}</p>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Footer */}
+      <div className="px-4 py-2 bg-accent/30 border-t border-border/50">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-muted-foreground">Click to visit official website</span>
+          <ExternalLink className="h-3 w-3 text-muted-foreground" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const HeroSection = () => {
   const universities = [
@@ -153,146 +346,36 @@ const HeroSection = () => {
           </p>
           <TooltipProvider>
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-sm text-muted-foreground">
-              {universities.map((uni, index) => (
-                uni === "University of Zimbabwe" ? (
-                  <Tooltip key={index}>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href="https://www.uz.ac.zw/" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full cursor-pointer hover:from-primary/30 hover:to-secondary/30 hover:text-foreground transition-all text-xs sm:text-sm border border-primary/20 hover:border-primary/40 flex items-center gap-2"
-                      >
-                        <GraduationCap className="h-3.5 w-3.5" />
-                        {uni}
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-md p-0 overflow-hidden" side="top">
-                      <div className="bg-gradient-to-br from-primary/10 via-background to-secondary/10">
-                        {/* Header */}
-                        <div className="bg-gradient-to-r from-primary/20 to-secondary/20 px-4 py-3 border-b border-border/50">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-primary/20">
-                              <GraduationCap className="h-5 w-5 text-primary" />
-                            </div>
-                            <div>
-                              <h4 className="font-semibold text-base text-foreground">University of Zimbabwe</h4>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <MapPin className="h-3 w-3" />
-                                <span>Harare</span>
-                                <span className="text-border">•</span>
-                                <span>Est. 1952</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="p-4 space-y-3">
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            The oldest and largest university in Zimbabwe. Originally founded as the University College of Rhodesia and Nyasaland.
-                          </p>
-                          
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="flex items-start gap-2 p-2 rounded-lg bg-accent/50">
-                              <Building2 className="h-4 w-4 text-primary mt-0.5" />
-                              <div>
-                                <p className="text-xs font-medium text-foreground">11 Faculties</p>
-                                <p className="text-xs text-muted-foreground">Including Medicine, Law, Engineering</p>
-                              </div>
-                            </div>
-                            <div className="flex items-start gap-2 p-2 rounded-lg bg-accent/50">
-                              <Users className="h-4 w-4 text-secondary mt-0.5" />
-                              <div>
-                                <p className="text-xs font-medium text-foreground">20,000+</p>
-                                <p className="text-xs text-muted-foreground">Students enrolled</p>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start gap-2 p-2 rounded-lg bg-accent/50">
-                            <FlaskConical className="h-4 w-4 text-primary mt-0.5" />
-                            <div>
-                              <p className="text-xs font-medium text-foreground">Research Excellence</p>
-                              <p className="text-xs text-muted-foreground">Lake Kariba Research Station & community outreach programs</p>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Footer */}
-                        <div className="px-4 py-2 bg-accent/30 border-t border-border/50">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">Click to visit official website</span>
-                            <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                          </div>
-                        </div>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                ) : uni === "Chinhoyi University of Technology" ? (
-                  <Tooltip key={index}>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href="https://www.cut.ac.zw" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full cursor-pointer hover:from-primary/30 hover:to-secondary/30 hover:text-foreground transition-all text-xs sm:text-sm border border-primary/20 hover:border-primary/40 flex items-center gap-2"
-                      >
-                        <GraduationCap className="h-3.5 w-3.5" />
-                        {uni}
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-md p-0 overflow-hidden" side="top">
-                      <div className="bg-gradient-to-br from-primary/10 via-background to-secondary/10">
-                        {/* Header */}
-                        <div className="bg-gradient-to-r from-primary/20 to-secondary/20 px-4 py-3 border-b border-border/50">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-primary/20">
-                              <GraduationCap className="h-5 w-5 text-primary" />
-                            </div>
-                            <div>
-                              <h4 className="font-semibold text-base text-foreground">Chinhoyi University of Technology</h4>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <MapPin className="h-3 w-3" />
-                                <span>Chinhoyi</span>
-                                <span className="text-border">•</span>
-                                <span>Est. 2001</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="p-4 space-y-3">
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            A state-owned university focused on technological education and applied sciences.
-                          </p>
-                          
-                          <div className="flex items-start gap-2 p-2 rounded-lg bg-accent/50">
-                            <FlaskConical className="h-4 w-4 text-primary mt-0.5" />
-                            <div>
-                              <p className="text-xs font-medium text-foreground">Technology Focus</p>
-                              <p className="text-xs text-muted-foreground">Specializing in applied sciences and technological innovation</p>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Footer */}
-                        <div className="px-4 py-2 bg-accent/30 border-t border-border/50">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">Click to visit official website</span>
-                            <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                          </div>
-                        </div>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                ) : (
+              {universities.map((uniName, index) => {
+                const uniInfo = universityData[uniName];
+                
+                if (uniInfo) {
+                  return (
+                    <Tooltip key={index}>
+                      <TooltipTrigger asChild>
+                        <a 
+                          href={uniInfo.website}
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full cursor-pointer hover:from-primary/30 hover:to-secondary/30 hover:text-foreground transition-all text-xs sm:text-sm border border-primary/20 hover:border-primary/40 flex items-center gap-2"
+                        >
+                          <GraduationCap className="h-3.5 w-3.5" />
+                          {uniName}
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-md p-0 overflow-hidden" side="top">
+                        <UniversityTooltipCard uni={uniInfo} />
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                }
+                
+                return (
                   <div key={index} className="px-4 py-2 bg-accent/50 rounded-full text-xs sm:text-sm hover:bg-accent/70 transition-colors">
-                    {uni}
+                    {uniName}
                   </div>
-                )
-              ))}
+                );
+              })}
             </div>
           </TooltipProvider>
         </div>
