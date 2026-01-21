@@ -357,9 +357,9 @@ const HeroSection = () => {
                           href={uniInfo.website}
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full cursor-pointer hover:from-primary/30 hover:to-secondary/30 hover:text-foreground transition-all text-xs sm:text-sm border border-primary/20 hover:border-primary/40 flex items-center gap-2"
+                          className="px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full cursor-pointer hover:from-primary/30 hover:to-secondary/30 hover:text-foreground transition-all text-xs sm:text-sm border border-primary/20 hover:border-primary/40 flex items-center gap-2 hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] hover:scale-105 hover:animate-pulse"
                         >
-                          <GraduationCap className="h-3.5 w-3.5" />
+                          <GraduationCap className="h-3.5 w-3.5 transition-transform hover:rotate-12" />
                           {uniName}
                         </a>
                       </TooltipTrigger>
