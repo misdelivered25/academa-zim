@@ -459,34 +459,56 @@ const Dashboard = () => {
 
         {/* Tabs for different sections */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 md:grid-cols-7 gap-1 bg-card/50 p-1 rounded-xl border border-border/30">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
-              <GraduationCap className="h-4 w-4 mr-0 md:mr-2" />
-              <span className="hidden md:inline">Overview</span>
+          <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-card/50 border border-border/30 rounded-xl w-full md:w-fit">
+            <TabsTrigger 
+              value="overview" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <GraduationCap className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="courses" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
-              <BookOpen className="h-4 w-4 mr-0 md:mr-2" />
-              <span className="hidden md:inline">Courses</span>
+            <TabsTrigger 
+              value="courses" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <BookOpen className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Courses</span>
             </TabsTrigger>
-            <TabsTrigger value="realtime" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
-              <Activity className="h-4 w-4 mr-0 md:mr-2" />
-              <span className="hidden md:inline">Realtime</span>
+            <TabsTrigger 
+              value="realtime" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Activity className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Realtime</span>
             </TabsTrigger>
-            <TabsTrigger value="ai-assistant" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
-              <Bot className="h-4 w-4 mr-0 md:mr-2" />
-              <span className="hidden md:inline">AI Assistant</span>
+            <TabsTrigger 
+              value="ai-assistant" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Bot className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">AI Assistant</span>
+              <span className="sm:hidden">AI</span>
             </TabsTrigger>
-            <TabsTrigger value="tutorials" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
-              <Play className="h-4 w-4 mr-0 md:mr-2" />
-              <span className="hidden md:inline">Tutorials</span>
+            <TabsTrigger 
+              value="tutorials" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Play className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Tutorials</span>
             </TabsTrigger>
-            <TabsTrigger value="research" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
-              <Search className="h-4 w-4 mr-0 md:mr-2" />
-              <span className="hidden md:inline">Research</span>
+            <TabsTrigger 
+              value="research" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Search className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Research</span>
             </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
-              <Settings className="h-4 w-4 mr-0 md:mr-2" />
-              <span className="hidden md:inline">Settings</span>
+            <TabsTrigger 
+              value="settings" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Settings className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Settings</span>
             </TabsTrigger>
           </TabsList>
 
