@@ -94,7 +94,11 @@ type Profile = {
 const CircularProgress = ({ value, size = 80, strokeWidth = 8, color = "primary" }: { value: number; size?: number; strokeWidth?: number; color?: string }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (value / 100) * circumference;
+  const roundedValue = Math.round(value * 100) / 100; // Round to 2 decimal places
+  const offset = circumference - (roundedValue / 100) * circumference;
+  
+  // Format display value - show integer if whole number, otherwise 1 decimal
+  const displayValue = roundedValue % 1 === 0 ? roundedValue.toFixed(0) : roundedValue.toFixed(1);
   
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -123,7 +127,7 @@ const CircularProgress = ({ value, size = 80, strokeWidth = 8, color = "primary"
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg font-bold text-foreground">{value}%</span>
+        <span className="text-sm font-bold text-foreground">{displayValue}%</span>
       </div>
     </div>
   );
@@ -864,34 +868,34 @@ const Dashboard = () => {
                       Academic Goals
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4">
-                    <div className="flex justify-around">
-                      <div className="text-center">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30">
                         <CircularProgress 
                           value={courses.length > 0 ? Math.min((courses.length / 6) * 100, 100) : 0} 
-                          size={70} 
-                          strokeWidth={6}
+                          size={60} 
+                          strokeWidth={5}
                           color="primary"
                         />
-                        <p className="text-xs text-muted-foreground mt-2">Courses</p>
+                        <p className="text-xs text-muted-foreground mt-2 font-medium">Courses</p>
                       </div>
-                      <div className="text-center">
+                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30">
                         <CircularProgress 
                           value={studySessions.length > 0 ? Math.min((totalStudyHours / 50) * 100, 100) : 0} 
-                          size={70} 
-                          strokeWidth={6}
+                          size={60} 
+                          strokeWidth={5}
                           color="secondary"
                         />
-                        <p className="text-xs text-muted-foreground mt-2">Study Hours</p>
+                        <p className="text-xs text-muted-foreground mt-2 font-medium">Study Hours</p>
                       </div>
-                      <div className="text-center">
+                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30">
                         <CircularProgress 
                           value={completionRate} 
-                          size={70} 
-                          strokeWidth={6}
+                          size={60} 
+                          strokeWidth={5}
                           color="primary"
                         />
-                        <p className="text-xs text-muted-foreground mt-2">Completed</p>
+                        <p className="text-xs text-muted-foreground mt-2 font-medium">Completed</p>
                       </div>
                     </div>
                   </CardContent>
