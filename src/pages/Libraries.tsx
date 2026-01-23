@@ -191,11 +191,39 @@ const Libraries = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="libraries" className="space-y-6">
-          <TabsList className="grid w-full md:w-fit grid-cols-4">
-            <TabsTrigger value="libraries">University Libraries</TabsTrigger>
-            <TabsTrigger value="databases">Research Databases</TabsTrigger>
-            <TabsTrigger value="recent">Recent Resources</TabsTrigger>
-            <TabsTrigger value="subjects">By Subject</TabsTrigger>
+          <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-card/50 border border-border/30 rounded-xl w-full md:w-fit">
+            <TabsTrigger 
+              value="libraries" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Database className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">University Libraries</span>
+              <span className="sm:hidden">Libraries</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="databases" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Globe className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Research Databases</span>
+              <span className="sm:hidden">Databases</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="recent" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Clock className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Recent Resources</span>
+              <span className="sm:hidden">Recent</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="subjects" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <BookOpen className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">By Subject</span>
+              <span className="sm:hidden">Subjects</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* University Libraries */}
