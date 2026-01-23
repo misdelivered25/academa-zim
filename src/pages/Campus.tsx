@@ -16,6 +16,7 @@ import {
   Bus,
   Utensils,
   BookOpen,
+  AlertTriangle
 } from "lucide-react";
 import Header from "@/components/Header";
 import GoogleMapCampus from "@/components/GoogleMapCampus";
@@ -464,10 +465,31 @@ const Campus = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="locations" className="space-y-6">
-          <TabsList className="grid w-full md:w-fit grid-cols-3">
-            <TabsTrigger value="locations">Campus Locations</TabsTrigger>
-            <TabsTrigger value="transport">Transportation</TabsTrigger>
-            <TabsTrigger value="emergency">Emergency Info</TabsTrigger>
+          <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-card/50 border border-border/30 rounded-xl w-full md:w-fit">
+            <TabsTrigger 
+              value="locations" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <MapPin className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Campus Locations</span>
+              <span className="sm:hidden">Locations</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="transport" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Bus className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Transportation</span>
+              <span className="sm:hidden">Transport</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="emergency" 
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <AlertTriangle className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Emergency Info</span>
+              <span className="sm:hidden">Emergency</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* Campus Locations */}
