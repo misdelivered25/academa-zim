@@ -1,5 +1,7 @@
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { 
   BookOpen, 
@@ -15,7 +17,9 @@ import {
   ExternalLink,
   Microscope,
   BookMarked,
-  Landmark
+  Landmark,
+  Search,
+  X
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import CosmicBackground from "@/components/CosmicBackground";
@@ -211,6 +215,8 @@ const UniversityTooltipCard = ({ uni }: { uni: UniversityInfo }) => {
 };
 
 const HeroSection = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  
   const universities = [
     "University of Zimbabwe",
     "National University of Science and Technology", 
@@ -219,6 +225,19 @@ const HeroSection = () => {
     "Bindura University of Science Education",
     "Great Zimbabwe University"
   ];
+
+  const filteredUniversities = useMemo(() => {
+    if (!searchQuery.trim()) return universities;
+    const query = searchQuery.toLowerCase();
+    return universities.filter(uni => {
+      const uniInfo = universityData[uni];
+      return (
+        uni.toLowerCase().includes(query) ||
+        uniInfo?.shortName.toLowerCase().includes(query) ||
+        uniInfo?.location.toLowerCase().includes(query)
+      );
+    });
+  }, [searchQuery]);
 
   const featureCards = [
     {
@@ -341,12 +360,38 @@ const HeroSection = () => {
 
         {/* University Logos Scroll */}
         <div className="mt-16 lg:mt-20 pt-8 border-t border-border/50">
-          <p className="text-center text-muted-foreground text-sm mb-8">
+          <p className="text-center text-muted-foreground text-sm mb-4">
             Connecting students across Zimbabwe's leading universities
           </p>
+          
+          {/* Search Input */}
+          <div className="flex justify-center mb-6">
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search universities by name, acronym, or city..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-10 bg-background/50 backdrop-blur-sm border-primary/20 focus:border-primary/40 rounded-full text-sm"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+          
           <TooltipProvider>
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-sm text-muted-foreground">
-              {universities.map((uniName, index) => {
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-sm text-muted-foreground min-h-[44px]">
+              {filteredUniversities.length === 0 ? (
+                <p className="text-muted-foreground text-sm italic">No universities found matching "{searchQuery}"</p>
+              ) : (
+                filteredUniversities.map((uniName, index) => {
                 const uniInfo = universityData[uniName];
                 
                 if (uniInfo) {
@@ -370,12 +415,13 @@ const HeroSection = () => {
                   );
                 }
                 
-                return (
-                  <div key={index} className="px-4 py-2 bg-accent/50 rounded-full text-xs sm:text-sm hover:bg-accent/70 transition-colors">
-                    {uniName}
-                  </div>
-                );
-              })}
+                  return (
+                    <div key={index} className="px-4 py-2 bg-accent/50 rounded-full text-xs sm:text-sm hover:bg-accent/70 transition-colors">
+                      {uniName}
+                    </div>
+                  );
+                })
+              )}
             </div>
           </TooltipProvider>
         </div>
