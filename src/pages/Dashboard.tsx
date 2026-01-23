@@ -90,18 +90,57 @@ type Profile = {
   created_at: string | null;
 };
 
-// Circular Progress Component for better visualization
-const CircularProgress = ({ value, size = 80, strokeWidth = 8, color = "primary" }: { value: number; size?: number; strokeWidth?: number; color?: string }) => {
+// Circular Progress Component for better visualization with animations
+const CircularProgress = ({ value, size = 80, strokeWidth = 8, color = "primary", delay = 0 }: { value: number; size?: number; strokeWidth?: number; color?: string; delay?: number }) => {
+  const [animatedValue, setAnimatedValue] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
-  const roundedValue = Math.round(value * 100) / 100; // Round to 2 decimal places
-  const offset = circumference - (roundedValue / 100) * circumference;
+  const roundedValue = Math.round(value * 100) / 100;
+  const offset = circumference - (animatedValue / 100) * circumference;
   
   // Format display value - show integer if whole number, otherwise 1 decimal
-  const displayValue = roundedValue % 1 === 0 ? roundedValue.toFixed(0) : roundedValue.toFixed(1);
+  const displayValue = animatedValue % 1 === 0 ? animatedValue.toFixed(0) : animatedValue.toFixed(1);
+
+  // Animate value on mount and when value changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    
+    const duration = 1000; // 1 second animation
+    const startTime = Date.now();
+    const startValue = animatedValue;
+    const endValue = roundedValue;
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function (ease-out cubic)
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const currentValue = startValue + (endValue - startValue) * easeOut;
+      
+      setAnimatedValue(Math.round(currentValue * 10) / 10);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [roundedValue, isVisible]);
   
   return (
-    <div className="relative" style={{ width: size, height: size }}>
+    <div 
+      className={`relative transition-all duration-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`} 
+      style={{ width: size, height: size, transitionDelay: `${delay}ms` }}
+    >
       <svg className="transform -rotate-90" width={size} height={size}>
         <circle
           className="text-muted/30"
@@ -123,11 +162,16 @@ const CircularProgress = ({ value, size = 80, strokeWidth = 8, color = "primary"
           r={radius}
           cx={size / 2}
           cy={size / 2}
-          style={{ transition: "stroke-dashoffset 0.5s ease-in-out" }}
+          style={{ 
+            transition: "stroke-dashoffset 0.1s ease-out",
+            filter: animatedValue > 0 ? `drop-shadow(0 0 ${Math.min(animatedValue / 10, 6)}px currentColor)` : 'none'
+          }}
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-sm font-bold text-foreground">{displayValue}%</span>
+        <span className={`text-sm font-bold text-foreground transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+          {displayValue}%
+        </span>
       </div>
     </div>
   );
@@ -870,30 +914,33 @@ const Dashboard = () => {
                   </CardHeader>
                   <CardContent className="p-4 sm:p-6">
                     <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30">
+                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30 transition-all hover:bg-accent/50">
                         <CircularProgress 
                           value={courses.length > 0 ? Math.min((courses.length / 6) * 100, 100) : 0} 
                           size={60} 
                           strokeWidth={5}
                           color="primary"
+                          delay={100}
                         />
                         <p className="text-xs text-muted-foreground mt-2 font-medium">Courses</p>
                       </div>
-                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30">
+                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30 transition-all hover:bg-accent/50">
                         <CircularProgress 
                           value={studySessions.length > 0 ? Math.min((totalStudyHours / 50) * 100, 100) : 0} 
                           size={60} 
                           strokeWidth={5}
                           color="secondary"
+                          delay={250}
                         />
                         <p className="text-xs text-muted-foreground mt-2 font-medium">Study Hours</p>
                       </div>
-                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30">
+                      <div className="flex flex-col items-center text-center p-2 sm:p-3 rounded-lg bg-accent/30 transition-all hover:bg-accent/50">
                         <CircularProgress 
                           value={completionRate} 
                           size={60} 
                           strokeWidth={5}
                           color="primary"
+                          delay={400}
                         />
                         <p className="text-xs text-muted-foreground mt-2 font-medium">Completed</p>
                       </div>
