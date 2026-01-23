@@ -30,7 +30,8 @@ import {
   Sparkles,
   BarChart3,
   PieChart,
-  Activity
+  Activity,
+  Settings
 } from "lucide-react";
 import Header from "@/components/Header";
 import { Link } from "react-router-dom";
@@ -51,6 +52,7 @@ import RealtimeDashboard from "@/components/RealtimeDashboard";
 import { NotificationManager } from "@/components/NotificationManager";
 import CosmicBackground from "@/components/CosmicBackground";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
+import PreferencesPanel from "@/components/PreferencesPanel";
 
 type Assignment = {
   id: string;
@@ -457,7 +459,7 @@ const Dashboard = () => {
 
         {/* Tabs for different sections */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 gap-1 bg-card/50 p-1 rounded-xl border border-border/30">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-7 gap-1 bg-card/50 p-1 rounded-xl border border-border/30">
             <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
               <GraduationCap className="h-4 w-4 mr-0 md:mr-2" />
               <span className="hidden md:inline">Overview</span>
@@ -481,6 +483,10 @@ const Dashboard = () => {
             <TabsTrigger value="research" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
               <Search className="h-4 w-4 mr-0 md:mr-2" />
               <span className="hidden md:inline">Research</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all">
+              <Settings className="h-4 w-4 mr-0 md:mr-2" />
+              <span className="hidden md:inline">Settings</span>
             </TabsTrigger>
           </TabsList>
 
@@ -890,6 +896,12 @@ const Dashboard = () => {
 
           <TabsContent value="research" className="animate-fade-in">
             <ScholarSearch />
+          </TabsContent>
+
+          <TabsContent value="settings" className="animate-fade-in">
+            <div className="max-w-2xl mx-auto">
+              <PreferencesPanel />
+            </div>
           </TabsContent>
         </Tabs>
       </main>
