@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { 
   BookOpen, 
   MapPin, 
@@ -13,24 +14,34 @@ import {
   Moon,
   Sun,
   Shield,
-  Info
+  Info,
+  Download,
+  Monitor
 } from "lucide-react";
 import logo from "@/assets/logo.webp";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isScrolled, setIsScrolled] = useState(false);
   const { isAdmin } = useAdmin();
   const location = useLocation();
+  const { preferences, savePreferences, isLoaded } = useUserPreferences();
+
+  // Derive effective theme (accounting for system preference)
+  const getEffectiveTheme = () => {
+    if (preferences.theme === "system") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    return preferences.theme;
+  };
+
+  const [effectiveTheme, setEffectiveTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialTheme = savedTheme || (prefersDark ? "dark" : "light");
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
-  }, []);
+    if (isLoaded) {
+      setEffectiveTheme(getEffectiveTheme());
+    }
+  }, [preferences.theme, isLoaded]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,11 +56,19 @@ const Header = () => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  const cycleTheme = () => {
+    const themeOrder: ("light" | "dark" | "system")[] = ["light", "dark", "system"];
+    const currentIndex = themeOrder.indexOf(preferences.theme);
+    const nextTheme = themeOrder[(currentIndex + 1) % themeOrder.length];
+    savePreferences({ theme: nextTheme });
+  };
+
+  const getThemeIcon = () => {
+    switch (preferences.theme) {
+      case "light": return <Sun className="h-5 w-5" />;
+      case "dark": return <Moon className="h-5 w-5" />;
+      case "system": return <Monitor className="h-5 w-5" />;
+    }
   };
 
   const navLinks = [
@@ -126,10 +145,11 @@ const Header = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={toggleTheme}
+              onClick={cycleTheme}
               className="hover:bg-accent"
+              title={`Theme: ${preferences.theme}`}
             >
-              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              {getThemeIcon()}
             </Button>
             <Link to="/login">
               <Button variant="ghost" size="sm" className="font-medium">
@@ -149,10 +169,11 @@ const Header = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={toggleTheme}
+              onClick={cycleTheme}
               className="hover:bg-accent"
+              title={`Theme: ${preferences.theme}`}
             >
-              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              {getThemeIcon()}
             </Button>
             <button
               className="p-2 rounded-lg hover:bg-accent transition-colors"
