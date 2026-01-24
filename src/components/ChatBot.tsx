@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import { 
   MessageCircle, 
   Send, 
@@ -26,74 +27,139 @@ interface Message {
   suggestions?: string[];
 }
 
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm ZimUni AI Assistant. I can help you with university information, assignments, library resources, and campus navigation. How can I assist you today?",
+      text: "Hello! I'm Paul, your ZimUni AI tutor. I can help you with academic questions, study guidance, assignments, and exam preparation. How can I assist you today?",
       sender: 'bot',
       timestamp: new Date(),
       suggestions: [
-        "Show me my assignments",
-        "Find library resources",
-        "Campus directions", 
-        "University programs"
+        "Help with my homework",
+        "Study tips for exams",
+        "Explain a concept", 
+        "Research guidance"
       ]
     }
   ]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const quickActions = [
-    { icon: BookOpen, label: "Assignments", action: "Show me my current assignments" },
-    { icon: Library, label: "Library", action: "Search library resources" },
-    { icon: MapPin, label: "Campus Map", action: "Help me navigate campus" },
-    { icon: Calendar, label: "Schedule", action: "Show my class schedule" }
+    { icon: BookOpen, label: "Homework", action: "Help me with my homework" },
+    { icon: Library, label: "Research", action: "Guide me with academic research" },
+    { icon: MapPin, label: "Study Tips", action: "Give me effective study tips" },
+    { icon: Calendar, label: "Exam Prep", action: "How should I prepare for exams?" }
   ];
 
-  const generateBotResponse = (userMessage: string): Message => {
-    const lowerMessage = userMessage.toLowerCase();
-    let response = "";
-    let suggestions: string[] = [];
+  const streamAIResponse = async (userMessage: string): Promise<string> => {
+    const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/study-assistant`;
+    
+    const newHistory: ChatMessage[] = [...chatHistory, { role: 'user', content: userMessage }];
+    setChatHistory(newHistory);
+    
+    try {
+      const response = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
+        },
+        body: JSON.stringify({ messages: newHistory }),
+      });
 
-    if (lowerMessage.includes("assignment") || lowerMessage.includes("homework")) {
-      response = "I can help you with assignments! You currently have 3 pending assignments: Data Structures (due in 2 days), Research Methods (due in 5 days), and Web Development (due in 1 week). Would you like details on any specific assignment?";
-      suggestions = ["Data Structures assignment", "Research Methods details", "All assignment deadlines"];
-    } else if (lowerMessage.includes("library") || lowerMessage.includes("book") || lowerMessage.includes("research")) {
-      response = "Great! I can help you access our extensive library resources. We have access to IEEE, ACM Digital Library, JSTOR, and local university databases. What subject are you researching?";
-      suggestions = ["Computer Science resources", "Engineering papers", "Business journals", "Browse all databases"];
-    } else if (lowerMessage.includes("campus") || lowerMessage.includes("direction") || lowerMessage.includes("map")) {
-      response = "I can help you navigate campus! Are you looking for a specific building, facility, or service? I have real-time information about all campus locations across Zimbabwean universities.";
-      suggestions = ["Find lecture halls", "Cafeteria locations", "Library building", "Student services"];
-    } else if (lowerMessage.includes("program") || lowerMessage.includes("course") || lowerMessage.includes("degree")) {
-      response = "I have information on all university programs across Zimbabwe! This includes undergraduate and postgraduate programs in Engineering, Computer Science, Business, Medicine, and more. Which field interests you?";
-      suggestions = ["Engineering programs", "Computer Science courses", "Business degrees", "All programs"];
-    } else if (lowerMessage.includes("schedule") || lowerMessage.includes("timetable") || lowerMessage.includes("class")) {
-      response = "Your class schedule for this week: Monday - Data Structures (9AM), Wednesday - Web Development (11AM), Friday - Research Methods (2PM). Would you like to see your full semester schedule?";
-      suggestions = ["Full semester schedule", "Upcoming classes", "Assignment deadlines", "Exam dates"];
-    } else if (lowerMessage.includes("exam") || lowerMessage.includes("test")) {
-      response = "I can help you prepare for exams! Based on your enrolled courses, you have Data Structures exam in 2 weeks and Web Development project submission next week. Would you like study resources?";
-      suggestions = ["Study materials", "Past papers", "Exam schedule", "Study groups"];
-    } else {
-      response = "I'm here to help with university-related queries! I can assist with assignments, library resources, campus navigation, course information, schedules, and exam preparation. What would you like to know?";
-      suggestions = ["My assignments", "Library access", "Campus map", "Course information"];
+      if (!response.ok) {
+        if (response.status === 429) {
+          return "I'm receiving too many requests right now. Please wait a moment and try again.";
+        }
+        if (response.status === 402) {
+          return "AI credits are currently unavailable. Please try again later.";
+        }
+        throw new Error('Failed to get response');
+      }
+
+      if (!response.body) throw new Error('No response body');
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (let line of lines) {
+          if (line.endsWith('\r')) line = line.slice(0, -1);
+          if (line.startsWith(':') || line.trim() === '') continue;
+          if (!line.startsWith('data: ')) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === '[DONE]') continue;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+              // Update the message in real-time
+              setMessages(prev => {
+                const last = prev[prev.length - 1];
+                if (last?.sender === 'bot' && last.id.startsWith('streaming-')) {
+                  return prev.map((m, i) => 
+                    i === prev.length - 1 ? { ...m, text: assistantContent } : m
+                  );
+                }
+                return prev;
+              });
+            }
+          } catch {
+            // Ignore incomplete JSON chunks
+          }
+        }
+      }
+
+      // Update chat history with assistant response
+      setChatHistory(prev => [...prev, { role: 'assistant', content: assistantContent }]);
+      
+      return assistantContent || "I'm sorry, I couldn't generate a response. Please try again.";
+    } catch (error) {
+      console.error('AI response error:', error);
+      return "I'm having trouble connecting right now. Please check your internet connection and try again.";
     }
-
-    return {
-      id: Date.now().toString(),
-      text: response,
-      sender: 'bot',
-      timestamp: new Date(),
-      suggestions
-    };
   };
 
-  const handleSendMessage = (messageText?: string) => {
+  const generateSuggestions = (response: string): string[] => {
+    const lowerResponse = response.toLowerCase();
+    
+    if (lowerResponse.includes("assignment") || lowerResponse.includes("homework")) {
+      return ["Break down the steps", "Give me an example", "What resources should I use?"];
+    } else if (lowerResponse.includes("exam") || lowerResponse.includes("study")) {
+      return ["Create a study schedule", "Practice questions", "Memory techniques"];
+    } else if (lowerResponse.includes("research") || lowerResponse.includes("paper")) {
+      return ["How to cite sources", "Structure my paper", "Find academic sources"];
+    }
+    
+    return ["Tell me more", "Give an example", "Related topics"];
+  };
+
+  const handleSendMessage = async (messageText?: string) => {
     const text = messageText || inputValue.trim();
-    if (!text) return;
+    if (!text || isTyping) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -102,16 +168,45 @@ const ChatBot = () => {
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    // Add placeholder for streaming response
+    const streamingMessage: Message = {
+      id: `streaming-${Date.now()}`,
+      text: '',
+      sender: 'bot',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage, streamingMessage]);
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate bot typing delay
-    setTimeout(() => {
-      const botResponse = generateBotResponse(text);
-      setMessages(prev => [...prev, botResponse]);
+    try {
+      const response = await streamAIResponse(text);
+      const suggestions = generateSuggestions(response);
+      
+      // Replace the streaming message with the final message
+      setMessages(prev => {
+        const filtered = prev.filter(m => !m.id.startsWith('streaming-'));
+        return [...filtered, {
+          id: Date.now().toString(),
+          text: response,
+          sender: 'bot',
+          timestamp: new Date(),
+          suggestions
+        }];
+      });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to get a response. Please try again.",
+        variant: "destructive",
+      });
+      // Remove the streaming message on error
+      setMessages(prev => prev.filter(m => !m.id.startsWith('streaming-')));
+    } finally {
       setIsTyping(false);
-    }, 1000 + Math.random() * 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

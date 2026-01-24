@@ -29,13 +29,15 @@ import {
   Sparkles,
   RefreshCw,
   Settings,
-  Play
+  Play,
+  Pencil
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import QuizTaker from "@/components/QuizTaker";
 import QuizQuestionsManager from "@/components/QuizQuestionsManager";
+import AssignmentEditor from "@/components/AssignmentEditor";
 
 const StudyCenter = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,6 +72,9 @@ const StudyCenter = () => {
   const [activeQuizQuestions, setActiveQuizQuestions] = useState<any[]>([]);
   const [managingQuestionsQuiz, setManagingQuestionsQuiz] = useState<any>(null);
   const [quizQuestionsForManager, setQuizQuestionsForManager] = useState<any[]>([]);
+  
+  // Assignment editing state
+  const [editingAssignment, setEditingAssignment] = useState<any>(null);
 
   // Fetch user's assignments and courses
   useEffect(() => {
@@ -819,6 +824,14 @@ const StudyCenter = () => {
                           <Button
                             variant="ghost"
                             size="sm"
+                            onClick={() => setEditingAssignment(assignment)}
+                            className="hover:bg-primary/10 hover:text-primary"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => deleteAssignment(assignment.id)}
                             className="ml-auto hover:bg-destructive/10 hover:text-destructive"
                           >
@@ -833,6 +846,15 @@ const StudyCenter = () => {
                 <p className="text-center text-muted-foreground py-8">No assignments yet. Create one to get started!</p>
               )}
             </div>
+            
+            {/* Assignment Editor Dialog */}
+            <AssignmentEditor
+              assignment={editingAssignment}
+              courses={courses}
+              isOpen={!!editingAssignment}
+              onClose={() => setEditingAssignment(null)}
+              onSave={() => fetchUserData()}
+            />
           </TabsContent>
 
           {/* Study Materials Tab */}
