@@ -454,7 +454,7 @@ const Signup = () => {
                             Terms of Service
                           </Link>{" "}
                           and{" "}
-                          <Link to="/privacy" className="text-primary hover:text-primary-glow underline">
+                          <Link to="/terms#privacy" className="text-primary hover:text-primary-glow underline">
                             Privacy Policy
                           </Link>
                         </FormLabel>
