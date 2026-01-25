@@ -38,6 +38,7 @@ import { supabase } from "@/integrations/supabase/client";
 import QuizTaker from "@/components/QuizTaker";
 import QuizQuestionsManager from "@/components/QuizQuestionsManager";
 import AssignmentEditor from "@/components/AssignmentEditor";
+import PomodoroTimer from "@/components/PomodoroTimer";
 
 const StudyCenter = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -698,10 +699,11 @@ const StudyCenter = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="assignments" className="space-y-6">
-          <TabsList className="grid w-full md:w-fit grid-cols-3">
+          <TabsList className="grid w-full md:w-fit grid-cols-4">
             <TabsTrigger value="assignments">Assignments</TabsTrigger>
             <TabsTrigger value="materials">Study Materials</TabsTrigger>
             <TabsTrigger value="quizzes">Quizzes</TabsTrigger>
+            <TabsTrigger value="timer">Focus Timer</TabsTrigger>
           </TabsList>
 
           {/* Assignments Tab */}
@@ -1022,6 +1024,32 @@ const StudyCenter = () => {
               ) : (
                 <p className="text-center text-muted-foreground py-8 col-span-2">No quizzes yet. Create one to get started!</p>
               )}
+            </div>
+          </TabsContent>
+
+          {/* Focus Timer Tab */}
+          <TabsContent value="timer" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-foreground">Pomodoro Focus Timer</h2>
+            </div>
+
+            <div className="max-w-2xl mx-auto space-y-6">
+              <PomodoroTimer />
+              
+              <Card className="bg-gradient-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg">How to Use the Pomodoro Technique</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm text-muted-foreground">
+                  <p>1. <strong className="text-foreground">Focus</strong> - Work on a task for 25 minutes without distractions</p>
+                  <p>2. <strong className="text-foreground">Short Break</strong> - Take a 5-minute break to rest your mind</p>
+                  <p>3. <strong className="text-foreground">Repeat</strong> - Complete 4 focus sessions</p>
+                  <p>4. <strong className="text-foreground">Long Break</strong> - After 4 sessions, take a 15-30 minute break</p>
+                  <div className="pt-3 border-t border-border">
+                    <p className="text-xs">💡 Tip: Your completed focus sessions are automatically saved to track your study progress.</p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>

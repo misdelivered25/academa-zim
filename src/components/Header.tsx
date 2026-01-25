@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
+import { useAuth } from "@/hooks/useAuth";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { 
   BookOpen, 
@@ -15,15 +16,16 @@ import {
   Sun,
   Shield,
   Info,
-  Download,
   Monitor
 } from "lucide-react";
 import logo from "@/assets/logo.webp";
+import UserDropdown from "./UserDropdown";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isAdmin } = useAdmin();
+  const { user } = useAuth();
   const location = useLocation();
   const { preferences, savePreferences, isLoaded } = useUserPreferences();
 
@@ -151,17 +153,23 @@ const Header = () => {
             >
               {getThemeIcon()}
             </Button>
-            <Link to="/login">
-              <Button variant="ghost" size="sm" className="font-medium">
-                <User className="h-4 w-4 mr-2" />
-                Sign In
-              </Button>
-            </Link>
-            <Link to="/dashboard">
-              <Button size="sm" className="bg-gradient-hero btn-glow font-semibold">
-                Get Started
-              </Button>
-            </Link>
+            {user ? (
+              <UserDropdown />
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm" className="font-medium">
+                    <User className="h-4 w-4 mr-2" />
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/dashboard">
+                  <Button size="sm" className="bg-gradient-hero btn-glow font-semibold">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Controls */}
@@ -223,17 +231,35 @@ const Header = () => {
               </Link>
             )}
             <div className="flex flex-col space-y-2 px-4 pt-4 mt-2 border-t border-border">
-              <Link to="/login" className="w-full">
-                <Button variant="outline" className="w-full justify-center font-medium">
-                  <User className="h-4 w-4 mr-2" />
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/dashboard" className="w-full">
-                <Button className="w-full justify-center bg-gradient-hero font-semibold">
-                  Get Started
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/profile" className="w-full">
+                    <Button variant="outline" className="w-full justify-center font-medium">
+                      <User className="h-4 w-4 mr-2" />
+                      Profile
+                    </Button>
+                  </Link>
+                  <Link to="/dashboard" className="w-full">
+                    <Button className="w-full justify-center bg-gradient-hero font-semibold">
+                      Dashboard
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="w-full">
+                    <Button variant="outline" className="w-full justify-center font-medium">
+                      <User className="h-4 w-4 mr-2" />
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/dashboard" className="w-full">
+                    <Button className="w-full justify-center bg-gradient-hero font-semibold">
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </div>
