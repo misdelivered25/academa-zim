@@ -146,6 +146,22 @@ export const useNotifications = () => {
           notified[`${assignment.id}_24h`] = true;
         }
 
+        // 3-hour warning
+        if (hoursUntilDue <= 3 && hoursUntilDue > 2 && !notified[`${assignment.id}_3h`]) {
+          sendInAppNotification(
+            '⚠️ Assignment Due in 3 Hours!',
+            `"${assignment.title}" needs your attention`,
+            'warning',
+            'deadline'
+          );
+          sendBrowserNotification('Assignment Due in 3 Hours!', {
+            body: `"${assignment.title}" needs your attention`,
+            tag: `assignment_${assignment.id}_3h`,
+            requireInteraction: true,
+          });
+          notified[`${assignment.id}_3h`] = true;
+        }
+
         // 1-hour warning
         if (minutesUntilDue <= 60 && minutesUntilDue > 55 && !notified[`${assignment.id}_1h`]) {
           sendInAppNotification(
@@ -160,6 +176,22 @@ export const useNotifications = () => {
             requireInteraction: true,
           });
           notified[`${assignment.id}_1h`] = true;
+        }
+
+        // 15-minute final warning
+        if (minutesUntilDue <= 15 && minutesUntilDue > 10 && !notified[`${assignment.id}_15m`]) {
+          sendInAppNotification(
+            '🔥 FINAL WARNING: 15 Minutes Left!',
+            `"${assignment.title}" is almost due!`,
+            'error',
+            'deadline'
+          );
+          sendBrowserNotification('FINAL WARNING: 15 Minutes Left!', {
+            body: `"${assignment.title}" is almost due!`,
+            tag: `assignment_${assignment.id}_15m`,
+            requireInteraction: true,
+          });
+          notified[`${assignment.id}_15m`] = true;
         }
       });
 
