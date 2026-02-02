@@ -125,6 +125,178 @@ All colors MUST be HSL for optimal theming support.
     --cosmic-glow-2: 270 84% 45%;
     --cosmic-glow-3: 290 70% 50%;
   }
+
+  /* ===== Color Theme Variations ===== */
+  
+  /* Default Purple Theme (already defined in :root) */
+  .theme-purple {
+    /* Uses default values */
+  }
+
+  /* Blue Theme */
+  .theme-blue {
+    --primary: 217 91% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 210 91% 65%;
+    --secondary: 199 89% 48%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 214 32% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 214 32% 96%;
+    --accent-foreground: 217 91% 55%;
+    --ring: 217 91% 55%;
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 55%), hsl(199 89% 48%));
+    --gradient-accent: linear-gradient(120deg, hsl(199 89% 48%), hsl(210 91% 60%));
+    --shadow-elegant: 0 20px 40px -10px hsl(217 91% 55% / 0.15);
+    --shadow-glow: 0 0 60px hsl(210 91% 65% / 0.25);
+    --sidebar-ring: 217 91% 55%;
+    --cosmic-glow-1: 217 84% 35%;
+    --cosmic-glow-2: 210 84% 55%;
+    --cosmic-glow-3: 199 70% 50%;
+  }
+
+  .dark.theme-blue {
+    --primary: 217 91% 70%;
+    --primary-foreground: 217 47% 11%;
+    --primary-glow: 210 91% 75%;
+    --secondary: 199 89% 60%;
+    --ring: 217 91% 65%;
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 55%), hsl(199 89% 65%));
+    --shadow-elegant: 0 20px 40px -10px hsl(217 91% 65% / 0.2);
+    --shadow-glow: 0 0 60px hsl(210 91% 75% / 0.3);
+  }
+
+  /* Green Theme */
+  .theme-green {
+    --primary: 142 76% 42%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 142 76% 52%;
+    --secondary: 160 84% 39%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 142 30% 96%;
+    --muted-foreground: 142 20% 35%;
+    --accent: 142 35% 96%;
+    --accent-foreground: 142 76% 42%;
+    --ring: 142 76% 42%;
+    --gradient-hero: linear-gradient(135deg, hsl(142 76% 42%), hsl(160 84% 39%));
+    --gradient-accent: linear-gradient(120deg, hsl(160 84% 39%), hsl(142 76% 52%));
+    --shadow-elegant: 0 20px 40px -10px hsl(142 76% 42% / 0.15);
+    --shadow-glow: 0 0 60px hsl(142 76% 52% / 0.25);
+    --sidebar-ring: 142 76% 42%;
+    --cosmic-glow-1: 142 84% 30%;
+    --cosmic-glow-2: 142 84% 45%;
+    --cosmic-glow-3: 160 70% 45%;
+  }
+
+  .dark.theme-green {
+    --primary: 142 76% 60%;
+    --primary-foreground: 142 47% 11%;
+    --primary-glow: 142 76% 70%;
+    --secondary: 160 84% 55%;
+    --ring: 142 76% 55%;
+    --gradient-hero: linear-gradient(135deg, hsl(142 76% 50%), hsl(160 84% 55%));
+    --shadow-elegant: 0 20px 40px -10px hsl(142 76% 55% / 0.2);
+    --shadow-glow: 0 0 60px hsl(142 76% 65% / 0.3);
+  }
+
+  /* Orange Theme */
+  .theme-orange {
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 35 95% 60%;
+    --secondary: 38 92% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 30 30% 96%;
+    --muted-foreground: 30 20% 35%;
+    --accent: 30 35% 96%;
+    --accent-foreground: 25 95% 53%;
+    --ring: 25 95% 53%;
+    --gradient-hero: linear-gradient(135deg, hsl(25 95% 53%), hsl(38 92% 50%));
+    --gradient-accent: linear-gradient(120deg, hsl(38 92% 50%), hsl(30 95% 60%));
+    --shadow-elegant: 0 20px 40px -10px hsl(25 95% 53% / 0.15);
+    --shadow-glow: 0 0 60px hsl(35 95% 60% / 0.25);
+    --sidebar-ring: 25 95% 53%;
+    --cosmic-glow-1: 25 84% 35%;
+    --cosmic-glow-2: 30 84% 50%;
+    --cosmic-glow-3: 38 70% 50%;
+  }
+
+  .dark.theme-orange {
+    --primary: 25 95% 65%;
+    --primary-foreground: 25 47% 11%;
+    --primary-glow: 35 95% 70%;
+    --secondary: 38 92% 60%;
+    --ring: 25 95% 60%;
+    --gradient-hero: linear-gradient(135deg, hsl(25 95% 55%), hsl(38 92% 60%));
+    --shadow-elegant: 0 20px 40px -10px hsl(25 95% 60% / 0.2);
+    --shadow-glow: 0 0 60px hsl(35 95% 70% / 0.3);
+  }
+
+  /* Rose Theme */
+  .theme-rose {
+    --primary: 346 77% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 340 82% 65%;
+    --secondary: 330 81% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 346 30% 96%;
+    --muted-foreground: 346 20% 35%;
+    --accent: 346 35% 96%;
+    --accent-foreground: 346 77% 55%;
+    --ring: 346 77% 55%;
+    --gradient-hero: linear-gradient(135deg, hsl(346 77% 55%), hsl(330 81% 60%));
+    --gradient-accent: linear-gradient(120deg, hsl(330 81% 60%), hsl(340 82% 65%));
+    --shadow-elegant: 0 20px 40px -10px hsl(346 77% 55% / 0.15);
+    --shadow-glow: 0 0 60px hsl(340 82% 65% / 0.25);
+    --sidebar-ring: 346 77% 55%;
+    --cosmic-glow-1: 346 84% 35%;
+    --cosmic-glow-2: 346 84% 50%;
+    --cosmic-glow-3: 330 70% 50%;
+  }
+
+  .dark.theme-rose {
+    --primary: 346 77% 70%;
+    --primary-foreground: 346 47% 11%;
+    --primary-glow: 340 82% 75%;
+    --secondary: 330 81% 65%;
+    --ring: 346 77% 65%;
+    --gradient-hero: linear-gradient(135deg, hsl(346 77% 60%), hsl(330 81% 65%));
+    --shadow-elegant: 0 20px 40px -10px hsl(346 77% 65% / 0.2);
+    --shadow-glow: 0 0 60px hsl(340 82% 75% / 0.3);
+  }
+
+  /* Cyan Theme */
+  .theme-cyan {
+    --primary: 186 94% 42%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 180 94% 50%;
+    --secondary: 174 84% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 186 30% 96%;
+    --muted-foreground: 186 20% 35%;
+    --accent: 186 35% 96%;
+    --accent-foreground: 186 94% 42%;
+    --ring: 186 94% 42%;
+    --gradient-hero: linear-gradient(135deg, hsl(186 94% 42%), hsl(174 84% 45%));
+    --gradient-accent: linear-gradient(120deg, hsl(174 84% 45%), hsl(180 94% 50%));
+    --shadow-elegant: 0 20px 40px -10px hsl(186 94% 42% / 0.15);
+    --shadow-glow: 0 0 60px hsl(180 94% 50% / 0.25);
+    --sidebar-ring: 186 94% 42%;
+    --cosmic-glow-1: 186 84% 30%;
+    --cosmic-glow-2: 180 84% 45%;
+    --cosmic-glow-3: 174 70% 45%;
+  }
+
+  .dark.theme-cyan {
+    --primary: 186 94% 60%;
+    --primary-foreground: 186 47% 11%;
+    --primary-glow: 180 94% 65%;
+    --secondary: 174 84% 55%;
+    --ring: 186 94% 55%;
+    --gradient-hero: linear-gradient(135deg, hsl(186 94% 50%), hsl(174 84% 55%));
+    --shadow-elegant: 0 20px 40px -10px hsl(186 94% 55% / 0.2);
+    --shadow-glow: 0 0 60px hsl(180 94% 65% / 0.3);
+  }
 }
 
 @layer base {
