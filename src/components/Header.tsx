@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
-import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { 
   BookOpen, 
   MapPin, 
@@ -12,14 +11,12 @@ import {
   X,
   User,
   Mail,
-  Moon,
-  Sun,
   Shield,
   Info,
-  Monitor
 } from "lucide-react";
 import logo from "@/assets/logo.webp";
 import UserDropdown from "./UserDropdown";
+import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,23 +24,6 @@ const Header = () => {
   const { isAdmin } = useAdmin();
   const { user } = useAuth();
   const location = useLocation();
-  const { preferences, savePreferences, isLoaded } = useUserPreferences();
-
-  // Derive effective theme (accounting for system preference)
-  const getEffectiveTheme = () => {
-    if (preferences.theme === "system") {
-      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    }
-    return preferences.theme;
-  };
-
-  const [effectiveTheme, setEffectiveTheme] = useState<"light" | "dark">("light");
-
-  useEffect(() => {
-    if (isLoaded) {
-      setEffectiveTheme(getEffectiveTheme());
-    }
-  }, [preferences.theme, isLoaded]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,21 +37,6 @@ const Header = () => {
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
-
-  const cycleTheme = () => {
-    const themeOrder: ("light" | "dark" | "system")[] = ["light", "dark", "system"];
-    const currentIndex = themeOrder.indexOf(preferences.theme);
-    const nextTheme = themeOrder[(currentIndex + 1) % themeOrder.length];
-    savePreferences({ theme: nextTheme });
-  };
-
-  const getThemeIcon = () => {
-    switch (preferences.theme) {
-      case "light": return <Sun className="h-5 w-5" />;
-      case "dark": return <Moon className="h-5 w-5" />;
-      case "system": return <Monitor className="h-5 w-5" />;
-    }
-  };
 
   const navLinks = [
     { to: "/study-center", icon: BookOpen, label: "Study Center" },
@@ -144,15 +109,7 @@ const Header = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-3">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={cycleTheme}
-              className="hover:bg-accent"
-              title={`Theme: ${preferences.theme}`}
-            >
-              {getThemeIcon()}
-            </Button>
+            <ThemeToggle />
             {user ? (
               <UserDropdown />
             ) : (
@@ -174,15 +131,7 @@ const Header = () => {
 
           {/* Mobile Controls */}
           <div className="flex lg:hidden items-center space-x-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={cycleTheme}
-              className="hover:bg-accent"
-              title={`Theme: ${preferences.theme}`}
-            >
-              {getThemeIcon()}
-            </Button>
+            <ThemeToggle />
             <button
               className="p-2 rounded-lg hover:bg-accent transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}

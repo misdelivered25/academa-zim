@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import Cookies from "js-cookie";
 
+export type ColorTheme = "purple" | "blue" | "green" | "orange" | "rose" | "cyan";
+
 export interface UserPreferences {
   theme: "light" | "dark" | "system";
+  colorTheme: ColorTheme;
   fontSize: "small" | "medium" | "large";
   reducedMotion: boolean;
   compactMode: boolean;
@@ -16,6 +19,7 @@ export interface UserPreferences {
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   theme: "system",
+  colorTheme: "purple",
   fontSize: "medium",
   reducedMotion: false,
   compactMode: false,
@@ -75,6 +79,11 @@ export const useUserPreferences = () => {
     } else {
       root.classList.toggle("dark", preferences.theme === "dark");
     }
+
+    // Apply color theme
+    const colorThemes: ColorTheme[] = ["purple", "blue", "green", "orange", "rose", "cyan"];
+    colorThemes.forEach(theme => root.classList.remove(`theme-${theme}`));
+    root.classList.add(`theme-${preferences.colorTheme}`);
 
     // Apply font size
     const fontSizes = { small: "14px", medium: "16px", large: "18px" };

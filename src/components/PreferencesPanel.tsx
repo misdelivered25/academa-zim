@@ -3,9 +3,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useUserPreferences } from "@/hooks/useUserPreferences";
-import { Settings, Monitor, Moon, Sun, Type, Zap, Layout, RotateCcw } from "lucide-react";
+import { useUserPreferences, ColorTheme } from "@/hooks/useUserPreferences";
+import { Settings, Monitor, Moon, Sun, Type, Zap, Layout, RotateCcw, Palette } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+
+const COLOR_THEMES: { value: ColorTheme; label: string; color: string }[] = [
+  { value: "purple", label: "Galaxy Purple", color: "hsl(270, 91%, 55%)" },
+  { value: "blue", label: "Ocean Blue", color: "hsl(217, 91%, 55%)" },
+  { value: "green", label: "Forest Green", color: "hsl(142, 76%, 42%)" },
+  { value: "orange", label: "Sunset Orange", color: "hsl(25, 95%, 53%)" },
+  { value: "rose", label: "Rose Pink", color: "hsl(346, 77%, 55%)" },
+  { value: "cyan", label: "Teal Cyan", color: "hsl(186, 94%, 42%)" },
+];
 
 export const PreferencesPanel = () => {
   const { preferences, savePreferences, resetPreferences, isLoaded } = useUserPreferences();
@@ -51,7 +61,7 @@ export const PreferencesPanel = () => {
             {preferences.theme === "dark" ? <Moon className="h-4 w-4" /> : 
              preferences.theme === "light" ? <Sun className="h-4 w-4" /> :
              <Monitor className="h-4 w-4" />}
-            Theme
+            Theme Mode
           </Label>
           <Select
             value={preferences.theme}
@@ -83,6 +93,43 @@ export const PreferencesPanel = () => {
               </SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        {/* Color Theme */}
+        <div className="space-y-3">
+          <Label className="flex items-center gap-2 text-sm font-medium">
+            <Palette className="h-4 w-4" />
+            Color Theme
+          </Label>
+          <div className="grid grid-cols-3 gap-2">
+            {COLOR_THEMES.map((theme) => (
+              <button
+                key={theme.value}
+                onClick={() => savePreferences({ colorTheme: theme.value })}
+                className={cn(
+                  "relative flex flex-col items-center gap-1.5 p-3 rounded-lg border-2 transition-all duration-300",
+                  "hover:scale-105 hover:shadow-md",
+                  preferences.colorTheme === theme.value
+                    ? "border-primary bg-primary/10 shadow-sm"
+                    : "border-border/50 hover:border-border"
+                )}
+              >
+                <div
+                  className="w-8 h-8 rounded-full shadow-inner transition-transform duration-300"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${theme.color}, ${theme.color.replace('55%', '65%')})`,
+                    transform: preferences.colorTheme === theme.value ? 'scale(1.1)' : 'scale(1)'
+                  }}
+                />
+                <span className="text-xs font-medium text-muted-foreground">
+                  {theme.label.split(' ')[0]}
+                </span>
+                {preferences.colorTheme === theme.value && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse" />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Font Size */}
