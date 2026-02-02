@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import Confetti from "@/components/Confetti";
 
 interface Question {
   id: string;
@@ -127,7 +128,11 @@ const QuizTaker = ({ quiz, attemptId, questions, onComplete, onClose }: QuizTake
     const passed = results.percentage >= (quiz.passing_score || 50);
     
     return (
-      <Dialog open={true} onOpenChange={() => { onComplete(); onClose(); }}>
+      <>
+        {/* Confetti celebration for passing */}
+        <Confetti isActive={passed} particleCount={150} duration={5000} />
+        
+        <Dialog open={true} onOpenChange={() => { onComplete(); onClose(); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl flex items-center gap-2">
@@ -223,6 +228,7 @@ const QuizTaker = ({ quiz, attemptId, questions, onComplete, onClose }: QuizTake
           </div>
         </DialogContent>
       </Dialog>
+      </>
     );
   }
 
