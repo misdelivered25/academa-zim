@@ -39,6 +39,7 @@ import QuizTaker from "@/components/QuizTaker";
 import QuizQuestionsManager from "@/components/QuizQuestionsManager";
 import AssignmentEditor from "@/components/AssignmentEditor";
 import PomodoroTimer from "@/components/PomodoroTimer";
+import Confetti, { useConfetti } from "@/components/Confetti";
 
 const StudyCenter = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,6 +77,9 @@ const StudyCenter = () => {
   
   // Assignment editing state
   const [editingAssignment, setEditingAssignment] = useState<any>(null);
+  
+  // Confetti celebration
+  const { isActive: showConfetti, trigger: triggerConfetti, reset: resetConfetti } = useConfetti();
 
   // Fetch user's assignments and courses
   useEffect(() => {
@@ -340,8 +344,11 @@ const StudyCenter = () => {
 
       if (error) throw error;
 
+      // Trigger confetti celebration!
+      triggerConfetti();
+
       toast({
-        title: "Assignment Completed",
+        title: "🎉 Assignment Completed!",
         description: `Great job on completing ${assignment.title}!`,
       });
 
@@ -369,8 +376,11 @@ const StudyCenter = () => {
 
       if (error) throw error;
 
+      // Trigger confetti celebration for submission too!
+      triggerConfetti();
+
       toast({
-        title: "Assignment Submitted",
+        title: "🎉 Assignment Submitted!",
         description: `${assignment.title} has been submitted successfully!`,
       });
 
@@ -662,9 +672,12 @@ const StudyCenter = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <>
+      {/* Confetti celebration for completed assignments */}
+      <Confetti isActive={showConfetti} particleCount={120} duration={4000} onComplete={resetConfetti} />
       
+      <div className="min-h-screen bg-background">
+        <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -1413,7 +1426,8 @@ const StudyCenter = () => {
           }}
         />
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
