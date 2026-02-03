@@ -53,6 +53,7 @@ import { NotificationManager } from "@/components/NotificationManager";
 import CosmicBackground from "@/components/CosmicBackground";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import PreferencesPanel from "@/components/PreferencesPanel";
+import StudyStreak from "@/components/StudyStreak";
 
 type Assignment = {
   id: string;
@@ -473,9 +474,10 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        {/* Notification Manager */}
-        <div className="mb-6 md:mb-8">
+        {/* Notification Manager & Study Streak */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
           <NotificationManager />
+          <StudyStreak />
         </div>
 
         {/* Quick Stats - Enhanced Cards */}
