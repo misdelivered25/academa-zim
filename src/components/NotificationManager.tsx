@@ -255,19 +255,12 @@ export const NotificationManager = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold">Sound Settings</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() =>
-                setSoundPreferences({ enabled: !soundPreferences.enabled })
+            <Switch
+              checked={soundPreferences.enabled}
+              onCheckedChange={(checked) =>
+                setSoundPreferences({ enabled: checked })
               }
-            >
-              {soundPreferences.enabled ? (
-                <Volume2 className="h-4 w-4" />
-              ) : (
-                <VolumeX className="h-4 w-4" />
-              )}
-            </Button>
+            />
           </div>
 
           {soundPreferences.enabled && (
