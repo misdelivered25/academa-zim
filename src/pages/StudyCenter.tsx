@@ -38,6 +38,7 @@ import { supabase } from "@/integrations/supabase/client";
 import QuizTaker from "@/components/QuizTaker";
 import QuizQuestionsManager from "@/components/QuizQuestionsManager";
 import AssignmentEditor from "@/components/AssignmentEditor";
+import AssignmentCreation from "@/components/AssignmentCreation";
 import PomodoroTimer from "@/components/PomodoroTimer";
 import Confetti, { useConfetti } from "@/components/Confetti";
 
@@ -436,12 +437,6 @@ const StudyCenter = () => {
     return { percentage, score: bestAttempt.score, totalPoints: bestAttempt.total_points };
   };
 
-  const handleNewAssignment = () => {
-    toast({
-      title: "Creating Assignment",
-      description: "Opening assignment creation form",
-    });
-  };
 
   const handleUploadMaterial = () => {
     toast({
@@ -723,13 +718,7 @@ const StudyCenter = () => {
           <TabsContent value="assignments" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-foreground">Assignments & Homework</h2>
-              <Button 
-                className="bg-gradient-hero hover:shadow-glow transition-all"
-                onClick={handleNewAssignment}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Assignment
-              </Button>
+              <AssignmentCreation />
             </div>
 
             <div className="grid gap-6">
