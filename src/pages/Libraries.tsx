@@ -83,7 +83,7 @@ const Libraries = () => {
       resources: "12,000+",
       subjects: ["Heritage Studies", "Arts", "Agriculture", "Education"],
       access: "Full Access",
-      url: "https://www.gzu.ac.zw/library",
+      url: "https://library.gzu.ac.zw/",
       description: "GZU's collection focusing on heritage, culture, and regional development research."
     },
     {
