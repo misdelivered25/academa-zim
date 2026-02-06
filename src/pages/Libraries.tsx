@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   Database, 
   Search, 
@@ -18,12 +25,15 @@ import {
   Users,
   ExternalLink,
   University,
-  Bookmark
+  Bookmark,
+  X
 } from "lucide-react";
 import Header from "@/components/Header";
 
 const Libraries = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [accessFilter, setAccessFilter] = useState<string>("all");
+  const [subjectFilter, setSubjectFilter] = useState<string>("all");
 
   const digitalLibraries = [
     {
@@ -310,6 +320,64 @@ const Libraries = () => {
     { name: "Education", resources: "4,890", trend: "+10%" }
   ];
 
+  // Get all unique subjects from libraries and databases
+  const allSubjects = useMemo(() => {
+    const subjects = new Set<string>();
+    digitalLibraries.forEach(lib => lib.subjects.forEach(s => subjects.add(s)));
+    researchDatabases.forEach(db => db.subjects.forEach(s => subjects.add(s)));
+    return Array.from(subjects).sort();
+  }, []);
+
+  // Get all unique access types
+  const allAccessTypes = useMemo(() => {
+    const accessTypes = new Set<string>();
+    digitalLibraries.forEach(lib => accessTypes.add(lib.access));
+    researchDatabases.forEach(db => accessTypes.add(db.access));
+    return Array.from(accessTypes).sort();
+  }, []);
+
+  // Filter libraries
+  const filteredLibraries = useMemo(() => {
+    return digitalLibraries.filter(library => {
+      const matchesSearch = searchQuery === "" || 
+        library.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        library.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        library.university.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesAccess = accessFilter === "all" || library.access === accessFilter;
+      
+      const matchesSubject = subjectFilter === "all" || 
+        library.subjects.some(s => s === subjectFilter);
+      
+      return matchesSearch && matchesAccess && matchesSubject;
+    });
+  }, [searchQuery, accessFilter, subjectFilter]);
+
+  // Filter databases
+  const filteredDatabases = useMemo(() => {
+    return researchDatabases.filter(database => {
+      const matchesSearch = searchQuery === "" || 
+        database.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        database.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        database.provider.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesAccess = accessFilter === "all" || database.access === accessFilter;
+      
+      const matchesSubject = subjectFilter === "all" || 
+        database.subjects.some(s => s === subjectFilter);
+      
+      return matchesSearch && matchesAccess && matchesSubject;
+    });
+  }, [searchQuery, accessFilter, subjectFilter]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setAccessFilter("all");
+    setSubjectFilter("all");
+  };
+
+  const hasActiveFilters = searchQuery !== "" || accessFilter !== "all" || subjectFilter !== "all";
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -323,9 +391,9 @@ const Libraries = () => {
           </p>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="flex gap-4">
+        {/* Search and Filters */}
+        <div className="mb-8 space-y-4">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -335,15 +403,66 @@ const Libraries = () => {
                 className="pl-10"
               />
             </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Advanced Search
-            </Button>
-            <Button className="bg-gradient-hero hover:shadow-glow transition-all">
-              <Search className="h-4 w-4 mr-2" />
-              Search
-            </Button>
+            <Select value={accessFilter} onValueChange={setAccessFilter}>
+              <SelectTrigger className="w-full md:w-[200px]">
+                <SelectValue placeholder="Access Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Access Types</SelectItem>
+                {allAccessTypes.map((type) => (
+                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={subjectFilter} onValueChange={setSubjectFilter}>
+              <SelectTrigger className="w-full md:w-[200px]">
+                <SelectValue placeholder="Subject Area" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Subjects</SelectItem>
+                {allSubjects.map((subject) => (
+                  <SelectItem key={subject} value={subject}>{subject}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+          
+          {/* Active Filters Display */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-muted-foreground">Active filters:</span>
+              {searchQuery && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  Search: "{searchQuery}"
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                    onClick={() => setSearchQuery("")}
+                  />
+                </Badge>
+              )}
+              {accessFilter !== "all" && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  Access: {accessFilter}
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                    onClick={() => setAccessFilter("all")}
+                  />
+                </Badge>
+              )}
+              {subjectFilter !== "all" && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  Subject: {subjectFilter}
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                    onClick={() => setSubjectFilter("all")}
+                  />
+                </Badge>
+              )}
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs h-6">
+                Clear all
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Quick Stats */}
@@ -405,8 +524,16 @@ const Libraries = () => {
 
           {/* University Libraries */}
           <TabsContent value="libraries" className="space-y-6">
+            {filteredLibraries.length === 0 ? (
+              <Card className="bg-gradient-card border-border p-8 text-center">
+                <p className="text-muted-foreground">No libraries found matching your filters.</p>
+                <Button variant="link" onClick={clearFilters} className="mt-2">
+                  Clear filters
+                </Button>
+              </Card>
+            ) : (
             <div className="grid gap-6">
-              {digitalLibraries.map((library, index) => (
+              {filteredLibraries.map((library, index) => (
                 <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -457,12 +584,21 @@ const Libraries = () => {
                 </Card>
               ))}
             </div>
+            )}
           </TabsContent>
 
           {/* Research Databases */}
           <TabsContent value="databases" className="space-y-6">
+            {filteredDatabases.length === 0 ? (
+              <Card className="bg-gradient-card border-border p-8 text-center">
+                <p className="text-muted-foreground">No databases found matching your filters.</p>
+                <Button variant="link" onClick={clearFilters} className="mt-2">
+                  Clear filters
+                </Button>
+              </Card>
+            ) : (
             <div className="grid md:grid-cols-2 gap-6">
-              {researchDatabases.map((database, index) => (
+              {filteredDatabases.map((database, index) => (
                 <Card key={index} className="bg-gradient-card border-border hover:shadow-card transition-all">
                   <CardHeader>
                     <div className="space-y-2">
@@ -518,6 +654,7 @@ const Libraries = () => {
                 </Card>
               ))}
             </div>
+            )}
           </TabsContent>
 
           {/* Recent Resources */}
