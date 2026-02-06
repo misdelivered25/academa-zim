@@ -73,7 +73,7 @@ const Libraries = () => {
       resources: "18,000+",
       subjects: ["Social Sciences", "Commerce", "Natural Sciences", "Education"],
       access: "Full Access",
-      url: "https://ir.msu.ac.zw",
+      url: "https://libraries.msu.ac.zw/",
       description: "MSU's digital archive of academic research, theses, and scholarly publications."
     },
     {
