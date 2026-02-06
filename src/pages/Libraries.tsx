@@ -33,6 +33,7 @@ const Libraries = () => {
       resources: "45,000+",
       subjects: ["Science", "Engineering", "Medicine", "Arts"],
       access: "Full Access",
+      url: "https://ir.uz.ac.zw",
       description: "Complete collection of UZ theses, dissertations, and research publications."
     },
     {
@@ -42,6 +43,7 @@ const Libraries = () => {
       resources: "25,000+",
       subjects: ["Technology", "Engineering", "Applied Sciences"],
       access: "Full Access",
+      url: "https://www.nust.ac.zw/library",
       description: "NUST's comprehensive database of technological research and innovations."
     },
     {
@@ -51,7 +53,58 @@ const Libraries = () => {
       resources: "150,000+",
       subjects: ["All Disciplines"],
       access: "Limited Access",
+      url: "https://www.zalico.co.zw",
       description: "Shared academic resources across all major Zimbabwe universities."
+    },
+    {
+      name: "Midlands State University Repository",
+      university: "Midlands State University",
+      type: "Institutional Repository",
+      resources: "18,000+",
+      subjects: ["Social Sciences", "Commerce", "Natural Sciences", "Education"],
+      access: "Full Access",
+      url: "https://ir.msu.ac.zw",
+      description: "MSU's digital archive of academic research, theses, and scholarly publications."
+    },
+    {
+      name: "Great Zimbabwe University Digital Library",
+      university: "Great Zimbabwe University",
+      type: "Digital Library",
+      resources: "12,000+",
+      subjects: ["Heritage Studies", "Arts", "Agriculture", "Education"],
+      access: "Full Access",
+      url: "https://www.gzu.ac.zw/library",
+      description: "GZU's collection focusing on heritage, culture, and regional development research."
+    },
+    {
+      name: "Bindura University Research Repository",
+      university: "Bindura University",
+      type: "Research Repository",
+      resources: "8,500+",
+      subjects: ["Science Education", "Agriculture", "Environmental Studies"],
+      access: "Full Access",
+      url: "https://www.buse.ac.zw/library",
+      description: "BUSE's specialized collection in science education and agricultural research."
+    },
+    {
+      name: "Chinhoyi University of Technology Library",
+      university: "CUT",
+      type: "Digital Repository",
+      resources: "10,000+",
+      subjects: ["Technology", "Hospitality", "Wildlife Management", "Business"],
+      access: "Full Access",
+      url: "https://www.cut.ac.zw/library",
+      description: "CUT's research database focusing on technology, tourism, and wildlife sciences."
+    },
+    {
+      name: "Africa University Digital Commons",
+      university: "Africa University",
+      type: "Digital Commons",
+      resources: "15,000+",
+      subjects: ["Theology", "Peace Studies", "Health Sciences", "Agriculture"],
+      access: "Full Access",
+      url: "https://www.africau.edu/library",
+      description: "Pan-African scholarly collection with focus on development and peace studies."
     }
   ];
 
@@ -63,6 +116,7 @@ const Libraries = () => {
       subjects: ["History", "Literature", "Political Science", "Economics"],
       articles: "2.5M+",
       access: "Subscription Required",
+      url: "https://www.jstor.org",
       description: "Comprehensive academic journal archive with full-text access."
     },
     {
@@ -72,6 +126,7 @@ const Libraries = () => {
       subjects: ["Engineering", "Computer Science", "Electronics"],
       articles: "5M+",
       access: "University Access",
+      url: "https://ieeexplore.ieee.org",
       description: "Leading database for electrical engineering and computer science research."
     },
     {
@@ -81,6 +136,7 @@ const Libraries = () => {
       subjects: ["Medicine", "Biology", "Life Sciences"],
       articles: "7M+",
       access: "Open Access",
+      url: "https://www.ncbi.nlm.nih.gov/pmc",
       description: "Free full-text archive of biomedical and life sciences journal literature."
     },
     {
@@ -90,7 +146,128 @@ const Libraries = () => {
       subjects: ["Science", "Technology", "Medicine", "Business"],
       articles: "13M+",
       access: "Subscription Required",
+      url: "https://link.springer.com",
       description: "Comprehensive collection of scientific, technical and medical content."
+    },
+    {
+      name: "Google Scholar",
+      provider: "Google",
+      type: "Search Engine",
+      subjects: ["All Disciplines"],
+      articles: "400M+",
+      access: "Open Access",
+      url: "https://scholar.google.com",
+      description: "Freely accessible search engine for scholarly literature across all fields."
+    },
+    {
+      name: "Scopus",
+      provider: "Elsevier",
+      type: "Citation Database",
+      subjects: ["Science", "Technology", "Medicine", "Social Sciences"],
+      articles: "90M+",
+      access: "Subscription Required",
+      url: "https://www.scopus.com",
+      description: "Largest abstract and citation database of peer-reviewed literature."
+    },
+    {
+      name: "Web of Science",
+      provider: "Clarivate",
+      type: "Citation Index",
+      subjects: ["Sciences", "Social Sciences", "Arts & Humanities"],
+      articles: "85M+",
+      access: "Subscription Required",
+      url: "https://www.webofscience.com",
+      description: "Multidisciplinary research platform with citation network analysis."
+    },
+    {
+      name: "Directory of Open Access Journals (DOAJ)",
+      provider: "DOAJ",
+      type: "Open Access Directory",
+      subjects: ["All Disciplines"],
+      articles: "9M+",
+      access: "Open Access",
+      url: "https://doaj.org",
+      description: "Community-curated index of high-quality open access journals."
+    },
+    {
+      name: "African Journals Online (AJOL)",
+      provider: "AJOL",
+      type: "African Research",
+      subjects: ["African Studies", "Health", "Agriculture", "Environment"],
+      articles: "200K+",
+      access: "Mixed Access",
+      url: "https://www.ajol.info",
+      description: "Largest collection of peer-reviewed African-published scholarly journals."
+    },
+    {
+      name: "ScienceDirect",
+      provider: "Elsevier",
+      type: "Scientific Database",
+      subjects: ["Physical Sciences", "Engineering", "Life Sciences", "Health Sciences"],
+      articles: "16M+",
+      access: "Subscription Required",
+      url: "https://www.sciencedirect.com",
+      description: "Leading full-text scientific database with peer-reviewed journal articles."
+    },
+    {
+      name: "arXiv",
+      provider: "Cornell University",
+      type: "Preprint Server",
+      subjects: ["Physics", "Mathematics", "Computer Science", "Quantitative Biology"],
+      articles: "2.3M+",
+      access: "Open Access",
+      url: "https://arxiv.org",
+      description: "Open-access archive for scholarly articles in STEM fields before peer review."
+    },
+    {
+      name: "ERIC (Education Resources)",
+      provider: "US Department of Education",
+      type: "Education Database",
+      subjects: ["Education", "Teaching", "Learning Sciences"],
+      articles: "1.8M+",
+      access: "Open Access",
+      url: "https://eric.ed.gov",
+      description: "Comprehensive education research and information database."
+    },
+    {
+      name: "ProQuest Dissertations & Theses",
+      provider: "ProQuest",
+      type: "Thesis Repository",
+      subjects: ["All Disciplines"],
+      articles: "5M+",
+      access: "Subscription Required",
+      url: "https://www.proquest.com/pqdtglobal",
+      description: "World's most comprehensive collection of dissertations and theses."
+    },
+    {
+      name: "ResearchGate",
+      provider: "ResearchGate",
+      type: "Academic Network",
+      subjects: ["All Disciplines"],
+      articles: "160M+",
+      access: "Free Registration",
+      url: "https://www.researchgate.net",
+      description: "Professional network for researchers to share and discover research."
+    },
+    {
+      name: "SABINET African Journals",
+      provider: "SABINET",
+      type: "African Scholarly Content",
+      subjects: ["African Studies", "Law", "Health", "Social Sciences"],
+      articles: "500K+",
+      access: "Subscription Required",
+      url: "https://journals.co.za",
+      description: "Southern African and African scholarly journal content aggregator."
+    },
+    {
+      name: "WorldCat",
+      provider: "OCLC",
+      type: "Library Catalog",
+      subjects: ["All Disciplines"],
+      articles: "500M+",
+      access: "Open Access",
+      url: "https://www.worldcat.org",
+      description: "World's largest network of library content and services."
     }
   ];
 
@@ -256,12 +433,18 @@ const Libraries = () => {
                         <Badge key={i} variant="outline">{subject}</Badge>
                       ))}
                     </div>
-                    <div className="flex gap-2">
-                      <Button className="bg-gradient-hero hover:shadow-glow transition-all">
+                    <div className="flex flex-wrap gap-2">
+                      <Button 
+                        className="bg-gradient-hero hover:shadow-glow transition-all"
+                        onClick={() => window.open(library.url, '_blank')}
+                      >
                         <Eye className="h-4 w-4 mr-2" />
                         Browse Collection
                       </Button>
-                      <Button variant="outline">
+                      <Button 
+                        variant="outline"
+                        onClick={() => window.open(library.url, '_blank')}
+                      >
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Visit Library
                       </Button>
@@ -314,11 +497,19 @@ const Libraries = () => {
                       </div>
 
                       <div className="flex gap-2">
-                        <Button size="sm" className="flex-1 bg-gradient-hero hover:shadow-glow transition-all">
+                        <Button 
+                          size="sm" 
+                          className="flex-1 bg-gradient-hero hover:shadow-glow transition-all"
+                          onClick={() => window.open(database.url, '_blank')}
+                        >
                           <Database className="h-4 w-4 mr-2" />
                           Access Database
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => window.open(database.url, '_blank')}
+                        >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
                       </div>
