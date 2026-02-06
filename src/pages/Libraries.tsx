@@ -103,7 +103,7 @@ const Libraries = () => {
       resources: "10,000+",
       subjects: ["Technology", "Hospitality", "Wildlife Management", "Business"],
       access: "Full Access",
-      url: "https://www.cut.ac.zw/library",
+      url: "https://www.cut.ac.zw/cutlib/",
       description: "CUT's research database focusing on technology, tourism, and wildlife sciences."
     },
     {
