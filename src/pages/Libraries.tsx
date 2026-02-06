@@ -113,7 +113,7 @@ const Libraries = () => {
       resources: "15,000+",
       subjects: ["Theology", "Peace Studies", "Health Sciences", "Agriculture"],
       access: "Full Access",
-      url: "https://www.africau.edu/library",
+      url: "https://webpac.africau.ac.zw/",
       description: "Pan-African scholarly collection with focus on development and peace studies."
     }
   ];
