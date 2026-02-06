@@ -93,7 +93,7 @@ const Libraries = () => {
       resources: "8,500+",
       subjects: ["Science Education", "Agriculture", "Environmental Studies"],
       access: "Full Access",
-      url: "https://www.buse.ac.zw/library",
+      url: "https://library.buse.ac.zw/",
       description: "BUSE's specialized collection in science education and agricultural research."
     },
     {
