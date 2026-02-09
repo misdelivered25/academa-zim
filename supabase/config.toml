@@ -4,16 +4,16 @@ project_id = "ozyugjyviyxxeuiadwaz"
 verify_jwt = false
 
 [functions.analyze-assignment]
-verify_jwt = true
+verify_jwt = false
 
 [functions.update-assignment-progress]
-verify_jwt = true
+verify_jwt = false
 
 [functions.submit-quiz]
-verify_jwt = true
+verify_jwt = false
 
 [functions.start-quiz-attempt]
-verify_jwt = true
+verify_jwt = false
 
 [functions.generate-quiz-questions]
-verify_jwt = true
+verify_jwt = false
