@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { GraduationCap, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { GraduationCap, Mail, Phone, MapPin, Facebook } from "lucide-react";
 import hgcLogo from "@/assets/hgc-logo.png";
 import tatendaLogo from "@/assets/tatenda-foundation-logo.png";
 
@@ -57,15 +57,6 @@ const Footer = () => {
                   <a href="https://www.facebook.com/micheal.hore" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                     <Facebook className="h-4 w-4" />
                   </a>
-                </Button>
-                <Button variant="ghost" size="icon" className="hover:bg-background/10 text-background hover:text-background rounded-full" aria-label="Twitter">
-                  <Twitter className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="hover:bg-background/10 text-background hover:text-background rounded-full" aria-label="LinkedIn">
-                  <Linkedin className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="hover:bg-background/10 text-background hover:text-background rounded-full" aria-label="Instagram">
-                  <Instagram className="h-4 w-4" />
                 </Button>
               </div>
             </div>

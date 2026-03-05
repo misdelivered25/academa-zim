@@ -53,6 +53,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             full_name: `${userData.firstName} ${userData.lastName}`,
             first_name: userData.firstName,
             last_name: userData.lastName,
+            phone_number: userData.phone,
+            university: userData.university,
+            program: userData.program,
+            student_id: userData.studentId,
           }
         }
       });
