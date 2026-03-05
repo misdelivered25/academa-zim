@@ -19,6 +19,10 @@ const navItems = [
 
 export const MobileNav = () => {
   const location = useLocation();
+  
+  // Hide on auth pages
+  const hiddenPaths = ['/login', '/signup', '/reset-password'];
+  if (hiddenPaths.includes(location.pathname)) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-background/95 backdrop-blur-md border-t border-border safe-area-bottom">
