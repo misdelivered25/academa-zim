@@ -22,17 +22,20 @@ serve(async (req) => {
 
     const token = authHeader.replace('Bearer ', '');
 
-    const supabaseClient = createClient(
+    // User client for auth and user-scoped writes
+    const userClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      }
+      { global: { headers: { Authorization: authHeader } } }
     );
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    // Service role client to read quiz_questions with correct_answer (bypasses RLS)
+    const adminClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const { data: { user }, error: userError } = await userClient.auth.getUser(token);
     
     if (userError || !user) {
       return new Response(
@@ -50,8 +53,8 @@ serve(async (req) => {
       );
     }
 
-    // Fetch quiz questions to validate answers and calculate score
-    const { data: questions, error: questionsError } = await supabaseClient
+    // Fetch quiz questions with correct_answer using admin client
+    const { data: questions, error: questionsError } = await adminClient
       .from('quiz_questions')
       .select('*')
       .eq('quiz_id', quiz_id);
@@ -90,8 +93,8 @@ serve(async (req) => {
 
     let result;
     if (attempt_id) {
-      // Update existing attempt
-      const { data: existingAttempt } = await supabaseClient
+      // Read existing attempt with admin client, update with user client
+      const { data: existingAttempt } = await adminClient
         .from('quiz_attempts')
         .select('started_at')
         .eq('id', attempt_id)
@@ -101,7 +104,7 @@ serve(async (req) => {
         ? Math.round((new Date(now).getTime() - new Date(existingAttempt.started_at).getTime()) / 60000)
         : 0;
 
-      const { data, error } = await supabaseClient
+      const { data, error } = await userClient
         .from('quiz_attempts')
         .update({
           status: 'completed',
@@ -120,8 +123,7 @@ serve(async (req) => {
       if (error) throw error;
       result = data;
     } else {
-      // Create new attempt
-      const { data, error } = await supabaseClient
+      const { data, error } = await userClient
         .from('quiz_attempts')
         .insert({
           user_id: user.id,
@@ -152,7 +154,7 @@ serve(async (req) => {
         score,
         total_points: totalPoints,
         percentage,
-        passed: percentage >= 50, // Assuming 50% is passing score
+        passed: percentage >= 50,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
