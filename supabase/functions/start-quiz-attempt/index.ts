@@ -22,17 +22,20 @@ serve(async (req) => {
 
     const token = authHeader.replace('Bearer ', '');
 
-    const supabaseClient = createClient(
+    // User client for auth verification and user-scoped writes
+    const userClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      }
+      { global: { headers: { Authorization: authHeader } } }
     );
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    // Service role client to read quiz_questions (bypasses RLS)
+    const adminClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const { data: { user }, error: userError } = await userClient.auth.getUser(token);
     
     if (userError || !user) {
       return new Response(
@@ -50,10 +53,10 @@ serve(async (req) => {
       );
     }
 
-    // Fetch quiz details
-    const { data: quiz, error: quizError } = await supabaseClient
+    // Fetch quiz details using admin client (RLS blocks non-owner reads on quiz_questions)
+    const { data: quiz, error: quizError } = await adminClient
       .from('quizzes')
-      .select('*, quiz_questions(*)')
+      .select('*, quiz_questions(id, question_text, options, points, question_type)')
       .eq('id', quiz_id)
       .single();
 
@@ -66,8 +69,8 @@ serve(async (req) => {
       );
     }
 
-    // Create new quiz attempt
-    const { data: attempt, error: attemptError } = await supabaseClient
+    // Create new quiz attempt using user client (RLS enforces user_id match)
+    const { data: attempt, error: attemptError } = await userClient
       .from('quiz_attempts')
       .insert({
         user_id: user.id,
@@ -82,6 +85,7 @@ serve(async (req) => {
 
     console.log(`Quiz attempt started for user ${user.id}, quiz ${quiz_id}, attempt ${attempt.id}`);
 
+    // Return quiz WITHOUT correct_answer — already excluded from the select above
     return new Response(
       JSON.stringify({ 
         success: true, 
