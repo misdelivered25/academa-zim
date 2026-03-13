@@ -140,7 +140,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Note: The success toast will be handled by the auth state change
       return { error: null };
     } catch (error: any) {
-      console.error('Google sign in exception:', error);
       toast({
         title: "Google Sign In Error",
         description: error.message || "Failed to connect. Please check your connection.",

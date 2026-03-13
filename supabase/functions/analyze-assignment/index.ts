@@ -12,6 +12,21 @@ serve(async (req) => {
 
   try {
     const { documentText } = await req.json();
+
+    // Input validation: enforce length limits
+    if (!documentText || typeof documentText !== 'string') {
+      return new Response(
+        JSON.stringify({ error: "documentText is required and must be a string" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (documentText.length > 10000) {
+      return new Response(
+        JSON.stringify({ error: "Document text must be under 10,000 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {

@@ -124,8 +124,10 @@ export default function AssignmentCreation() {
   };
 
   const handleCreate = async () => {
-    if (!assignment.title || !assignment.course_id) {
-      toast({ title: "Please fill in required fields", variant: "destructive" });
+    const result = assignmentSchema.safeParse(assignment);
+    if (!result.success) {
+      const firstError = result.error.errors[0]?.message || "Invalid input";
+      toast({ title: firstError, variant: "destructive" });
       return;
     }
 
