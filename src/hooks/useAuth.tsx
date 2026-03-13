@@ -110,7 +110,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       return { error: null };
     } catch (error: any) {
-      console.error('Sign in exception:', error);
       toast({
         title: "Login Error",
         description: error.message || "Failed to connect. Please check your connection.",
