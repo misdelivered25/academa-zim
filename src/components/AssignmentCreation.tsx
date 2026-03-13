@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Loader2, Upload, FileText, Eye } from "lucide-react";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
+const assignmentSchema = z.object({
+  title: z.string().trim().min(1, "Title is required").max(200, "Title must be under 200 characters"),
+  course_id: z.string().uuid("Invalid course"),
+  due_date: z.string().optional(),
+  description: z.string().max(5000, "Description must be under 5000 characters").optional(),
+  status: z.string().default("pending"),
+});
 
 export default function AssignmentCreation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -115,8 +124,10 @@ export default function AssignmentCreation() {
   };
 
   const handleCreate = async () => {
-    if (!assignment.title || !assignment.course_id) {
-      toast({ title: "Please fill in required fields", variant: "destructive" });
+    const result = assignmentSchema.safeParse(assignment);
+    if (!result.success) {
+      const firstError = result.error.errors[0]?.message || "Invalid input";
+      toast({ title: firstError, variant: "destructive" });
       return;
     }
 

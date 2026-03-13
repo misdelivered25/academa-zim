@@ -89,16 +89,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('Attempting to sign in...');
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      console.log('Sign in response:', { error, data });
-
       if (error) {
-        console.error('Sign in error:', error);
         toast({
           title: "Login Error",
           description: error.message || "Failed to connect. Please check your connection.",
@@ -114,7 +110,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       return { error: null };
     } catch (error: any) {
-      console.error('Sign in exception:', error);
       toast({
         title: "Login Error",
         description: error.message || "Failed to connect. Please check your connection.",
@@ -126,7 +121,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signInWithGoogle = async () => {
     try {
-      console.log('Attempting Google sign in...');
       const { error, data } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -134,10 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       });
 
-      console.log('Google sign in response:', { error, data });
-
       if (error) {
-        console.error('Google sign in error:', error);
         toast({
           title: "Google Sign In Error",
           description: error.message || "Failed to connect. Please check your connection.",
@@ -149,7 +140,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Note: The success toast will be handled by the auth state change
       return { error: null };
     } catch (error: any) {
-      console.error('Google sign in exception:', error);
       toast({
         title: "Google Sign In Error",
         description: error.message || "Failed to connect. Please check your connection.",
