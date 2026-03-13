@@ -13,6 +13,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+const assignmentSchema = z.object({
+  title: z.string().trim().min(1, "Title is required").max(200, "Title must be under 200 characters"),
+  course_id: z.string().uuid("Invalid course"),
+  due_date: z.string().optional(),
+  description: z.string().max(5000, "Description must be under 5000 characters").optional(),
+  status: z.string().default("pending"),
+});
+
 export default function AssignmentCreation() {
   const [isOpen, setIsOpen] = useState(false);
   const [courses, setCourses] = useState<any[]>([]);
