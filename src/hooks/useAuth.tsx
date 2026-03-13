@@ -89,16 +89,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('Attempting to sign in...');
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      console.log('Sign in response:', { error, data });
-
       if (error) {
-        console.error('Sign in error:', error);
         toast({
           title: "Login Error",
           description: error.message || "Failed to connect. Please check your connection.",
