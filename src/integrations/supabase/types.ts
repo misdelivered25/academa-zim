@@ -157,7 +157,7 @@ export type Database = {
           status: string | null
           title: string
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           ai_analysis?: Json | null
@@ -173,7 +173,7 @@ export type Database = {
           status?: string | null
           title: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           ai_analysis?: Json | null
@@ -189,7 +189,7 @@ export type Database = {
           status?: string | null
           title?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {

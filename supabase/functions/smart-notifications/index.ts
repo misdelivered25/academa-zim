@@ -40,28 +40,29 @@ serve(async (req) => {
       );
     }
 
-    const { userId, action } = await req.json();
+    const { action } = await req.json();
+    const authenticatedUserId = user.id;
 
     if (action === 'analyze') {
-      // Fetch user's study patterns
+      // Fetch user's study patterns using verified user ID (not client-supplied)
       const { data: assignments } = await supabaseClient
         .from('assignments')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', authenticatedUserId)
         .order('created_at', { ascending: false })
         .limit(50);
 
       const { data: sessions } = await supabaseClient
         .from('study_sessions')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', authenticatedUserId)
         .order('session_date', { ascending: false })
         .limit(30);
 
       const { data: progress } = await supabaseClient
         .from('assignment_progress')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', authenticatedUserId)
         .order('updated_at', { ascending: false })
         .limit(30);
 

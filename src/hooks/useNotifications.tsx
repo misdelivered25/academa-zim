@@ -206,7 +206,7 @@ export const useNotifications = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('smart-notifications', {
-        body: { userId, action: 'analyze' }
+        body: { action: 'analyze' }
       });
 
       if (error) throw error;
