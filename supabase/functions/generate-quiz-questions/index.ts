@@ -7,6 +7,22 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// In-memory rate limiter (per isolate)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const MAX_REQUESTS = 15;
+const WINDOW_MS = 60 * 60 * 1000; // 60 minutes
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(userId, { count: 1, resetAt: now + WINDOW_MS });
+    return true;
+  }
+  entry.count++;
+  return entry.count <= MAX_REQUESTS;
+}
+
 async function extractTextFromPDF(base64Data: string): Promise<string> {
   try {
     const base64Clean = base64Data.replace(/^data:application\/pdf;base64,/, '');
@@ -51,11 +67,7 @@ serve(async (req) => {
     }
 
     // Rate limiting: 15 requests per 60 minutes per user
-    const { data: withinLimit, error: rlError } = await supabase.rpc('check_rate_limit', {
-      max_requests: 15,
-      window_minutes: 60,
-    });
-    if (rlError || !withinLimit) {
+    if (!checkRateLimit(user.id)) {
       return new Response(
         JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
