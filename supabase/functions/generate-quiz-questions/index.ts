@@ -50,6 +50,18 @@ serve(async (req) => {
       );
     }
 
+    // Rate limiting: 15 requests per 60 minutes per user
+    const { data: withinLimit, error: rlError } = await supabase.rpc('check_rate_limit', {
+      max_requests: 15,
+      window_minutes: 60,
+    });
+    if (rlError || !withinLimit) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { topic, documentText, pdfBase64, numberOfQuestions = 5, difficulty = "medium" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     

@@ -36,6 +36,18 @@ serve(async (req) => {
       );
     }
 
+    // Rate limiting: 20 requests per 60 minutes per user
+    const { data: withinLimit, error: rlError } = await supabase.rpc('check_rate_limit', {
+      max_requests: 20,
+      window_minutes: 60,
+    });
+    if (rlError || !withinLimit) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { documentText } = await req.json();
 
     // Input validation: enforce length limits
