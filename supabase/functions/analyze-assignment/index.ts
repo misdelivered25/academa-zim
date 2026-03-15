@@ -6,6 +6,22 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// In-memory rate limiter (per isolate)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const MAX_REQUESTS = 20;
+const WINDOW_MS = 60 * 60 * 1000; // 60 minutes
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(userId, { count: 1, resetAt: now + WINDOW_MS });
+    return true;
+  }
+  entry.count++;
+  return entry.count <= MAX_REQUESTS;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -33,6 +49,14 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Rate limiting: 20 requests per 60 minutes per user
+    if (!checkRateLimit(user.id)) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
