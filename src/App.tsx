@@ -12,6 +12,7 @@ import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import StudyCenter from "./pages/StudyCenter";
+import StudyPlanner from "./pages/StudyPlanner";
 import Libraries from "./pages/Libraries";
 import Campus from "./pages/Campus";
 import Contact from "./pages/Contact";
@@ -45,6 +46,11 @@ const App = () => (
               <Route path="/study-center" element={
                 <ProtectedRoute>
                   <StudyCenter />
+                </ProtectedRoute>
+              } />
+              <Route path="/study-planner" element={
+                <ProtectedRoute>
+                  <StudyPlanner />
                 </ProtectedRoute>
               } />
               <Route path="/libraries" element={

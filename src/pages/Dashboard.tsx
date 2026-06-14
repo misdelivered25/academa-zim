@@ -54,6 +54,7 @@ import CosmicBackground from "@/components/CosmicBackground";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import PreferencesPanel from "@/components/PreferencesPanel";
 import StudyStreak from "@/components/StudyStreak";
+import CommandCenter from "@/components/CommandCenter";
 
 type Assignment = {
   id: string;
@@ -472,6 +473,11 @@ const Dashboard = () => {
           >
             Sign Out
           </Button>
+        </div>
+
+        {/* Academic Command Center */}
+        <div className="mb-6 md:mb-8">
+          <CommandCenter />
         </div>
 
         {/* Notification Manager & Study Streak */}
