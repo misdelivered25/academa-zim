@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Building, Clock, Phone, Search, MapPin, Navigation } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type Building = {
+type CampusBuilding = {
   id: string;
   name: string;
   category: string | null;
