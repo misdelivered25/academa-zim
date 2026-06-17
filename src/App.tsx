@@ -15,6 +15,7 @@ import StudyCenter from "./pages/StudyCenter";
 import StudyPlanner from "./pages/StudyPlanner";
 import Libraries from "./pages/Libraries";
 import Campus from "./pages/Campus";
+import Opportunities from "./pages/Opportunities";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import About from "./pages/About";
@@ -61,6 +62,11 @@ const App = () => (
               <Route path="/campus" element={
                 <ProtectedRoute>
                   <Campus />
+                </ProtectedRoute>
+              } />
+              <Route path="/opportunities" element={
+                <ProtectedRoute>
+                  <Opportunities />
                 </ProtectedRoute>
               } />
               <Route path="/admin" element={
