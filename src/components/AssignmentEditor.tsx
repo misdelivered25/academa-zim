@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import AssignmentChecklist from "@/components/AssignmentChecklist";
+import { Separator } from "@/components/ui/separator";
 
 interface Assignment {
   id: string;
@@ -101,7 +103,7 @@ export default function AssignmentEditor({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Assignment</DialogTitle>
         </DialogHeader>
@@ -192,6 +194,17 @@ export default function AssignmentEditor({
               rows={4}
             />
           </div>
+
+          {assignment && (
+            <>
+              <Separator />
+              <AssignmentChecklist
+                assignmentId={assignment.id}
+                assignmentTitle={formData.title}
+                assignmentDescription={formData.description}
+              />
+            </>
+          )}
         </div>
 
         <DialogFooter className="gap-2">
