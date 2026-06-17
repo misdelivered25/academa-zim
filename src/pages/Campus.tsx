@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import GoogleMapCampus from "@/components/GoogleMapCampus";
+import CampusBuildingBrowser from "@/components/CampusBuildingBrowser";
 
 // University-specific data
 const universityData: Record<string, {
@@ -464,8 +465,16 @@ const Campus = () => {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="locations" className="space-y-6">
+        <Tabs defaultValue="directory" className="space-y-6">
           <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-card/50 border border-border/30 rounded-xl w-full md:w-fit">
+            <TabsTrigger
+              value="directory"
+              className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
+            >
+              <Building className="h-4 w-4 mr-0 sm:mr-2" />
+              <span className="hidden sm:inline">Live Directory</span>
+              <span className="sm:hidden">Directory</span>
+            </TabsTrigger>
             <TabsTrigger 
               value="locations" 
               className="flex-1 md:flex-none text-xs sm:text-sm px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg whitespace-nowrap"
@@ -491,6 +500,11 @@ const Campus = () => {
               <span className="sm:hidden">Emergency</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="directory" className="space-y-6">
+            <CampusBuildingBrowser universityCode={selectedUniversity} />
+          </TabsContent>
+
 
           {/* Campus Locations */}
           <TabsContent value="locations" className="space-y-6">

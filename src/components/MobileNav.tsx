@@ -1,19 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
 import { 
-  Home, 
   BookOpen, 
   Database, 
   MapPin, 
-  User,
+  Briefcase,
   LayoutDashboard
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { to: "/", icon: Home, label: "Home" },
-  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Home" },
   { to: "/study-center", icon: BookOpen, label: "Study" },
   { to: "/libraries", icon: Database, label: "Library" },
+  { to: "/opportunities", icon: Briefcase, label: "Opps" },
   { to: "/campus", icon: MapPin, label: "Campus" },
 ];
 
